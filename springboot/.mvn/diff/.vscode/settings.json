@@ -1,0 +1,17 @@
+{
+  "files.exclude": {
+    ".gitignore": true,
+    "package-lock.json": true,
+    "tsconfig.json": true,
+    ".vscode": true,
+    "bin": true,
+    "dist": true,
+    ".eslintrc.js": true,
+    ".prettierrc": true,
+    "nest-cli.json": true,
+    "tsconfig.build.json": true,
+  },
+  "editor.insertSpaces": true,
+  "editor.tabSize": 2,
+  "editor.detectIndentation": false,
+}

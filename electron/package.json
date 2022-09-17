@@ -1,0 +1,129 @@
+{
+  "name": "my-app",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "npm config set registry https://registry.yarnpkg.com && npx -y -p typescript -p ts-node ts-node --skipProject bin/pre_load_configuration.ts && ts-node --skipProject bin/start.ts",
+    "pack": "npm config set registry https://registry.yarnpkg.com && npx -y -p typescript -p ts-node ts-node --skipProject bin/pre_load_configuration.ts && ts-node --skipProject bin/pack.ts",
+    "make": "npm config set registry https://registry.yarnpkg.com && npx -y -p typescript -p ts-node ts-node --skipProject bin/pre_load_configuration.ts && ts-node --skipProject bin/make.ts"
+  },
+  "main": "./dist/index.js",
+  "private": true,
+  "homepage": ".",
+  "build": {
+    "extends": null,
+    "files": [
+      "dist",
+      "public",
+      "build"
+    ],
+    "directories": {
+      "output": "output"
+    },
+    "appId": "com.electron.electron",
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "deleteAppDataOnUninstall": true,
+      "guid": "b5a96e2b-5f4f-4a67-b77a-2c9d7c947242",
+      "runAfterFinish": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "asar": {
+      "smartUnpack": true
+    },
+    "asarUnpack": [
+      "public",
+      "build",
+      "node_modules/@electron/remote",
+      "node_modules/node-os-utils"
+    ]
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ],
+    "rules": {
+      "import/no-anonymous-default-export": [
+        "off",
+        {
+          "allowArrowFunction": true
+        }
+      ]
+    }
+  },
+  "browserslist": {
+    "production": [
+      "last 1 chrome version"
+    ],
+    "development": [
+      "last 1 chrome version"
+    ]
+  },
+  "devDependencies": {
+    "@babylonjs/core": "5.48.0",
+    "@emotion/react": "11.10.6",
+    "@emotion/styled": "11.10.6",
+    "@fontsource/roboto": "4.5.8",
+    "@mui/icons-material": "5.11.11",
+    "@mui/lab": "5.0.0-alpha.121",
+    "@mui/material": "5.11.11",
+    "@mui/x-date-pickers": "5.0.20",
+    "@nestjs/cli": "9.2.0",
+    "@types/node": "18.14.2",
+    "@types/node-os-utils": "1.3.0",
+    "@types/qs": "6.9.7",
+    "@types/react": "18.0.28",
+    "@types/react-dom": "18.0.11",
+    "@types/react-router-dom": "5.3.3",
+    "@types/uuid": "9.0.1",
+    "@types/wait-on": "5.3.1",
+    "@typescript-eslint/eslint-plugin": "5.54.0",
+    "@typescript-eslint/parser": "5.54.0",
+    "autoprefixer": "10.4.13",
+    "electron": "23.1.1",
+    "electron-builder": "23.6.0",
+    "eslint": "8.35.0",
+    "get-port": "5.1.1",
+    "mobx-react-use-autorun": "3.1.13",
+    "node-polyfill-webpack-plugin": "2.0.1",
+    "postcss": "8.4.21",
+    "react": "18.2.0",
+    "react-app-rewired": "2.2.1",
+    "react-dom": "18.2.0",
+    "react-git-info": "2.0.1",
+    "react-intl": "6.2.10",
+    "react-router-dom": "6.8.2",
+    "react-scripts": "5.0.1",
+    "reflect-metadata": "0.1.13",
+    "rxjs-exhaustmap-with-trailing": "2.1.1",
+    "source-map-support": "0.5.21",
+    "tailwindcss": "3.2.7",
+    "ts-loader": "9.4.2",
+    "ts-node": "10.9.1",
+    "tsconfig-paths": "4.1.0",
+    "typedjson": "1.8.0",
+    "typescript": "4.9.5",
+    "typestyle": "2.4.0",
+    "wait-on": "7.0.1",
+    "web-vitals": "3.1.1",
+    "windows-locale": "1.1.3"
+  },
+  "dependencies": {
+    "@electron/remote": "2.0.9",
+    "axios": "1.3.4",
+    "date-fns": "2.29.3",
+    "electron-log": "4.4.8",
+    "electron-store": "8.1.0",
+    "execa": "5.1.1",
+    "linq": "3.2.4",
+    "node-os-utils": "1.3.7",
+    "qs": "6.11.0",
+    "rxjs": "7.8.0",
+    "stream-to-string": "1.2.1",
+    "tree-kill": "1.2.2",
+    "uuid": "9.0.0"
+  }
+}
