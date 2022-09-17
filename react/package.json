@@ -1,0 +1,93 @@
+{
+  "name": "my-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "start": "npm config set registry https://registry.yarnpkg.com && npx -y -p typescript -p ts-node ts-node --skipProject bin/pre_load_configuration.ts && ts-node --skipProject bin/start.ts",
+    "build": "npm config set registry https://registry.yarnpkg.com && npx -y -p typescript -p ts-node ts-node --skipProject bin/pre_load_configuration.ts && ts-node --skipProject bin/build.ts"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ],
+    "rules": {
+      "import/no-anonymous-default-export": [
+        "off",
+        {
+          "allowArrowFunction": true
+        }
+      ]
+    }
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@emotion/react": "11.10.5",
+    "@emotion/styled": "11.10.5",
+    "@fontsource/roboto": "4.5.8",
+    "@mui/icons-material": "5.10.9",
+    "@mui/lab": "5.0.0-alpha.105",
+    "@mui/material": "5.10.11",
+    "@mui/x-date-pickers": "5.0.5",
+    "@types/crypto-js": "4.1.1",
+    "@types/node": "18.11.7",
+    "@types/node-rsa": "1.1.1",
+    "@types/qs": "6.9.7",
+    "@types/react": "18.0.24",
+    "@types/react-dom": "18.0.8",
+    "@types/react-router-dom": "5.3.3",
+    "@types/react-virtualized-auto-sizer": "1.0.1",
+    "@types/react-window": "1.8.5",
+    "@types/uuid": "8.3.4",
+    "autoprefixer": "10.4.13",
+    "axios": "1.2.1",
+    "crypto-js": "4.1.1",
+    "date-fns": "2.29.3",
+    "execa": "5.1.1",
+    "get-port": "5.1.1",
+    "is-mobile": "3.1.1",
+    "linq": "4.0.0",
+    "mathjs": "11.3.2",
+    "mobx-react-use-autorun": "3.0.45",
+    "node-polyfill-webpack-plugin": "2.0.1",
+    "node-rsa": "1.1.1",
+    "postcss": "8.4.18",
+    "qs": "6.11.0",
+    "react": "18.2.0",
+    "react-app-rewired": "2.2.1",
+    "react-dom": "18.2.0",
+    "react-git-info": "2.0.1",
+    "react-intl": "6.2.1",
+    "react-router-dom": "6.4.2",
+    "react-scripts": "5.0.1",
+    "react-use": "17.4.0",
+    "react-virtualized-auto-sizer": "1.0.7",
+    "react-window": "1.8.7",
+    "recharts": "2.1.15",
+    "reflect-metadata": "0.1.13",
+    "rxjs": "7.5.7",
+    "rxjs-exhaustmap-with-trailing": "2.1.0",
+    "rxjs-websockets": "9.0.0",
+    "tailwindcss": "3.2.1",
+    "tree-kill": "1.2.2",
+    "ts-node": "10.9.1",
+    "typedjson": "1.8.0",
+    "typescript": "4.8.4",
+    "typestyle": "2.4.0",
+    "uuid": "9.0.0",
+    "vh-check": "2.0.5",
+    "wait-on": "6.0.1",
+    "web-vitals": "3.0.4",
+    "windows-locale": "1.1.3"
+  }
+}

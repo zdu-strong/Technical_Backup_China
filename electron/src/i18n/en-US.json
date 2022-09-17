@@ -1,0 +1,10 @@
+{
+  "CurrentlyCharging": "Currently charging",
+  "CurrentlyNotCharging": "Not currently charging",
+  "CurrentBattery": "Current battery",
+  "EditSrcAppTsxAndSaveToReload": "Edit src/App.tsx and save to reload",
+  "CurrentCpuUsage": "Current cpu usage",
+  "PleaseWaitLoading": "Please wait, loading...",
+  "EnterTheGameIfYouWantToExitJustPressTheESCKey": "Enter the game, if you want to exit, just press the ESC key",
+  "ReturnToHomePage": "To home"
+}

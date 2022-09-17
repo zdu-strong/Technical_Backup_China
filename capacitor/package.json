@@ -1,0 +1,121 @@
+{
+  "name": "my-app",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "npm config set registry https://registry.yarnpkg.com && npx -y -p typescript -p ts-node ts-node --skipProject bin/pre_load_configuration.ts && ts-node --skipProject bin/start.ts",
+    "pack": "npm config set registry https://registry.yarnpkg.com && npx -y -p typescript -p ts-node ts-node --skipProject bin/pre_load_configuration.ts && ts-node --skipProject bin/pack.ts",
+    "make": "npm config set registry https://registry.yarnpkg.com && npx -y -p typescript -p ts-node ts-node --skipProject bin/pre_load_configuration.ts && ts-node --skipProject bin/make.ts"
+  },
+  "private": true,
+  "homepage": ".",
+  "description": "An Ionic project",
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ],
+    "rules": {
+      "import/no-anonymous-default-export": [
+        "off",
+        {
+          "allowArrowFunction": true
+        }
+      ]
+    }
+  },
+  "browserslist": {
+    "production": [
+      "last 1 chrome version"
+    ],
+    "development": [
+      "last 1 chrome version"
+    ]
+  },
+  "devDependencies": {
+    "@awesome-cordova-plugins/android-full-screen": "6.2.0",
+    "@awesome-cordova-plugins/android-notch": "6.2.0",
+    "@awesome-cordova-plugins/screen-orientation": "6.2.0",
+    "@capacitor/action-sheet": "4.0.1",
+    "@capacitor/android": "4.4.0",
+    "@capacitor/app": "4.1.0",
+    "@capacitor/app-launcher": "4.0.1",
+    "@capacitor/browser": "4.0.1",
+    "@capacitor/camera": "4.1.3",
+    "@capacitor/cli": "4.4.0",
+    "@capacitor/clipboard": "4.0.1",
+    "@capacitor/core": "4.4.0",
+    "@capacitor/device": "4.0.1",
+    "@capacitor/dialog": "4.0.1",
+    "@capacitor/filesystem": "4.1.3",
+    "@capacitor/geolocation": "4.0.1",
+    "@capacitor/google-maps": "4.3.0",
+    "@capacitor/haptics": "4.0.1",
+    "@capacitor/ios": "4.4.0",
+    "@capacitor/keyboard": "4.0.1",
+    "@capacitor/local-notifications": "4.1.2",
+    "@capacitor/motion": "4.0.1",
+    "@capacitor/network": "4.0.1",
+    "@capacitor/preferences": "4.0.1",
+    "@capacitor/push-notifications": "4.1.1",
+    "@capacitor/screen-reader": "4.1.1",
+    "@capacitor/share": "4.0.1",
+    "@capacitor/splash-screen": "4.1.1",
+    "@capacitor/status-bar": "4.0.1",
+    "@capacitor/text-zoom": "4.0.1",
+    "@capacitor/toast": "4.0.1",
+    "@emotion/react": "11.10.5",
+    "@emotion/styled": "11.10.5",
+    "@fontsource/roboto": "4.5.8",
+    "@ionic/cli": "6.20.3",
+    "@mui/icons-material": "5.10.9",
+    "@mui/lab": "5.0.0-alpha.105",
+    "@mui/material": "5.10.11",
+    "@mui/x-date-pickers": "5.0.5",
+    "@oasis-engine-toolkit/controls": "0.8.0-alpha.6",
+    "@types/inquirer": "9.0.2",
+    "@types/node": "18.11.7",
+    "@types/qs": "6.9.7",
+    "@types/react": "18.0.24",
+    "@types/react-dom": "18.0.8",
+    "@types/react-router-dom": "5.3.3",
+    "@types/uuid": "8.3.4",
+    "autoprefixer": "10.4.12",
+    "axios": "1.1.3",
+    "cordova-plugin-android-notch": "1.0.3",
+    "cordova-plugin-fullscreen": "1.3.0",
+    "cordova-plugin-screen-orientation": "3.0.2",
+    "date-fns": "2.29.3",
+    "es6-promise-plugin": "4.2.2",
+    "execa": "5.1.1",
+    "get-port": "5.1.1",
+    "inquirer": "8.2.4",
+    "linq": "3.2.4",
+    "mathjs": "11.3.2",
+    "mobx-react-use-autorun": "3.0.44",
+    "node-polyfill-webpack-plugin": "2.0.1",
+    "oasis-engine": "0.7.5",
+    "oasis-engine-toolkit": "0.8.0-beta.3",
+    "postcss": "8.4.18",
+    "qs": "6.11.0",
+    "react": "18.2.0",
+    "react-app-rewired": "2.2.1",
+    "react-dom": "18.2.0",
+    "react-git-info": "2.0.1",
+    "react-intl": "6.2.1",
+    "react-router-dom": "6.4.2",
+    "react-scripts": "5.0.1",
+    "react-use": "17.4.0",
+    "reflect-metadata": "0.1.13",
+    "rxjs": "7.5.7",
+    "rxjs-exhaustmap-with-trailing": "2.1.0",
+    "tailwindcss": "3.2.1",
+    "tree-kill": "1.2.2",
+    "ts-node": "10.9.1",
+    "typedjson": "1.8.0",
+    "typescript": "4.8.4",
+    "typestyle": "2.4.0",
+    "uuid": "9.0.0",
+    "wait-on": "6.0.1",
+    "web-vitals": "3.0.4",
+    "windows-locale": "1.1.3"
+  }
+}
