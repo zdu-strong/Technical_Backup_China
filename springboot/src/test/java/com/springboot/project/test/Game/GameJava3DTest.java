@@ -41,10 +41,11 @@ public class GameJava3DTest extends BaseTest {
         branchGroup.setPickable(true);
         branchGroup.setCollidable(true);
         branchGroup.detach();
+        branchGroup.compile();
 
         var pickTool = new PickTool(branchGroup);
         pickTool.setShapeRay(new Point3d(0, 0, 0), new Vector3d(1, 1, 1));
-        // var pickResult = pickTool.pickClosest();
+        var pickResult = pickTool.pickClosest();
     }
 
     @BeforeEach
