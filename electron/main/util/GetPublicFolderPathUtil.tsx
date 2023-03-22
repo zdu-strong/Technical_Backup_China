@@ -1,5 +1,5 @@
 import path from "path";
-import { isPackaged } from "./IsPackagedUtil";
+import { isPackaged } from "@/util/IsPackagedUtil";
 
 export const getPublicFoldePath = (() => {
   if (isPackaged) {

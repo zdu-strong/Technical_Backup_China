@@ -1,7 +1,7 @@
 import { BrowserWindow } from "electron";
 import path from "path";
-import { getBuildFoldePath } from "./GetBuildFolderPathUtil";
-import { isPackaged } from "./IsPackagedUtil";
+import { getBuildFoldePath } from "@/util/GetBuildFolderPathUtil";
+import { isPackaged } from "@/util/IsPackagedUtil";
 
 export async function loadWindowFromRelativeUrl(
   browserWindow: BrowserWindow,

@@ -7,7 +7,7 @@
     "pretty": true,
     "paths": {
       "@/*": [
-        "./*"
+        "main/*"
       ]
     },
   },

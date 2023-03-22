@@ -1,5 +1,5 @@
-import { PaginationModel } from "../model";
-import { ElectronStorage, ElectronDatabase } from "../util";
+import { PaginationModel } from "@/model";
+import { ElectronStorage, ElectronDatabase } from "@/util";
 import linq from "linq";
 import { v1 } from "uuid";
 import { subMilliseconds } from "date-fns";

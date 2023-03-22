@@ -1,6 +1,6 @@
 import { app, BrowserWindow, screen } from "electron";
 import * as remote from "@electron/remote/main";
-import { isNotShowForTest, loadWindowFromRelativeUrl, isPackaged } from "../util";
+import { isNotShowForTest, loadWindowFromRelativeUrl, isPackaged } from "@/util";
 
 export default async () => {
   const display = screen.getDisplayNearestPoint(screen.getCursorScreenPoint());

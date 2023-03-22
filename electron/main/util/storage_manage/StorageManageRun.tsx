@@ -1,7 +1,7 @@
-import { StorageSpaceService } from "../../service";
+import { StorageSpaceService } from "@/service";
 import { concat, interval, concatMap, lastValueFrom, of, catchError } from "rxjs";
 import { from } from "linq";
-import { listRoots } from "../StorageUtil";
+import { listRoots } from "@/util/StorageUtil";
 
 async function runManageStorageSpace() {
   const totalPage = (

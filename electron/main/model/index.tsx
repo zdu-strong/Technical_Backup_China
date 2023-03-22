@@ -1,4 +1,4 @@
-import { PaginationModel } from './PaginationMode'
-import { StorageSpaceModel } from './StorageSpaceModel'
+import { PaginationModel } from '@/model/PaginationMode'
+import { StorageSpaceModel } from '@/model/StorageSpaceModel'
 
 export { PaginationModel, StorageSpaceModel }

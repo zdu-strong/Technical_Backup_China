@@ -6,7 +6,7 @@ import {
   ProtocolRequest,
   ProtocolResponse,
 } from "electron";
-import { createHomeWindow } from "./window";
+import { createHomeWindow } from "@/window";
 import { initialize } from "@electron/remote/main";
 import linq from "linq";
 

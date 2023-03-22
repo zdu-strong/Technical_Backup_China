@@ -2,8 +2,8 @@ import Storage from "electron-store";
 import { DatabaseModel } from "main/model/DatabaseModel";
 import path from "path";
 import { TypedJSON } from "typedjson";
-import { StorageSpaceModel } from "../model";
-import { getBaseFolderPath } from "./StorageUtil";
+import { StorageSpaceModel } from "@/model";
+import { getBaseFolderPath } from "@/util/StorageUtil";
 
 export const DatabaseStorageFolderName = "ed069481-6ae2-8360-61e5-66f528c13020";
 

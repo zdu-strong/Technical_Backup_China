@@ -1,3 +1,3 @@
-import createHomeWindow from './HomeWindow'
+import createHomeWindow from '@/window/HomeWindow'
 
 export { createHomeWindow }
