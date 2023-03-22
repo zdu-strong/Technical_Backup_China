@@ -5,6 +5,11 @@
     "noEmit": false,
     "module": "commonjs",
     "pretty": true,
+    "paths": {
+      "@/*": [
+        "./*"
+      ]
+    },
   },
   "include": [
     "./"
