@@ -87,7 +87,7 @@
     "electron-builder": "23.6.0",
     "eslint": "8.35.0",
     "get-port": "5.1.1",
-    "mobx-react-use-autorun": "3.1.13",
+    "mobx-react-use-autorun": "3.1.14",
     "node-polyfill-webpack-plugin": "2.0.1",
     "postcss": "8.4.21",
     "react": "18.2.0",
