@@ -46,6 +46,10 @@ execa (Current project not support ES module)<br/>
 get-port (Current project not support ES module)<br/>
 linq (Current project not support ES module)<br/>
 
+## Notes - Things to note
+
+1. The dependencies used in the Electron main process need to be installed in dependencies, and other dependencies are installed in devDependencies. This can keep the application size to a minimum.
+
 ## Notes - CSS In JS with style
 
 Define componentized css, & represents the current class name.
