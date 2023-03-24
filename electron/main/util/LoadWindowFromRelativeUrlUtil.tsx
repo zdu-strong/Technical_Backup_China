@@ -1,6 +1,6 @@
 import { BrowserWindow } from "electron";
 import path from "path";
-import { getBuildFoldePath } from "@/util/GetBuildFolderPathUtil";
+import { buildFolderPath } from "@/util/GetBuildFolderPathUtil";
 import { isPackaged } from "@/util/IsPackagedUtil";
 
 export async function loadWindowFromRelativeUrl(
@@ -11,9 +11,9 @@ export async function loadWindowFromRelativeUrl(
     throw new Error("Unsupport url");
   }
   if (isPackaged) {
-    await browserWindow.loadFile(path.join(getBuildFoldePath, "index.html"), {
-      hash: new URL("http://127.0.0.1" + url).pathname,
-      search: new URL("http://127.0.0.1" + url).search,
+    await browserWindow.loadFile(path.join(buildFolderPath, "index.html"), {
+      hash: new URL(`http://127.0.0.1${url}`).pathname,
+      search: new URL(`http://127.0.0.1${url}`).search,
     });
   } else {
     await browserWindow.loadURL(

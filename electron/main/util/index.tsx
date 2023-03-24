@@ -1,5 +1,5 @@
-import { getBuildFoldePath as buildFolderPath } from '@/util/GetBuildFolderPathUtil'
-import { getPublicFoldePath as publicFolderPath } from '@/util/GetPublicFolderPathUtil'
+import { buildFolderPath } from '@/util/GetBuildFolderPathUtil'
+import { publicFolderPath } from '@/util/GetPublicFolderPathUtil'
 import { getIsLoaded, setIsLoadedToTrue } from '@/util/IsLoadedUtil'
 import { isNotShowForTest } from '@/util/IsNotShowForTestUtil'
 import { isPackaged } from '@/util/IsPackagedUtil';

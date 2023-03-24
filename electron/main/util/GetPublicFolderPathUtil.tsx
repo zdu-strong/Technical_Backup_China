@@ -1,7 +1,7 @@
 import path from "path";
 import { isPackaged } from "@/util/IsPackagedUtil";
 
-export const getPublicFoldePath = (() => {
+export const publicFolderPath = (() => {
   if (isPackaged) {
     return path.join(__dirname, "../../../app.asar.unpacked/public");
   } else {
