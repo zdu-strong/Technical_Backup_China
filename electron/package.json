@@ -28,7 +28,7 @@
       "perMachine": true,
       "deleteAppDataOnUninstall": true,
       "guid": "b5a96e2b-5f4f-4a67-b77a-2c9d7c947242",
-      "runAfterFinish": false,
+      "runAfterFinish": true,
       "allowToChangeInstallationDirectory": true
     },
     "asar": {
