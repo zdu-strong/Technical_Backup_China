@@ -41,6 +41,21 @@ The following dependencies are currently unable to continue to be upgraded:<br/>
 execa (Current project not support ES module)<br/>
 get-port (Current project not support ES module)<br/>
 
+## Notes - xpath - Select the node whose text contains "abc"
+
+    html:
+        <div>
+          <div class="flex">
+            abcd
+          </div>
+          <div class="flex">
+            hijk
+          </div>
+        </div>
+    xpath: //div[contains(@class, 'flex')][contains(., 'abc')]
+    count: 1
+
 ## Learn More
 
 1. Cypress (https://www.cypress.io)<br/>
+2. Xpath (https://www.w3schools.com/xml/xpath_syntax.asp)<br/>
