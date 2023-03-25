@@ -1,3 +1,7 @@
-export function setPhoneViewport() {
-  cy.viewport("iphone-xr")
+export function setPhonePortraitViewport() {
+  cy.viewport("iphone-xr", "portrait")
+}
+
+export function setPhoneLandscapeViewport() {
+  cy.viewport("iphone-xr", "landscape")
 }

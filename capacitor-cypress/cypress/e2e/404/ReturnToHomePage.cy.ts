@@ -7,6 +7,6 @@ it('', () => {
 })
 
 before(() => {
-  action.setPhoneViewport()
+  action.setPhonePortraitViewport()
   cy.visit("/404")
 })

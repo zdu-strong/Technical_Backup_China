@@ -39,7 +39,7 @@ export default observer(() => {
       }
     }),
   }, {
-    canvasRef: useRef(),
+    canvasRef: useRef<HTMLCanvasElement>(),
   })
 
   function resizeGameCanvas() {
@@ -77,6 +77,7 @@ export default observer(() => {
       for (let i = 10; i > 0; i--) {
         await timer(16).toPromise();
       }
+      state.canvasRef.current!.focus();
       state.ready = true;
     } catch (error) {
       state.error = error
