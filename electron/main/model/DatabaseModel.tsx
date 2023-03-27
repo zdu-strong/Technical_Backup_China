@@ -1,6 +1,6 @@
 import { jsonArrayMember, jsonObject } from "typedjson";
 import { StorageSpaceModel } from "@/model/StorageSpaceModel";
-import { makeAutoObservable } from 'mobx-react-use-autorun'
+import { makeAutoObservable } from 'mobx'
 
 @jsonObject
 export class DatabaseModel {

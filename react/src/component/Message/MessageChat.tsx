@@ -96,11 +96,11 @@ export default observer((props: { username: string, userId: string }) => {
     if (fileList.length > 0) {
       try {
         state.loadingOfSend = true;
-        const urlList = await from(fileList).pipe(
+        const urlList = (await from(fileList).pipe(
           concatMap((file) => from(api.upload(file))),
           map(({ url }) => url),
           toArray(),
-        ).toPromise() as any as string[];
+        ).toPromise())! as string[];
         for (const url of urlList) {
           await api.UserMessage.sendMessage({
             url,
