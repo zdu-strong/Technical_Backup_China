@@ -12,7 +12,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import com.springboot.project.test.BaseTest;
 
-public class ResourceControllerIsFolderOfResourceNotIsFolderTest extends BaseTest {
+public class ResourceControllerIsDirectoryOfResourceNotIsDirectoryTest extends BaseTest {
 
     private String resourceUrl;
 
@@ -28,7 +28,7 @@ public class ResourceControllerIsFolderOfResourceNotIsFolderTest extends BaseTes
     public void beforeEach() throws URISyntaxException {
         var storageFileModel = this.storage
                 .storageResource(new UrlResource(ClassLoader.getSystemResource("image/default.jpg")));
-        this.resourceUrl = "/is_folder/" + String.join("/",
+        this.resourceUrl = "/is_directory/" + String.join("/",
                 JinqStream.from(new URIBuilder(storageFileModel.getRelativeUrl()).getPathSegments())
                         .toArray(String[]::new));
     }

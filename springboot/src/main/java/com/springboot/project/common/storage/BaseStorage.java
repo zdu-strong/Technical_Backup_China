@@ -116,7 +116,7 @@ public class BaseStorage {
             } else if (JinqStream.from(pathSegmentList).findFirst().get().equals("download")
                     && JinqStream.from(pathSegmentList).skip(1).findFirst().get().equals("resource")) {
                 pathSegmentList = JinqStream.from(pathSegmentList).skip(2).toList();
-            } else if (JinqStream.from(pathSegmentList).findFirst().get().equals("is_folder")
+            } else if (JinqStream.from(pathSegmentList).findFirst().get().equals("is_directory")
                     && JinqStream.from(pathSegmentList).skip(1).findFirst().get().equals("resource")) {
                 pathSegmentList = JinqStream.from(pathSegmentList).skip(2).toList();
             } else {
