@@ -78,7 +78,7 @@ Define componentized css, & represents the current class name.
 ## Notes - typedjson
 
     import { jsonArrayMember, jsonMember, jsonObject } from 'typedjson'
-    import { makeAutoObservable } from 'mobx-react-use-autorun'
+    import { makeAutoObservable } from 'mobx'
 
     @jsonObject
     export class UserModel {
