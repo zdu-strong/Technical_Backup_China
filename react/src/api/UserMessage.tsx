@@ -13,7 +13,7 @@ export async function sendMessage(body: {
   url?: string,
 }) {
   const response = await axios.post<UserMessageModel>("/user_message/send", { content: body.content, url: body.url });
-  response.data = new TypedJSON(UserMessageModel).parse(response.data) as any;
+  response.data = new TypedJSON(UserMessageModel).parse(response.data)!;
   return response.data;
 }
 
@@ -28,9 +28,9 @@ export function getUserMessageWebsocket(websocketInput$: Subject<{
     switchMap((getResponses: GetWebSocketResponses) => {
       return getResponses(websocketInput$.pipe(map(data => JSON.stringify(data))));
     }),
-    map((data) => new TypedJSON(UserMessageWebSocketReceiveModel).parse(data)),
+    map((data) => new TypedJSON(UserMessageWebSocketReceiveModel).parse(data)!),
     map((data) => {
-      for (const message of data?.list!) {
+      for (const message of data.list) {
         if (message.url) {
           message.url = `${ServerAddress}/download${message.url}`;
         }

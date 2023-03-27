@@ -20,7 +20,7 @@ export async function getDatabase() {
       StorageSpaceList: [],
     },
     deserialize: (data) => {
-      return new TypedJSON(DatabaseModel).parse(data) as any;
+      return new TypedJSON(DatabaseModel).parse(data)!;
     },
   });
   return databaseStorage;
