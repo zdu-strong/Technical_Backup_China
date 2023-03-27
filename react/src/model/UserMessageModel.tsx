@@ -1,4 +1,5 @@
 import { UserModel } from "@/model/UserModel"
+import { makeAutoObservable } from "mobx-react-use-autorun";
 import { jsonMember, jsonObject } from "typedjson";
 
 @jsonObject
@@ -34,5 +35,8 @@ export class UserMessageModel {
   @jsonMember(UserModel)
   user!: UserModel;
 
+  constructor() {
+    makeAutoObservable(this);
+  }
 }
 

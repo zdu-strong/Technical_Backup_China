@@ -1,5 +1,6 @@
 import { jsonArrayMember, jsonMember, jsonObject } from 'typedjson'
 import { UserEmailModel } from './UserEmailModel';
+import { makeAutoObservable } from 'mobx-react-use-autorun'
 
 @jsonObject
 export class UserModel {
@@ -38,4 +39,8 @@ export class UserModel {
 
   @jsonMember(String)
   privateKeyOfRSAOfAccessToken!: string;
+
+  constructor() {
+    makeAutoObservable(this);
+  }
 }

@@ -1,3 +1,4 @@
+import { makeAutoObservable } from 'mobx-react-use-autorun';
 import { jsonMember, jsonObject } from 'typedjson'
 import { UserModel } from './UserModel';
 
@@ -39,5 +40,9 @@ export class FriendshipModel {
 
   @jsonMember(String)
   aesOfFriend!: string;
+
+  constructor() {
+    makeAutoObservable(this);
+  }
 
 }

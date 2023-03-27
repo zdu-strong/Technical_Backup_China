@@ -72,6 +72,25 @@ Define componentized css, & represents the current class name.
       return <div className={state.css.container}></div>
     })
 
+## Notes - typedjson
+
+    import { jsonArrayMember, jsonMember, jsonObject } from 'typedjson'
+    import { makeAutoObservable } from 'mobx-react-use-autorun'
+
+    @jsonObject
+    export class UserModel {
+
+      @jsonMember(String)
+      username!: string;
+
+      @jsonArrayMember(UserModel)
+      childList!: UserModel[];
+
+      constructor() {
+        makeAutoObservable(this);
+      }
+    }
+
 ## Learn More
 
 1. React UI framework (https://reactjs.org)<br/>
@@ -80,11 +99,12 @@ Define componentized css, & represents the current class name.
 4. Material UI Components (https://material-ui.com)<br/>
 5. Material Icons (https://mui.com/material-ui/material-icons)<br/>
 6. Loading icon (https://mui.com/material-ui/react-progress)<br/>
-7. axios (https://axios-http.com/)
-8. linq (https://www.npmjs.com/package/linq)<br/>
-9. date-fns (https://date-fns.org)
-10. UUID (https://www.npmjs.com/package/uuid)<br/>
-11. Recharts (https://recharts.org/en-US)<br/>
-12. tailwindcss(https://tailwindcss.com)<br/>
-13. Animate.css(https://animate.style)<br/>
-14. react-git-info (https://www.npmjs.com/package/react-git-info)
+7. axios (https://axios-http.com)
+8. typedjson (https://www.npmjs.com/package/typedjson)
+9. linq (https://www.npmjs.com/package/linq)<br/>
+10. date-fns (https://date-fns.org)
+11. UUID (https://www.npmjs.com/package/uuid)<br/>
+12. Recharts (https://recharts.org/en-US)<br/>
+13. tailwindcss(https://tailwindcss.com)<br/>
+14. Animate.css(https://animate.style)<br/>
+15. react-git-info (https://www.npmjs.com/package/react-git-info)
