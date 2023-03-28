@@ -250,7 +250,7 @@ export default observer(forwardRef((props: {
         {...props}
         /* 设置当前元素的高度 */
         setRowHeight={async (rowHeight) => {
-          var pageNum = state.baseTotalPage + props.index + 1;
+          const pageNum = state.baseTotalPage + props.index + 1;
           const originHeight = getRowHeightByPageNum(pageNum);
           if (!(rowHeight !== originHeight && rowHeight >= DefaultVariableSizeListChildRowHeight)) {
             return;

@@ -16,7 +16,7 @@ export default observer(() => {
   }, {
     navigate: useNavigate(),
     ...((() => {
-      var [URLSearchParams, SetURLSearchParams] = useSearchParams();
+      const [URLSearchParams, SetURLSearchParams] = useSearchParams();
       return {
         URLSearchParams,
         SetURLSearchParams

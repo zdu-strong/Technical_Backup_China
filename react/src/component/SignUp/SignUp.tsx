@@ -138,7 +138,7 @@ export default observer(() => {
 
     try {
       state.loading.signUp = true
-      var userEmailList = state.emailList.map(s => ({
+      const userEmailList = state.emailList.map(s => ({
         email: s.email,
         verificationCode: s.verificationCode,
       }));

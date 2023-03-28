@@ -5,7 +5,7 @@ import { concatMap, from, map, range, toArray } from "rxjs";
 import * as mathjs from 'mathjs'
 
 export async function upload(file: File) {
-  for (var i = 10; i > 0; i--) {
+  for (let i = 10; i > 0; i--) {
     await timer(1).toPromise();
   }
   /* Each piece is 10MB */
