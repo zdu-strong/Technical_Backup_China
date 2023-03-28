@@ -60,6 +60,7 @@ import com.springboot.project.service.UserMessageService;
 import com.springboot.project.service.UserService;
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
+import cn.hutool.crypto.symmetric.AES;
 
 /**
  * 
@@ -135,12 +136,13 @@ public class BaseTest {
     }
 
     protected TokenModel createAccount(String email) {
+        var password = email;
         try {
             if (!hasExistUser(email)) {
                 UserModel userModelOfNewAccount = getNewAccount();
-                signUp(userModelOfNewAccount, email);
+                signUp(userModelOfNewAccount, email, password);
             }
-            return signIn(email);
+            return signIn(email, password);
         } catch (URISyntaxException | InvalidKeySpecException | NoSuchAlgorithmException | JsonProcessingException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -196,8 +198,8 @@ public class BaseTest {
         return userEmailModel.getVerificationCode();
     }
 
-    private void signUp(UserModel userModelOfNewAccount, String email)
-            throws InvalidKeySpecException, NoSuchAlgorithmException, URISyntaxException {
+    private void signUp(UserModel userModelOfNewAccount, String email, String password)
+            throws InvalidKeySpecException, NoSuchAlgorithmException, URISyntaxException, JsonProcessingException {
         String verificationCode = sendVerificationCode(email, userModelOfNewAccount.getId(),
                 userModelOfNewAccount.getPublicKeyOfRSA());
         var publicKeyOfRSA = (RSAPublicKey) KeyFactory.getInstance("RSA")
@@ -214,9 +216,9 @@ public class BaseTest {
                         .setVerificationCode(verificationCode)))
                 .setPublicKeyOfRSA(Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded()));
         userModelOfSignUp
-                .setPrivateKeyOfRSA(this.encryptDecryptService
-                        .encryptByAES(
-                                Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded())));
+                .setPrivateKeyOfRSA(new AES(this.encryptDecryptService.generateSecretKeyOfAES(new ObjectMapper()
+                        .writeValueAsString(Lists.newArrayList(userModelOfNewAccount.getId(), password))))
+                        .encryptBase64(Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded())));
         var url = new URIBuilder("/sign_up").build();
         var response = this.testRestTemplate.postForEntity(url, new HttpEntity<>(userModelOfSignUp),
                 Object.class);
@@ -240,7 +242,7 @@ public class BaseTest {
         return user;
     }
 
-    private TokenModel signIn(String email)
+    private TokenModel signIn(String email, String password)
             throws URISyntaxException, InvalidKeySpecException, NoSuchAlgorithmException, JsonMappingException,
             JsonProcessingException {
         UserModel user;
@@ -254,11 +256,14 @@ public class BaseTest {
             var privateKeyOfRSA = (RSAPrivateKey) KeyFactory.getInstance("RSA")
                     .generatePrivate(new PKCS8EncodedKeySpec(
                             Base64.getDecoder()
-                                    .decode(this.encryptDecryptService
-                                            .decryptByAES(user.getPrivateKeyOfRSA()))));
+                                    .decode(new AES(this.encryptDecryptService.generateSecretKeyOfAES(new ObjectMapper()
+                                            .writeValueAsString(Lists.newArrayList(user.getId(), password))))
+                                            .decryptStr(user.getPrivateKeyOfRSA()))));
             var rsa = new RSA(privateKeyOfRSA, null);
-            var password = rsa.encryptBase64(new ObjectMapper().writeValueAsString(new Date()), KeyType.PrivateKey);
-            var url = new URIBuilder("/sign_in").setParameter("userId", user.getId()).setParameter("password", password)
+            var passwordParameter = rsa.encryptBase64(new ObjectMapper().writeValueAsString(new Date()),
+                    KeyType.PrivateKey);
+            var url = new URIBuilder("/sign_in").setParameter("userId", user.getId())
+                    .setParameter("password", passwordParameter)
                     .setParameter("privateKeyOfRSA", "privateKeyOfRSA")
                     .build();
             var response = this.testRestTemplate.postForEntity(url, null, String.class);
