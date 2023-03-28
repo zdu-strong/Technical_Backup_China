@@ -3,7 +3,7 @@ import axios from "axios";
 import { UserEmailModel } from "@/model/UserEmailModel";
 import { getAccessToken, getPrivateKeyOfRSA, GlobalUserInfo, removeAccessToken, removePrivateKeyOfRSA, setAccessToken, setGlobalUserInfo, setPrivateKeyOfRSA } from "@/common/axios-config/AxiosConfig";
 import { decryptByPrivateKeyOfRSA, encryptByPublicKeyOfRSA, encryptByPrivateKeyOfRSA, decryptByPublicKeyOfRSA, generateKeyPairOfRSA } from "@/common/RSAUtils";
-import { decryptByAES, encryptByAES } from '@/common/AESUtils';
+import { decryptByAES, encryptByAES, generateSecretKeyOfAES } from '@/common/AESUtils';
 
 export async function getNewAccountOfSignUp() {
   return axios.post<UserModel>("/sign_up/get_new_account");
@@ -16,7 +16,7 @@ export async function signUp(userId: string, password: string, nickname: string,
     username: nickname,
     userEmailList: userEmailList,
     publicKeyOfRSA: publicKey,
-    privateKeyOfRSA: await encryptByAES(Buffer.from(JSON.stringify([userId, password]), "utf8").toString("base64"), privateKey),
+    privateKeyOfRSA: await encryptByAES(await generateSecretKeyOfAES(JSON.stringify([userId, password])), privateKey),
     password: await encryptByPublicKeyOfRSA(publicKeyOfRSA, userId),
   });
   await signIn(userId, password);
@@ -39,7 +39,7 @@ export async function signIn(userIdOrEmail: string, password: string): Promise<v
   const { privateKey, publicKey } = await generateKeyPairOfRSA();
   let privateKeyOfRSAOfUser: string;
   try {
-    privateKeyOfRSAOfUser = await decryptByAES(Buffer.from(JSON.stringify([user.id, password]), "utf8").toString("base64"), user.privateKeyOfRSA);
+    privateKeyOfRSAOfUser = await decryptByAES(await generateSecretKeyOfAES(JSON.stringify([user.id, password])), user.privateKeyOfRSA);
   } catch (error) {
     throw new Error('Incorrect password');
   }

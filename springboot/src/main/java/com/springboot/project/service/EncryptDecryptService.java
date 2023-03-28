@@ -12,7 +12,11 @@ import java.util.Base64;
 import java.util.Date;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
+
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Service;
 import com.springboot.project.entity.EncryptDecryptEntity;
 import cn.hutool.crypto.asymmetric.KeyType;
@@ -63,6 +67,19 @@ public class EncryptDecryptService extends BaseService {
         this.generateKey();
         var rsa = new RSA(this.keyOfRSAPrivateKey, this.keyOfRSAPublicKey);
         return rsa;
+    }
+
+    public SecretKey generateSecretKeyOfAES(String password) {
+        try {
+            var salt = DigestUtils.md5(password);
+            var factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
+            var spec = new PBEKeySpec(password.toCharArray(), salt, 1, 256);
+            var secret = new SecretKeySpec(factory.generateSecret(spec)
+                    .getEncoded(), "AES");
+            return secret;
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 
     private void generateKey() {

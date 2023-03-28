@@ -11,5 +11,11 @@ registerWebworker(async ({
   if (!data) {
     throw new Error("Empty data is not allowed");
   }
-  return CryptoJS.AES.encrypt(CryptoJS.enc.Utf8.parse(data), secretKeyOfAES).toString();
+  return CryptoJS.AES.encrypt(
+    CryptoJS.enc.Utf8.parse(data),
+    CryptoJS.enc.Base64.parse(secretKeyOfAES),
+    {
+      iv: CryptoJS.enc.Utf8.parse("")
+    }
+  ).toString();
 });
