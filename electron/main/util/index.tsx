@@ -5,7 +5,6 @@ import { isNotShowForTest } from '@/util/IsNotShowForTestUtil'
 import { isPackaged } from '@/util/IsPackagedUtil';
 import { loadWindowFromRelativeUrl } from '@/util/LoadWindowFromRelativeUrlUtil'
 import * as ElectronStorage from '@/util/StorageUtil'
-import StorageManageRunUtil from '@/util/storage_manage/StorageManageRunWorker'
 import * as ElectronDatabase from '@/util/ElectronDatabaseInstanceUtil'
 
-export { buildFolderPath, publicFolderPath, getIsLoaded, setIsLoadedToTrue, isNotShowForTest, isPackaged, loadWindowFromRelativeUrl, ElectronStorage, StorageManageRunUtil, ElectronDatabase }
+export { buildFolderPath, publicFolderPath, getIsLoaded, setIsLoadedToTrue, isNotShowForTest, isPackaged, loadWindowFromRelativeUrl, ElectronStorage, ElectronDatabase }

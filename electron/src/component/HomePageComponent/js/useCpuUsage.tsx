@@ -1,6 +1,6 @@
 import { useMobxState } from "mobx-react-use-autorun";
 import { useMount, useUnmount } from "mobx-react-use-autorun"
-import { concatMap, delay, from, of, repeat, Subscription, tap } from "rxjs";
+import { concatMap, from, of, repeat, Subscription, tap } from "rxjs";
 import remote from "@/remote";
 
 export const useCpuUsage = () => {
@@ -15,8 +15,7 @@ export const useCpuUsage = () => {
       tap((cpuUsage) => {
         state.cpuUsage = cpuUsage;
       }),
-      delay(100),
-      repeat(),
+      repeat({ delay: 100 }),
     ).subscribe());
   }
 
