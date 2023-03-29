@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Button, Link as LinkAlias, CircularProgress } from "@mui/material";
 import { keyframes, stylesheet } from 'typestyle';
 import { useMobxState, observer, useUnmount, useMount } from 'mobx-react-use-autorun';
-import { concatMap, from, interval, Subscription, timer } from 'rxjs';
+import { concatMap, from, of, repeat, Subscription, timer } from 'rxjs';
 
 export default observer(() => {
 
@@ -53,7 +53,7 @@ export default observer(() => {
 
   useMount(() => {
     /* 产生随机数 */
-    state.subscription.add(interval(1000).pipe(
+    state.subscription.add(of(null).pipe(
       concatMap(() => from((async () => {
         while (true) {
           const numberOne = Math.floor(Math.random() * 100 + 1);
@@ -63,7 +63,8 @@ export default observer(() => {
           }
           await timer(0).toPromise();
         }
-      })()))
+      })())),
+      repeat({ delay: 1000 }),
     ).subscribe());
   })
 
