@@ -1,5 +1,5 @@
 import Storage from "electron-store";
-import { DatabaseModel } from "main/model/DatabaseModel";
+import { DatabaseModel } from "@/model/DatabaseModel";
 import path from "path";
 import { TypedJSON } from "typedjson";
 import { StorageSpaceModel } from "@/model";
