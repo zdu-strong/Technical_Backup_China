@@ -1,5 +1,6 @@
+import 'reflect-metadata';
 import { StorageSpaceService } from "@/service";
-import { concat, interval, concatMap, lastValueFrom, of, retry } from "rxjs";
+import { concatMap, lastValueFrom, of, retry, repeat } from "rxjs";
 import { from } from "linq";
 import { listRoots } from "@/util/StorageUtil";
 
@@ -32,13 +33,15 @@ async function runManageStorageSpace() {
 
 async function main() {
   await lastValueFrom(
-    concat(of(null), interval(60 * 60 * 1000)).pipe(
+    of(null).pipe(
       concatMap(() => {
         return from(runManageStorageSpace());
       }),
+      repeat({ delay: 10 * 60 * 1000 }),
       retry(),
     )
   );
+  process.exit();
 }
 
-export default main
+export default main()
