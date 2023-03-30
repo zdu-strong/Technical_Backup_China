@@ -108,3 +108,4 @@ Define componentized css, & represents the current class name.
 13. tailwindcss(https://tailwindcss.com)<br/>
 14. Animate.css(https://animate.style)<br/>
 15. react-git-info (https://www.npmjs.com/package/react-git-info)
+16. mathjs (https://www.npmjs.com/package/mathjs)

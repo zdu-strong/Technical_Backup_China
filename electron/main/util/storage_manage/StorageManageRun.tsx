@@ -1,4 +1,3 @@
-import 'reflect-metadata';
 import { StorageSpaceService } from "@/service";
 import { concatMap, lastValueFrom, of, retry, repeat } from "rxjs";
 import { from } from "linq";
@@ -41,7 +40,6 @@ async function main() {
       retry(),
     )
   );
-  process.exit();
 }
 
-export default main()
+export default main

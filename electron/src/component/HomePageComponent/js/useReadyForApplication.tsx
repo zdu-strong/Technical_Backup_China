@@ -2,6 +2,7 @@ import { observable } from 'mobx-react-use-autorun';
 import { useMount } from "mobx-react-use-autorun";
 import { timer } from 'rxjs';
 import remote from '@/remote';
+import { MessageService } from '@/common/MessageService';
 
 const state = observable({
   ready: false,
@@ -41,7 +42,7 @@ export const useReadyForApplication = () => {
         for (let i = 10; i > 0; i--) {
           await timer(1).toPromise();
         }
-        remote.StorageManageRunUtil();
+        remote.StorageManageRunUtil().catch((error) => MessageService.error(error));
         for (let i = 10; i > 0; i--) {
           await timer(1).toPromise();
         }

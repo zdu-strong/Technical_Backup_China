@@ -8,7 +8,8 @@ export async function getStorageSpaceListByPagination(pageNum: number, pageSize:
   const database = await ElectronDatabase.getDatabase();
   const stream = linq
     .from(database.get("StorageSpaceList"))
-    .orderBy((s) => s.createDate);
+    .orderBy((s) => s.createDate)
+    .thenBy(s => s.id);
   return PaginationModel(pageNum, pageSize, stream);
 }
 
@@ -41,7 +42,7 @@ export async function isUsed(folderName: string) {
   const folderNameOfRelative = await ElectronStorage.getFolderNameBaseOnBaseFolderPath(folderName);
   await createStorageSpaceEntityIfNotExist(folderNameOfRelative);
 
-  /* Has been used */
+  /* Has been used, The file path to store the json file of the database */
   if (folderNameOfRelative === ElectronDatabase.DatabaseStorageFolderName) {
     return true;
   }
