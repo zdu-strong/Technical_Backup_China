@@ -4,9 +4,9 @@ export const isPackaged = (() => {
     return app.isPackaged;
   } catch {
     const isPackagedOfApp: any = process.env["ELECTRON_IS_PACKAGED"];
-    if (isPackagedOfApp === true) {
+    if (isPackagedOfApp === "true") {
       return true;
-    } else if (isPackagedOfApp === false) {
+    } else if (isPackagedOfApp === "false") {
       return false;
     } else {
       throw new Error(
