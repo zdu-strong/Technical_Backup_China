@@ -37,9 +37,9 @@ async function createStorageSpaceEntityIfNotExist(folderName: string) {
 }
 
 export async function isUsed(folderName: string) {
-  /* Save data to database */
-  const database = await ElectronDatabase.getDatabase();
   const folderNameOfRelative = await ElectronStorage.getFolderNameBaseOnBaseFolderPath(folderName);
+
+  /* Save data to database */
   await createStorageSpaceEntityIfNotExist(folderNameOfRelative);
 
   /* Has been used, The file path to store the json file of the database */
@@ -50,6 +50,7 @@ export async function isUsed(folderName: string) {
   /* Check if it is used */
   const tempFileValidTime = 24 * 60 * 60 * 1000;
   const expiredDate = subMilliseconds(new Date(), 0 - tempFileValidTime);
+  const database = await ElectronDatabase.getDatabase();
   const list = linq
     .from(database.get("StorageSpaceList"))
     .where((s) => s.folderName === folderNameOfRelative)
@@ -69,7 +70,6 @@ export async function isUsed(folderName: string) {
 
 export async function deleteFolder(folderName: string): Promise<void> {
   /* Do not delete when in use */
-  const database = await ElectronDatabase.getDatabase();
   const folderNameOfRelative = await ElectronStorage.getFolderNameBaseOnBaseFolderPath(
     folderName
   );
@@ -77,7 +77,12 @@ export async function deleteFolder(folderName: string): Promise<void> {
     return;
   }
 
+
+  /* Delete from disk */
+  await ElectronStorage.deleteFolderOrFile(folderNameOfRelative);
+
   /* Delete from database */
+  const database = await ElectronDatabase.getDatabase();
   const StorageSpaceList = database.get("StorageSpaceList");
   const storageSpaceEntityList = linq
     .from(StorageSpaceList)
@@ -86,8 +91,5 @@ export async function deleteFolder(folderName: string): Promise<void> {
   for (const storageSpaceEntity of storageSpaceEntityList) {
     StorageSpaceList.splice(StorageSpaceList.indexOf(storageSpaceEntity), 1);
   }
-
-  /* Delete from disk */
   database.set("StorageSpaceList", StorageSpaceList);
-  await ElectronStorage.deleteFolderOrFile(folderNameOfRelative);
 }
