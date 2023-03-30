@@ -1,7 +1,7 @@
 import { StorageSpaceService } from "@/service";
 import { concatMap, lastValueFrom, of, retry, repeat } from "rxjs";
 import { from } from "linq";
-import { listRoots } from "@/util/StorageUtil";
+import { ElectronStorage } from "@/util";
 
 async function runManageStorageSpace() {
   const { totalPage } = await StorageSpaceService.getStorageSpaceListByPagination(1, 1);
@@ -18,7 +18,7 @@ async function runManageStorageSpace() {
     }
   }
 
-  const folderNameListOfRootFolder = await listRoots();
+  const folderNameListOfRootFolder = await ElectronStorage.listRoots();
   for (const folderName of folderNameListOfRootFolder) {
     try {
       if (!(await StorageSpaceService.isUsed(folderName))) {
