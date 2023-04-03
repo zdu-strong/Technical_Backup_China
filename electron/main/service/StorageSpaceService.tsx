@@ -16,10 +16,10 @@ export async function getStorageSpaceListByPagination(pageNum: number, pageSize:
 async function createStorageSpaceEntityIfNotExist(folderName: string) {
   /* Do not add if it already exists */
   const database = await ElectronDatabase.getDatabase();
-  const StorageSpaceList = database.get("StorageSpaceList");
+
   if (
     linq
-      .from(StorageSpaceList)
+      .from(database.get("StorageSpaceList"))
       .where((s) => s.folderName === folderName)
       .any()
   ) {
@@ -27,6 +27,7 @@ async function createStorageSpaceEntityIfNotExist(folderName: string) {
   }
 
   /* Add a row of data */
+  const StorageSpaceList = database.get("StorageSpaceList");
   StorageSpaceList.push({
     id: v1(),
     folderName: folderName,
@@ -51,17 +52,14 @@ export async function isUsed(folderName: string) {
   const tempFileValidTime = 24 * 60 * 60 * 1000;
   const expiredDate = subMilliseconds(new Date(), 0 - tempFileValidTime);
   const database = await ElectronDatabase.getDatabase();
-  const list = linq
+  const isUsed = linq
     .from(database.get("StorageSpaceList"))
     .where((s) => s.folderName === folderNameOfRelative)
-    .toArray();
-  const isUsed = !linq
-    .from(list)
-    .where((s) => s.updateDate.getTime() < expiredDate.getTime())
-    .where(() =>
-      linq
-        .from(list)
-        .all((m) => m.updateDate.getTime() < expiredDate.getTime())
+    .groupBy(s => s.folderName)
+    .where(s =>
+      s.where(m => m.updateDate.getTime() < expiredDate.getTime())
+        .where(() => s.all(m => m.updateDate.getTime() < expiredDate.getTime()))
+        .any()
     )
     .any();
   return isUsed;
