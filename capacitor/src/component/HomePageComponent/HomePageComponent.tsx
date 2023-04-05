@@ -1,9 +1,9 @@
-import logo from './image/logo.svg';
+import logo from '@/component/HomePageComponent/image/logo.svg';
 import { FormattedMessage } from "react-intl";
 import { Link } from "react-router-dom";
 import { Button, Link as LinkAlias } from "@mui/material";
 import { keyframes, stylesheet } from 'typestyle';
-import { useBatteryInfo } from './js/useBatteryInfo';
+import { useBatteryInfo } from '@/component/HomePageComponent/js/useBatteryInfo';
 import CircularProgress from '@mui/material/CircularProgress';
 import { observer, useMobxState } from 'mobx-react-use-autorun';
 import GameDialog from '@/component/Game/GameDialog';

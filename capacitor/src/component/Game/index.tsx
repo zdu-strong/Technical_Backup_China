@@ -3,7 +3,7 @@ import { observer, useMobxState } from 'mobx-react-use-autorun';
 import { useRef } from 'react';
 import { useMount, useUnmount } from "mobx-react-use-autorun"
 import { concat, concatMap, delay, EMPTY, fromEvent, interval, of, retry, Subscription, take, tap, timer } from 'rxjs';
-import { initGameEngine } from './js/initGameEngine';
+import { initGameEngine } from '@/component/Game/js/initGameEngine';
 import { exhaustMapWithTrailing } from 'rxjs-exhaustmap-with-trailing'
 import LoadingOrErrorComponent from '@/common/MessageService/LoadingOrErrorComponent';
 import * as BABYLON from '@babylonjs/core'
