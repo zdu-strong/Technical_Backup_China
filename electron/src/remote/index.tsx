@@ -2,8 +2,8 @@ import * as UtilType from '@/../main/util'
 import * as RemoteType from '@electron/remote';
 import * as NodeOsUtilsType from 'node-os-utils';
 import * as FSType from 'fs';
-import { timer } from 'rxjs';
 import * as StorageManageRunUtilType from '@/../main/util/storage_manage/StorageManageRun'
+import { timer } from 'rxjs';
 
 const remote = window.require("@electron/remote") as typeof RemoteType;
 
