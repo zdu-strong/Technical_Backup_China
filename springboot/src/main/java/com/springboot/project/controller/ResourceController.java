@@ -1,7 +1,6 @@
 package com.springboot.project.controller;
 
 import java.io.IOException;
-
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
@@ -9,6 +8,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import java.net.URISyntaxException;
+import org.jinq.orm.stream.JinqStream;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.multipart.MultipartFile;
+import com.google.common.collect.Lists;
+import com.springboot.project.common.storage.SequenceResource;
 
 @RestController
 public class ResourceController extends BaseController {
@@ -34,6 +41,53 @@ public class ResourceController extends BaseController {
         } else {
             return ResponseEntity.status(HttpStatus.OK).headers(httpHeaders).body(resource);
         }
+    }
+
+    @GetMapping("/download/resource/**/*")
+    public ResponseEntity<?> downloadResource() throws IOException {
+        var resource = this.storage.getResourceFromRequest(request);
+        var totalContentLength = resource.contentLength();
+
+        this.resourceHttpHeadersUtil.checkIsCorrectRangeIfNeed(totalContentLength, request);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        this.resourceHttpHeadersUtil.setETag(httpHeaders, request);
+        this.resourceHttpHeadersUtil.setCacheControl(httpHeaders, request);
+        this.resourceHttpHeadersUtil.setContentType(httpHeaders, resource, request);
+        this.resourceHttpHeadersUtil.setContentLength(httpHeaders, totalContentLength, request);
+        this.resourceHttpHeadersUtil.setContentDisposition(httpHeaders, ContentDisposition.attachment(), resource,
+                request);
+        this.resourceHttpHeadersUtil.setContentRangeIfNeed(httpHeaders, totalContentLength, request);
+
+        if (this.resourceHttpHeadersUtil.getRangeList(request).size() > 0) {
+            return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).headers(httpHeaders)
+                    .body(this.resourceHttpHeadersUtil.getResourceFromRequest(totalContentLength, request));
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).headers(httpHeaders).body(resource);
+        }
+    }
+
+    @PostMapping("/upload/resource")
+    public ResponseEntity<?> uploadResource(MultipartFile file) throws IOException {
+        var storageFileModel = this.storage.storageResource(file);
+        return ResponseEntity.ok(storageFileModel.getRelativeUrl());
+    }
+
+    @PostMapping("/upload/merge")
+    public ResponseEntity<?> mergeResource(@RequestBody String[] urlList) throws IOException, URISyntaxException {
+        var resourceList = JinqStream.from(Lists.newArrayList(urlList)).select(url -> {
+            var mockHttpServletRequest = new MockHttpServletRequest();
+            mockHttpServletRequest.setRequestURI(url);
+            return mockHttpServletRequest;
+        }).select(mockHttpServletRequest -> this.storage.getResourceFromRequest(mockHttpServletRequest)).toList();
+        if (resourceList.size() == 1) {
+            return ResponseEntity.ok(JinqStream.from(Lists.newArrayList(urlList)).getOnlyValue());
+        }
+
+        String fileName = this.storage.getFileNameFromResource(resourceList.stream().findFirst().get());
+
+        var storageFileModel = this.storage.storageResource(new SequenceResource(fileName, resourceList));
+        return ResponseEntity.ok(storageFileModel.getRelativeUrl());
     }
 
     @GetMapping("/is_directory/resource/**/*")

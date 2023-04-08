@@ -1,4 +1,4 @@
-package com.springboot.project.test.controller.DownloadResourceController;
+package com.springboot.project.test.controller.ResourceController;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import com.springboot.project.test.BaseTest;
 
-public class DownloadResourceControllerDownloadResourceTest extends BaseTest {
+public class ResourceControllerDownloadResourceTest extends BaseTest {
 
     private String downloadResourceUrl;
 

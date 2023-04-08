@@ -1,4 +1,4 @@
-package com.springboot.project.test.controller.UploadResourceController;
+package com.springboot.project.test.controller.ResourceController;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -20,7 +20,7 @@ import com.springboot.project.common.storage.RangeUrlResource;
 import com.springboot.project.test.BaseTest;
 import io.reactivex.rxjava3.core.Observable;
 
-public class UploadResourceControllerUploadMergeTest extends BaseTest {
+public class ResourceControllerUploadMergeTest extends BaseTest {
     private List<String> urlList;
 
     @Test

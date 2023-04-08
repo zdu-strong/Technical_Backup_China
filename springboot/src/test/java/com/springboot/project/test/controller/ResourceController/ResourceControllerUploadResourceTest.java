@@ -1,4 +1,4 @@
-package com.springboot.project.test.controller.UploadResourceController;
+package com.springboot.project.test.controller.ResourceController;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -13,7 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
 import com.springboot.project.test.BaseTest;
 
-public class UploadResourceControllerTest extends BaseTest {
+public class ResourceControllerUploadResourceTest extends BaseTest {
 
     @Test
     public void test() throws URISyntaxException {
