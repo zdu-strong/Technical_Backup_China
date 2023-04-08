@@ -87,10 +87,10 @@ export default observer(forwardRef((props: {
     state.subscription.unsubscribe();
   })
 
-  function subscribeToScrollToTheEndWhenResize(){
-    state.subscription.add(fromEvent(window,"resize").pipe(
-      tap(()=>{
-        if(isNeedScrollToEnd()){
+  function subscribeToScrollToTheEndWhenResize() {
+    state.subscription.add(fromEvent(window, "resize").pipe(
+      tap(() => {
+        if (isNeedScrollToEnd()) {
           scrollToItemByPageNum(state.totalPage);
         }
       })
