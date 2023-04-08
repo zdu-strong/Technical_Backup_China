@@ -6,12 +6,12 @@ import { GlobalUserInfo } from "@/common/axios-config/AxiosConfig";
 import { useMount } from "mobx-react-use-autorun";
 import api from "@/api";
 import LoadingOrErrorComponent from "@/common/MessageService/LoadingOrErrorComponent";
-import { MessageService } from "@/common/MessageService";
 
 export default observer(() => {
 
   const state = useMobxState({
     readyForStart: false,
+    error: null as any,
     css: stylesheet({
       container: {
         width: "100%",
@@ -35,12 +35,12 @@ export default observer(() => {
         state.navigate('/sign_in');
       }
     } catch (error) {
-      MessageService.error(error);
+      state.error = error;
     }
   })
 
   return <div className={state.css.container}>
-    <LoadingOrErrorComponent ready={state.readyForStart} error={null} >
+    <LoadingOrErrorComponent ready={state.readyForStart} error={state.error} >
       <MessageChat userId={GlobalUserInfo.id!} username={GlobalUserInfo.username!} />
     </LoadingOrErrorComponent>
   </div>;

@@ -17,6 +17,7 @@ import { UserEmailModel } from "@/model/UserEmailModel";
 import SendIcon from '@mui/icons-material/Send';
 import { Link, useNavigate } from "react-router-dom";
 import { encryptByPublicKeyOfRSA } from "@/common/RSAUtils";
+import LoadingOrErrorComponent from "@/common/MessageService/LoadingOrErrorComponent";
 
 export default observer(() => {
 
@@ -34,6 +35,7 @@ export default observer(() => {
       sendVerificationCode: {} as Record<string, boolean>,
     },
     ready: false,
+    errorOfInit: null as any,
     error: {
       nickname() {
         if (state.nickname) {
@@ -113,7 +115,7 @@ export default observer(() => {
       await getNewAccountOfSignUp();
       state.ready = true;
     } catch (e) {
-      MessageService.error(e);
+      state.errorOfInit = e;
     }
   })
 
@@ -171,271 +173,270 @@ export default observer(() => {
     }
   }
 
-  return <div className={state.css.container}>
-    {!state.ready && <div className="flex flex-col flex-auto justify-center">
-      <CircularProgress color="secondary" />
-    </div>}
-    {state.ready && <div className="flex flex-col flex-auto w-full">
+  return <LoadingOrErrorComponent error={state.errorOfInit} ready={state.ready}>
+    <div className={state.css.container}>
       <div className="flex flex-col flex-auto w-full">
-        <div className="flex justify-center" style={{ marginTop: "1em" }}>
-          <FormattedMessage id="SignUp" defaultMessage="SignUp" />
-        </div>
-        <Divider style={{ marginTop: "1em" }} />
-        <div className="flex flex-row" style={{ marginTop: "1em" }}>
-          <div style={{ marginRight: "1em" }}>
-            <FormattedMessage id="AccountID" defaultMessage="Account ID" />
-            {":"}
+        <div className="flex flex-col flex-auto w-full">
+          <div className="flex justify-center" style={{ marginTop: "1em" }}>
+            <FormattedMessage id="SignUp" defaultMessage="SignUp" />
           </div>
-          <div>
-            {state.userId}
+          <Divider style={{ marginTop: "1em" }} />
+          <div className="flex flex-row" style={{ marginTop: "1em" }}>
+            <div style={{ marginRight: "1em" }}>
+              <FormattedMessage id="AccountID" defaultMessage="Account ID" />
+              {":"}
+            </div>
+            <div>
+              {state.userId}
+            </div>
           </div>
-        </div>
-        {state.activeStep === 0 && <div>
-          <FormattedMessage id="YouCanSignInWithYourAccountIDEmailOrMobilePhoneNumberAsAnAccount" defaultMessage="You can log in with your account ID, mailbox, mobile phone number as an account" />
-        </div>}
-        <Divider style={{ marginTop: "1em" }} />
-        {state.activeStep === 0 && <div className="flex flex-col" style={{ marginTop: "1em" }}>
-          <div>
-            <FormattedMessage id="NicknameYouCanModifyYourNicknameAtAnyTime" defaultMessage="Nickname, you can modify your nickname at any time" />
-          </div>
-          <TextField
-            label={state.intl.formatMessage({
-              id: "Nickname",
-              defaultMessage: "nickname"
-            })}
-            variant="outlined"
-            onChange={(e) => {
-              state.nickname = e.target.value;
-            }}
-            value={state.nickname}
-            autoComplete="off"
-            error={!!state.error.nickname()}
-            helperText={state.error.nickname()}
-            style={{ marginTop: "1em" }}
-            onKeyDown={(e) => {
-              if (!e.shiftKey && e.key === "Enter") {
-                nextStep();
-              }
-            }}
-          />
-        </div>}
-        {state.activeStep !== 0 && (<div className="flex flex-row" style={{ marginTop: "1em" }}>
-          <div style={{ marginRight: "1em" }}>
-            <FormattedMessage id="Nickname" defaultMessage="nickname" />
-            {":"}
-          </div>
-          <div>
-            {state.nickname}
-          </div>
-        </div>)}
-        {state.activeStep > 0 && <Divider style={{ marginTop: "1em", marginBottom: "1em" }} />}
-        {state.activeStep > 1 && <div>
-          <FormattedMessage id="PasswordSettingIsComplete" defaultMessage="Password setting is complete" />
-        </div>}
-        {state.activeStep === 1 && <div className="flex flex-col">
-          <div className="flex" style={{ marginBottom: "0em" }} >
-            <FormattedMessage id="JustLikeTheTreasureMapLetUsHideThePasswordInThisWorld" defaultMessage="Just like the treasure map, let's hide the password in this world. For example, select a paragraph as a password from Shakespeare's works." />
-          </div>
-          <div className="flex" style={{ marginBottom: "0em" }} >
-            <FormattedMessage id="ThePasswordSupportsAllTheCharactersOfUTF8" defaultMessage="The password supports all the characters of UTF-8. You can use any of the language content you like as the password." />
-          </div>
-          <div className="flex" style={{ marginBottom: "0em" }}>
-            <FormattedMessage id="WeDoNotProvideResetPasswordSoRememberYourPassword" defaultMessage="We do not provide reset password functions. So, remember your password." />
-          </div>
-          <div className="flex" style={{ marginBottom: "1em" }}>
-            <FormattedMessage id="OnlyYouWhocanKnowThePassword" defaultMessage="We can't know your chat content and file content. Only you who can know the password." />
-          </div>
-          <TextField
-            label={state.intl.formatMessage({
-              id: "Password",
-              defaultMessage: "Password"
-            })}
-            className="flex flex-auto"
-            variant="outlined"
-            onChange={(e) => {
-              state.password = e.target.value;
-            }}
-            inputProps={{
-              style: {
-                resize: "vertical",
-              }
-            }}
-            value={state.password}
-            autoComplete="off"
-            multiline={true}
-            rows={6}
-            error={!!state.error.password()}
-            helperText={state.error.password()}
-          />
-        </div>}
-        {state.activeStep > 1 && <Divider style={{ marginTop: "1em", marginBottom: "1em" }} />}
-        {state.activeStep > 2 && <div>
-          {state.emailList.length > 0 && <div className="flex flex-col">
-            {state.emailList.map(s => <div key={s.id}>
-              <FormattedMessage id="Email" defaultMessage="Email" />
-              {": "}
-              {s.email}
-            </div>)}
+          {state.activeStep === 0 && <div>
+            <FormattedMessage id="YouCanSignInWithYourAccountIDEmailOrMobilePhoneNumberAsAnAccount" defaultMessage="You can log in with your account ID, mailbox, mobile phone number as an account" />
           </div>}
-        </div>}
-        {state.activeStep === 2 && <div className="flex flex-col">
-          <div>
-            <FormattedMessage id="BindedEmailOrMobilePhoneNumber" defaultMessage="Binded email or mobile phone number" />
-          </div>
-          <div>
-            <FormattedMessage id="YouCanUseTheEmailOrMobilePhoneNumberAsAnAccountToSignIn" defaultMessage="You can use the mailbox or mobile phone number as an account to log in, and you can also unbind on the login page." />
-          </div>
-          <div>
-            <FormattedMessage id="IfYouUnfortunatelyForgetYourPasswordPleaseCreateANewAccount" defaultMessage="If you unfortunately forget your password, please create a new account, and then use an email or mobile phone number to retrieve the friend relationship of the account that you have bound to use the mailbox or mobile phone number in the user setting interface." />
-          </div>
-          {state.emailList.map((s, index) => <div className="flex flex-row items-center" key={s.id} style={{ marginTop: '1em' }}>
+          <Divider style={{ marginTop: "1em" }} />
+          {state.activeStep === 0 && <div className="flex flex-col" style={{ marginTop: "1em" }}>
+            <div>
+              <FormattedMessage id="NicknameYouCanModifyYourNicknameAtAnyTime" defaultMessage="Nickname, you can modify your nickname at any time" />
+            </div>
             <TextField
               label={state.intl.formatMessage({
-                id: "Email",
-                defaultMessage: "Email"
+                id: "Nickname",
+                defaultMessage: "nickname"
               })}
               variant="outlined"
               onChange={(e) => {
-                s.email = e.target.value;
+                state.nickname = e.target.value;
               }}
-              value={s.email}
+              value={state.nickname}
               autoComplete="off"
-              className="w-full"
-              error={!!state.error.email(s)}
-              helperText={state.error.email(s)}
+              error={!!state.error.nickname()}
+              helperText={state.error.nickname()}
+              style={{ marginTop: "1em" }}
+              onKeyDown={(e) => {
+                if (!e.shiftKey && e.key === "Enter") {
+                  nextStep();
+                }
+              }}
             />
+          </div>}
+          {state.activeStep !== 0 && (<div className="flex flex-row" style={{ marginTop: "1em" }}>
+            <div style={{ marginRight: "1em" }}>
+              <FormattedMessage id="Nickname" defaultMessage="nickname" />
+              {":"}
+            </div>
             <div>
-              <Button
-                style={{
-                  marginLeft: "1em",
-                  textTransform: "none"
-                }}
-                variant="contained"
-                onClick={async () => {
-                  try {
-                    state.submitted = true;
-                    if (state.error.email(s)) {
-                      return;
-                    }
-                    state.submitted = false;
-
-                    state.loading.sendVerificationCode[s.id!] = true;
-                    await api.Authorization.sendVerificationCode(state.userId, s.email!, await encryptByPublicKeyOfRSA(state.publicKeyOfRSA, state.userId));
-                  } catch (e) {
-                    MessageService.error(e);
-                  } finally {
-                    state.loading.sendVerificationCode[s.id!] = false;
-                  }
-                }}
-                startIcon={state.loading.sendVerificationCode[s.id!] ? <CircularProgress color="inherit" size="16px" /> : <SendIcon />}
-              >
-                <FormattedMessage id="Send" defaultMessage="Send" />
-              </Button>
+              {state.nickname}
+            </div>
+          </div>)}
+          {state.activeStep > 0 && <Divider style={{ marginTop: "1em", marginBottom: "1em" }} />}
+          {state.activeStep > 1 && <div>
+            <FormattedMessage id="PasswordSettingIsComplete" defaultMessage="Password setting is complete" />
+          </div>}
+          {state.activeStep === 1 && <div className="flex flex-col">
+            <div className="flex" style={{ marginBottom: "0em" }} >
+              <FormattedMessage id="JustLikeTheTreasureMapLetUsHideThePasswordInThisWorld" defaultMessage="Just like the treasure map, let's hide the password in this world. For example, select a paragraph as a password from Shakespeare's works." />
+            </div>
+            <div className="flex" style={{ marginBottom: "0em" }} >
+              <FormattedMessage id="ThePasswordSupportsAllTheCharactersOfUTF8" defaultMessage="The password supports all the characters of UTF-8. You can use any of the language content you like as the password." />
+            </div>
+            <div className="flex" style={{ marginBottom: "0em" }}>
+              <FormattedMessage id="WeDoNotProvideResetPasswordSoRememberYourPassword" defaultMessage="We do not provide reset password functions. So, remember your password." />
+            </div>
+            <div className="flex" style={{ marginBottom: "1em" }}>
+              <FormattedMessage id="OnlyYouWhocanKnowThePassword" defaultMessage="We can't know your chat content and file content. Only you who can know the password." />
             </div>
             <TextField
-              label={<FormattedMessage id="VerificationCode" defaultMessage="Verification code" />}
+              label={state.intl.formatMessage({
+                id: "Password",
+                defaultMessage: "Password"
+              })}
+              className="flex flex-auto"
               variant="outlined"
               onChange={(e) => {
-                if (e.target.value === '') {
-                  s.verificationCode = e.target.value;
-                } else if (e.target.value && new RegExp("^[0-9]+$").test(e.target.value)) {
-                  s.verificationCode = e.target.value;
+                state.password = e.target.value;
+              }}
+              inputProps={{
+                style: {
+                  resize: "vertical",
                 }
               }}
-              value={s.verificationCode}
+              value={state.password}
               autoComplete="off"
-              className="w-full"
-              error={!!state.error.verificationCode(s)}
-              helperText={state.error.verificationCode(s)}
-              style={{ marginLeft: "1em" }}
+              multiline={true}
+              rows={6}
+              error={!!state.error.password()}
+              helperText={state.error.password()}
             />
-            <IconButton
-              aria-label="delete"
+          </div>}
+          {state.activeStep > 1 && <Divider style={{ marginTop: "1em", marginBottom: "1em" }} />}
+          {state.activeStep > 2 && <div>
+            {state.emailList.length > 0 && <div className="flex flex-col">
+              {state.emailList.map(s => <div key={s.id}>
+                <FormattedMessage id="Email" defaultMessage="Email" />
+                {": "}
+                {s.email}
+              </div>)}
+            </div>}
+          </div>}
+          {state.activeStep === 2 && <div className="flex flex-col">
+            <div>
+              <FormattedMessage id="BindedEmailOrMobilePhoneNumber" defaultMessage="Binded email or mobile phone number" />
+            </div>
+            <div>
+              <FormattedMessage id="YouCanUseTheEmailOrMobilePhoneNumberAsAnAccountToSignIn" defaultMessage="You can use the mailbox or mobile phone number as an account to log in, and you can also unbind on the login page." />
+            </div>
+            <div>
+              <FormattedMessage id="IfYouUnfortunatelyForgetYourPasswordPleaseCreateANewAccount" defaultMessage="If you unfortunately forget your password, please create a new account, and then use an email or mobile phone number to retrieve the friend relationship of the account that you have bound to use the mailbox or mobile phone number in the user setting interface." />
+            </div>
+            {state.emailList.map((s, index) => <div className="flex flex-row items-center" key={s.id} style={{ marginTop: '1em' }}>
+              <TextField
+                label={state.intl.formatMessage({
+                  id: "Email",
+                  defaultMessage: "Email"
+                })}
+                variant="outlined"
+                onChange={(e) => {
+                  s.email = e.target.value;
+                }}
+                value={s.email}
+                autoComplete="off"
+                className="w-full"
+                error={!!state.error.email(s)}
+                helperText={state.error.email(s)}
+              />
+              <div>
+                <Button
+                  style={{
+                    marginLeft: "1em",
+                    textTransform: "none"
+                  }}
+                  variant="contained"
+                  onClick={async () => {
+                    try {
+                      state.submitted = true;
+                      if (state.error.email(s)) {
+                        return;
+                      }
+                      state.submitted = false;
+
+                      state.loading.sendVerificationCode[s.id!] = true;
+                      await api.Authorization.sendVerificationCode(state.userId, s.email!, await encryptByPublicKeyOfRSA(state.publicKeyOfRSA, state.userId));
+                    } catch (e) {
+                      MessageService.error(e);
+                    } finally {
+                      state.loading.sendVerificationCode[s.id!] = false;
+                    }
+                  }}
+                  startIcon={state.loading.sendVerificationCode[s.id!] ? <CircularProgress color="inherit" size="16px" /> : <SendIcon />}
+                >
+                  <FormattedMessage id="Send" defaultMessage="Send" />
+                </Button>
+              </div>
+              <TextField
+                label={<FormattedMessage id="VerificationCode" defaultMessage="Verification code" />}
+                variant="outlined"
+                onChange={(e) => {
+                  if (e.target.value === '') {
+                    s.verificationCode = e.target.value;
+                  } else if (e.target.value && new RegExp("^[0-9]+$").test(e.target.value)) {
+                    s.verificationCode = e.target.value;
+                  }
+                }}
+                value={s.verificationCode}
+                autoComplete="off"
+                className="w-full"
+                error={!!state.error.verificationCode(s)}
+                helperText={state.error.verificationCode(s)}
+                style={{ marginLeft: "1em" }}
+              />
+              <IconButton
+                aria-label="delete"
+                onClick={() => {
+                  const index = state.emailList.findIndex(m => m.id === s.id);
+                  if (index >= 0) {
+                    state.emailList.splice(index, 1)
+                  }
+                }}
+                style={{ marginLeft: "0.2em" }}
+                size="large"
+              >
+                <DeleteIcon />
+              </IconButton>
+            </div>)}
+            <div style={{ marginTop: "0.9em" }}>
+              <Fab
+                color="primary"
+                aria-label="add"
+                size="small"
+                onClick={() => {
+                  state.emailList.push({
+                    id: v1(),
+                    email: '',
+                    verificationCode: '',
+                  })
+                }}
+              >
+                <AddIcon />
+              </Fab>
+            </div>
+          </div>}
+        </div>
+
+        <Divider style={{ marginTop: "1em", marginBottom: "1em" }} />
+        <div style={{ marginTop: "1em" }} className="flex flex-col">
+          <Box sx={{ width: '100%' }}>
+            <Stepper activeStep={state.activeStep} alternativeLabel>
+              {state.steps.map((label) => (
+                <Step key={label}>
+                  <StepLabel>{label}</StepLabel>
+                </Step>
+              ))}
+            </Stepper>
+          </Box>
+          <div className="flex justify-between" style={{ marginTop: "1em", marginBottom: "1em" }}>
+            {state.activeStep === 0 && <div></div>}
+            {state.activeStep > 0 && <Button
+              style={{
+                textTransform: "none"
+              }}
+              variant="contained"
+              startIcon={<SaveIcon />}
               onClick={() => {
-                const index = state.emailList.findIndex(m => m.id === s.id);
-                if (index >= 0) {
-                  state.emailList.splice(index, 1)
+                if (state.activeStep > 0) {
+                  state.activeStep--;
                 }
               }}
-              style={{ marginLeft: "0.2em" }}
-              size="large"
             >
-              <DeleteIcon />
-            </IconButton>
-          </div>)}
-          <div style={{ marginTop: "0.9em" }}>
-            <Fab
-              color="primary"
-              aria-label="add"
-              size="small"
-              onClick={() => {
-                state.emailList.push({
-                  id: v1(),
-                  email: '',
-                  verificationCode: '',
-                })
+              <FormattedMessage id="Previous" defaultMessage="Previous" />
+            </Button>}
+            <Link to="/sign_in">
+              <FormattedMessage id="SignIn" defaultMessage="SignIn" />
+            </Link>
+            {state.activeStep < state.steps.length - 1 && <Button
+              variant="contained"
+              startIcon={<SaveIcon />}
+              onClick={nextStep}
+              style={{
+                textTransform: "none"
               }}
             >
-              <AddIcon />
-            </Fab>
+              <FormattedMessage id="Next" defaultMessage="Next" />
+            </Button>}
+            {state.activeStep >= state.steps.length - 1 && <Button
+              variant="contained"
+              startIcon={state.loading.signUp ? <CircularProgress color="inherit" size="16px" /> : <SaveIcon />}
+              onClick={signUp}
+              style={{
+                textTransform: "none"
+              }}
+            >
+              <FormattedMessage id="SignUp" defaultMessage="SignUp" />
+            </Button>}
           </div>
-        </div>}
-      </div>
-
-      <Divider style={{ marginTop: "1em", marginBottom: "1em" }} />
-      <div style={{ marginTop: "1em" }} className="flex flex-col">
-        <Box sx={{ width: '100%' }}>
-          <Stepper activeStep={state.activeStep} alternativeLabel>
-            {state.steps.map((label) => (
-              <Step key={label}>
-                <StepLabel>{label}</StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-        </Box>
-        <div className="flex justify-between" style={{ marginTop: "1em", marginBottom: "1em" }}>
-          {state.activeStep === 0 && <div></div>}
-          {state.activeStep > 0 && <Button
-            style={{
-              textTransform: "none"
-            }}
-            variant="contained"
-            startIcon={<SaveIcon />}
-            onClick={() => {
-              if (state.activeStep > 0) {
-                state.activeStep--;
-              }
-            }}
-          >
-            <FormattedMessage id="Previous" defaultMessage="Previous" />
-          </Button>}
-          <Link to="/sign_in">
-            <FormattedMessage id="SignIn" defaultMessage="SignIn" />
-          </Link>
-          {state.activeStep < state.steps.length - 1 && <Button
-            variant="contained"
-            startIcon={<SaveIcon />}
-            onClick={nextStep}
-            style={{
-              textTransform: "none"
-            }}
-          >
-            <FormattedMessage id="Next" defaultMessage="Next" />
-          </Button>}
-          {state.activeStep >= state.steps.length - 1 && <Button
-            variant="contained"
-            startIcon={state.loading.signUp ? <CircularProgress color="inherit" size="16px" /> : <SaveIcon />}
-            onClick={signUp}
-            style={{
-              textTransform: "none"
-            }}
-          >
-            <FormattedMessage id="SignUp" defaultMessage="SignUp" />
-          </Button>}
+        </div>
+        <div>
         </div>
       </div>
-      <div>
-      </div>
-    </div>}
-  </div>;
+    </div>
+  </LoadingOrErrorComponent>
 })
