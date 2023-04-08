@@ -4,7 +4,7 @@ import { stylesheet } from "typestyle";
 import { useImperativeHandle, forwardRef, useRef, ReactNode, Ref } from "react";
 import MessageUnlimitedVariableSizeListChildComponent from "./MessageUnlimitedVariableSizeListChildComponent";
 import { v1 } from "uuid";
-import AutoSizer from 'react-virtualized-auto-sizer'
+import AutoSizer, { Size } from 'react-virtualized-auto-sizer'
 import { concatMap, delay, EMPTY, fromEvent, interval, ReplaySubject, Subscription, switchMap, take, tap, timer } from "rxjs";
 import { useMount, useUnmount } from "mobx-react-use-autorun";
 import { DefaultVariableSizeListChildRowHeight } from "./js/DefaultVariableSizeListChildRowHeight";
@@ -227,12 +227,12 @@ export default observer(forwardRef((props: {
     ).subscribe());
   }
 
-  function childRender({ height, width }: { height: number; width: number }) {
+  function childRender(size: Size) {
     return <VariableSizeList
-      height={height}
+      height={size.height!}
       itemCount={state.totalPage - state.baseTotalPage}
       itemSize={state.getRowHeightByIndex}
-      width={width}
+      width={size.width!}
       ref={state.variableSizeListRef as any}
       className={state.css.VariableSizeList}
       innerRef={state.innerRef}
@@ -241,7 +241,7 @@ export default observer(forwardRef((props: {
       style={state.ready ? {} : { visibility: "hidden" }}
       onScroll={({ scrollOffset }) => {
         state.scrollTopOffset = scrollOffset;
-        calcualateIsNeedScrollToEnd(height);
+        calcualateIsNeedScrollToEnd(size.height!);
       }}
       key={state.baseTotalPage}
     >
