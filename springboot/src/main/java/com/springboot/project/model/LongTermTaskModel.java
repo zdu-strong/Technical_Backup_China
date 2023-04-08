@@ -17,24 +17,24 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class LongTermTaskModel<T> {
 
-	private String id;
+    private String id;
 
-	private Date createDate;
+    /**
+     * Is it running or has ended. If it is done, then it is success.
+     */
+    private Boolean isDone;
 
-	/**
-	 * When the update time exceeds one minute, it means that the task is
-	 * interrupted.
-	 */
-	private Date updateDate;
+    private Date createDate;
 
-	/**
-	 * Stored is the json object or json array
-	 */
-	private T result;
+    /**
+     * When the update time exceeds one minute, it means that the task is
+     * interrupted.
+     */
+    private Date updateDate;
 
-	/**
-	 * Is it running or has ended. If it is done, then it is success.
-	 */
-	private Boolean isDone;
+    /**
+     * Stored is the json object or json array
+     */
+    private T result;
 
 }

@@ -75,19 +75,21 @@ public class ResourceController extends BaseController {
 
     @PostMapping("/upload/merge")
     public ResponseEntity<?> mergeResource(@RequestBody String[] urlList) throws IOException, URISyntaxException {
-        var resourceList = JinqStream.from(Lists.newArrayList(urlList)).select(url -> {
-            var mockHttpServletRequest = new MockHttpServletRequest();
-            mockHttpServletRequest.setRequestURI(url);
-            return mockHttpServletRequest;
-        }).select(mockHttpServletRequest -> this.storage.getResourceFromRequest(mockHttpServletRequest)).toList();
-        if (resourceList.size() == 1) {
-            return ResponseEntity.ok(JinqStream.from(Lists.newArrayList(urlList)).getOnlyValue());
-        }
+        return this.longTermTaskUtil.run(() -> {
+            var resourceList = JinqStream.from(Lists.newArrayList(urlList)).select(url -> {
+                var mockHttpServletRequest = new MockHttpServletRequest();
+                mockHttpServletRequest.setRequestURI(url);
+                return mockHttpServletRequest;
+            }).select(mockHttpServletRequest -> this.storage.getResourceFromRequest(mockHttpServletRequest)).toList();
+            if (resourceList.size() == 1) {
+                return ResponseEntity.ok(JinqStream.from(Lists.newArrayList(urlList)).getOnlyValue());
+            }
 
-        String fileName = this.storage.getFileNameFromResource(resourceList.stream().findFirst().get());
+            String fileName = this.storage.getFileNameFromResource(resourceList.stream().findFirst().get());
 
-        var storageFileModel = this.storage.storageResource(new SequenceResource(fileName, resourceList));
-        return ResponseEntity.ok(storageFileModel.getRelativeUrl());
+            var storageFileModel = this.storage.storageResource(new SequenceResource(fileName, resourceList));
+            return ResponseEntity.ok(storageFileModel.getRelativeUrl());
+        });
     }
 
     @GetMapping("/is_directory/resource/**/*")

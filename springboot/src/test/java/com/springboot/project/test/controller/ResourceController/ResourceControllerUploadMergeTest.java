@@ -9,14 +9,20 @@ import java.math.RoundingMode;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.http.client.utils.URIBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
 import com.springboot.project.common.storage.RangeUrlResource;
+import com.springboot.project.model.LongTermTaskModel;
 import com.springboot.project.test.BaseTest;
 import io.reactivex.rxjava3.core.Observable;
 
@@ -25,11 +31,24 @@ public class ResourceControllerUploadMergeTest extends BaseTest {
 
     @Test
     public void test() throws URISyntaxException {
-        var url = new URIBuilder("/upload/merge").build();
-        var response = this.testRestTemplate.postForEntity(url, urlList, String.class);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertTrue(response.getBody().startsWith("/resource/"));
-        var result = this.testRestTemplate.getForEntity(new URIBuilder(response.getBody()).build(), byte[].class);
+        var urlOfMerge = new URIBuilder("/upload/merge").build();
+        var responseOfMerge = this.testRestTemplate.postForEntity(urlOfMerge, urlList, String.class);
+        assertEquals(HttpStatus.ACCEPTED, responseOfMerge.getStatusCode());
+        var urlOfResource = Observable.interval(0, 1, TimeUnit.SECONDS).concatMap((s) -> {
+            var urlOfLongTermTask = new URIBuilder(responseOfMerge.getBody()).build();
+            var responseOfLongTermTask = this.testRestTemplate.exchange(urlOfLongTermTask, HttpMethod.GET,
+                    new HttpEntity<>(null),
+                    new ParameterizedTypeReference<LongTermTaskModel<String>>() {
+                    });
+            assertEquals(HttpStatus.OK, responseOfLongTermTask.getStatusCode());
+            if (responseOfLongTermTask.getBody().getIsDone()) {
+                return Observable.just(responseOfLongTermTask.getBody().getResult());
+            } else {
+                return Observable.empty();
+            }
+        }).take(1).blockingSingle();
+        assertTrue(urlOfResource.startsWith("/resource/"));
+        var result = this.testRestTemplate.getForEntity(new URIBuilder(urlOfResource).build(), byte[].class);
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(MediaType.IMAGE_JPEG, result.getHeaders().getContentType());
         assertTrue(result.getHeaders().getContentDisposition().isInline());
