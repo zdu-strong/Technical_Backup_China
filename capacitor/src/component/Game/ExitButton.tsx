@@ -15,7 +15,7 @@ export default observer((props: { exit: () => void }) => {
       open: false,
     },
     ready: false,
-    isLeftAndNotIsRight: true,
+    isLeftAndNotIsRight: false,
     leftOrRight: 10,
     subscription: new Subscription(),
     css: stylesheet({
@@ -49,7 +49,7 @@ export default observer((props: { exit: () => void }) => {
       const insetRightPromise = AndroidNotch.getInsetRight();
       const insetLeft = await insetLeftPromise;
       const insetRight = await insetRightPromise;
-      state.isLeftAndNotIsRight = insetLeft <= insetRight;
+      state.isLeftAndNotIsRight = insetRight >= insetLeft;
     }
   }
 
@@ -65,10 +65,10 @@ export default observer((props: { exit: () => void }) => {
           const insetRightPromise = AndroidNotch.getInsetRight();
           const insetLeft = await insetLeftPromise;
           const insetRight = await insetRightPromise;
-          const isLeftAndNotIsRight = insetLeft <= insetRight;
+          const isLeftAndNotIsRight = insetRight >= insetLeft;
           return isLeftAndNotIsRight;
         }
-        return true;
+        return false;
       })())),
       distinctUntilChanged(),
       tap((isLeftAndNotIsRight) => {

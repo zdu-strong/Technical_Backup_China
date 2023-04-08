@@ -12,7 +12,7 @@ export default observer((props: { exit: () => void }) => {
       open: false,
     },
     ready: false,
-    isLeftAndNotIsRight: true,
+    isLeftAndNotIsRight: false,
     leftOrRight: 10,
     subscription: new Subscription(),
     css: stylesheet({
