@@ -45,6 +45,7 @@ The following dependencies are currently unable to continue to be upgraded:<br/>
 execa (Current project not support ES module)<br/>
 get-port (Current project not support ES module)<br/>
 linq (Current project not support ES module)<br/>
+typescript (Dependency incompatibility)<br/>
 
 ## Notes - Things to note
 

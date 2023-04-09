@@ -54,6 +54,7 @@ execa (Current project not support ES module)<br/>
 linq (Current project not support ES module)<br/>
 get-port (Current project not support ES module)<br/>
 inquirer (Current project not support ES module)<br/>
+typescript (Dependency incompatibility)<br/>
 
 ## Notes - CSS In JS with style
 
