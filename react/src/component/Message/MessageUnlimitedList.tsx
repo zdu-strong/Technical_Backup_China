@@ -93,7 +93,7 @@ export default observer((props: {
     }).pipe(
       switchMap(() => api.UserMessage.getUserMessageWebsocket(state.websocketInput)),
       concatMap(({ list: messageList, totalPage }) => from((async () => {
-        if(totalPage!==null){
+        if (typeof totalPage === "number") {
           state.totalPage = totalPage;
         }
         for (const message of messageList) {
