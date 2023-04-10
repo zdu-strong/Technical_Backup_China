@@ -2,16 +2,13 @@ import { observer, useMobxState } from "mobx-react-use-autorun";
 import { stylesheet } from "typestyle";
 import { MessageService } from "@/common/MessageService";
 import api from '@/api'
-import { AppBar, BottomNavigation, BottomNavigationAction, Box, Button, CircularProgress, Fab, TextField, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Button, CircularProgress, Fab, TextField, Toolbar, Typography } from "@mui/material";
 import SendIcon from '@mui/icons-material/Send'
 import { FormattedMessage, useIntl } from "react-intl";
 import { v1 } from 'uuid'
 import { isMobilePhone } from "@/common/is-mobile-phone";
 import AddIcon from '@mui/icons-material/Add';
 import MessageUnlimitedList from "./MessageUnlimitedList";
-import BlindsIcon from '@mui/icons-material/Blinds';
-import AssignmentIcon from '@mui/icons-material/Assignment';
-import MessagePagination from "./MessagePagination";
 import { concatMap, from, map, toArray } from "rxjs";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useRef } from "react";
@@ -24,11 +21,6 @@ export default observer((props: { username: string, userId: string }) => {
     messageContent: "",
     /* 是否正在发送消息 */
     loadingOfSend: false,
-    chatTechnology: {
-      mode: "infiniteList",
-      pagination: "pagination",
-      infiniteList: "infiniteList",
-    },
     inputFileId: v1(),
     messageInputId: v1(),
     textareaRef: useRef<HTMLTextAreaElement>(),
@@ -120,17 +112,7 @@ export default observer((props: { username: string, userId: string }) => {
   return <div className={state.css.messsageListContainer}>
     <Box style={{ marginBottom: "1em", width: "100%" }}>
       <AppBar position="static">
-        <Toolbar className="flex flex-row justify-between" style={{ paddingLeft: "0px" }}>
-          <BottomNavigation
-            showLabels
-            value={state.chatTechnology.mode}
-            onChange={(event, newValue) => {
-              state.chatTechnology.mode = newValue;
-            }}
-          >
-            <BottomNavigationAction value={state.chatTechnology.infiniteList} label={<FormattedMessage id="Unlimited" defaultMessage="Unlimited" />} icon={<AssignmentIcon />} />
-            <BottomNavigationAction value={state.chatTechnology.pagination} label={<FormattedMessage id="Pagination" defaultMessage="Pagination" />} icon={<BlindsIcon />} />
-          </BottomNavigation>
+        <Toolbar className="flex flex-row justify-end" style={{ paddingLeft: "0px" }}>
           <div className="flex flex-row">
             <Typography variant="h6" component="div" sx={{ flexWrap: "nowrap" }}>
               <div style={{ marginLeft: "1em", ...(isMobilePhone ? { fontSize: "x-small" } : {}) }}>
@@ -155,8 +137,7 @@ export default observer((props: { username: string, userId: string }) => {
         </Toolbar>
       </AppBar>
     </Box>
-    {state.chatTechnology.mode === state.chatTechnology.infiniteList && <MessageUnlimitedList userId={state.userId} username={state.username} />}
-    {state.chatTechnology.mode === state.chatTechnology.pagination && <MessagePagination userId={state.userId} username={state.username} />}
+    <MessageUnlimitedList userId={state.userId} username={state.username} />
     <div className="flex flex-row justify-center items-center w-full" style={{ paddingBottom: "1em", marginTop: "1em" }}>
       <div className="flex flex-auto">
         <TextField
