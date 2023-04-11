@@ -6,6 +6,8 @@ import { subMilliseconds } from "date-fns";
 
 export async function getStorageSpaceListByPagination(pageNum: number, pageSize: number) {
   const database = await ElectronDatabase.getDatabase();
+
+  /* Pagination */
   const stream = linq
     .from(database.get("StorageSpaceList"))
     .orderBy((s) => s.createDate)
@@ -13,10 +15,98 @@ export async function getStorageSpaceListByPagination(pageNum: number, pageSize:
   return PaginationModel(pageNum, pageSize, stream);
 }
 
-async function createStorageSpaceEntityIfNotExist(folderName: string) {
-  /* Do not add if it already exists */
+export async function isUsed(folderName: string) {
   const database = await ElectronDatabase.getDatabase();
 
+  /* Get folder name from file path */
+  const folderNameOfRelative = await ElectronStorage.getFolderNameBaseOnBaseFolderPath(folderName);
+
+  /* Has been used, The file path to store the json file of the database */
+  if (folderNameOfRelative === ElectronDatabase.DatabaseStorageFolderName) {
+    while (true) {
+      const StorageSpaceList = database.get("StorageSpaceList");
+      const index = StorageSpaceList.findIndex(s => s.folderName === folderNameOfRelative);
+      if (index >= 0) {
+        StorageSpaceList.splice(index, 1);
+        database.set("StorageSpaceList", StorageSpaceList);
+        continue;
+      }
+      break;
+    }
+
+    return true;
+  }
+
+  if (await isUsedByProgramData(folderNameOfRelative)) {
+    while (true) {
+      const StorageSpaceList = database.get("StorageSpaceList");
+      const index = StorageSpaceList.findIndex(s => s.folderName === folderNameOfRelative);
+      if (index >= 0) {
+        StorageSpaceList.splice(index, 1);
+        database.set("StorageSpaceList", StorageSpaceList);
+        continue;
+      }
+      break;
+    }
+    return true;
+  }
+
+  /* Save data to database */
+  await createStorageSpaceEntityIfNotExist(folderNameOfRelative);
+
+  /* Check if it is used */
+  const tempFileValidTime = 24 * 60 * 60 * 1000;
+  const expiredDate = subMilliseconds(new Date(), 0 - tempFileValidTime);
+
+  const isUsed = linq
+    .from(database.get("StorageSpaceList"))
+    .where((s) => s.folderName === folderNameOfRelative)
+    .groupBy(s => s.folderName)
+    .where(s =>
+      s.where(m => m.updateDate.getTime() < expiredDate.getTime())
+        .where(() => s.all(m => m.updateDate.getTime() < expiredDate.getTime()))
+        .any()
+    )
+    .any();
+  return isUsed;
+}
+
+export async function deleteFolder(folderName: string): Promise<void> {
+  const database = await ElectronDatabase.getDatabase();
+
+  /* Get folder name from file path */
+  const folderNameOfRelative = await ElectronStorage.getFolderNameBaseOnBaseFolderPath(
+    folderName
+  );
+
+  /* Do not delete when in use */
+  if (await isUsed(folderNameOfRelative)) {
+    return;
+  }
+
+  /* Delete from disk */
+  await ElectronStorage.deleteFolderOrFile(folderNameOfRelative);
+
+  /* Delete from database */
+  const StorageSpaceList = database.get("StorageSpaceList");
+  const storageSpaceEntityList = linq
+    .from(StorageSpaceList)
+    .where((s) => s.folderName === folderNameOfRelative)
+    .toArray();
+  for (const storageSpaceEntity of storageSpaceEntityList) {
+    StorageSpaceList.splice(StorageSpaceList.indexOf(storageSpaceEntity), 1);
+  }
+  database.set("StorageSpaceList", StorageSpaceList);
+}
+
+async function isUsedByProgramData(folderName: string) {
+  return false;
+}
+
+async function createStorageSpaceEntityIfNotExist(folderName: string) {
+  const database = await ElectronDatabase.getDatabase();
+
+  /* Do not add if it already exists */
   if (
     linq
       .from(database.get("StorageSpaceList"))
@@ -34,60 +124,5 @@ async function createStorageSpaceEntityIfNotExist(folderName: string) {
     createDate: new Date(),
     updateDate: new Date(),
   });
-  database.set("StorageSpaceList", StorageSpaceList);
-}
-
-export async function isUsed(folderName: string) {
-  const folderNameOfRelative = await ElectronStorage.getFolderNameBaseOnBaseFolderPath(folderName);
-
-  /* Save data to database */
-  await createStorageSpaceEntityIfNotExist(folderNameOfRelative);
-
-  /* Has been used, The file path to store the json file of the database */
-  if (folderNameOfRelative === ElectronDatabase.DatabaseStorageFolderName) {
-    return true;
-  }
-
-  /* Check if it is used */
-  const tempFileValidTime = 24 * 60 * 60 * 1000;
-  const expiredDate = subMilliseconds(new Date(), 0 - tempFileValidTime);
-  const database = await ElectronDatabase.getDatabase();
-  const isUsed = linq
-    .from(database.get("StorageSpaceList"))
-    .where((s) => s.folderName === folderNameOfRelative)
-    .groupBy(s => s.folderName)
-    .where(s =>
-      s.where(m => m.updateDate.getTime() < expiredDate.getTime())
-        .where(() => s.all(m => m.updateDate.getTime() < expiredDate.getTime()))
-        .any()
-    )
-    .any();
-  return isUsed;
-}
-
-
-export async function deleteFolder(folderName: string): Promise<void> {
-  /* Do not delete when in use */
-  const folderNameOfRelative = await ElectronStorage.getFolderNameBaseOnBaseFolderPath(
-    folderName
-  );
-  if (await isUsed(folderNameOfRelative)) {
-    return;
-  }
-
-
-  /* Delete from disk */
-  await ElectronStorage.deleteFolderOrFile(folderNameOfRelative);
-
-  /* Delete from database */
-  const database = await ElectronDatabase.getDatabase();
-  const StorageSpaceList = database.get("StorageSpaceList");
-  const storageSpaceEntityList = linq
-    .from(StorageSpaceList)
-    .where((s) => s.folderName === folderName)
-    .toArray();
-  for (const storageSpaceEntity of storageSpaceEntityList) {
-    StorageSpaceList.splice(StorageSpaceList.indexOf(storageSpaceEntity), 1);
-  }
   database.set("StorageSpaceList", StorageSpaceList);
 }

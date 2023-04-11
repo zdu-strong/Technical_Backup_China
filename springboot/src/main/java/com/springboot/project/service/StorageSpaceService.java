@@ -15,7 +15,53 @@ import com.springboot.project.model.StorageSpaceModel;
 public class StorageSpaceService extends BaseService {
     private Duration tempFileSurvivalDuration = Duration.ofDays(1);
 
-    public StorageSpaceModel createStorageSpaceEntity(String folderName) {
+    public PaginationModel<StorageSpaceModel> getStorageSpaceListByPagination(int pageNum, int pageSize) {
+        var stream = this.StorageSpaceEntity().sortedBy(s -> s.getId()).sortedBy(s -> s.getCreateDate());
+        var storageSpacePaginationModel = new PaginationModel<>(pageNum, pageSize, stream,
+                (s) -> this.storageSpaceFormatter.format(s));
+        return storageSpacePaginationModel;
+    }
+
+    public boolean isUsed(String folderName) {
+        this.checkIsValidFolderName(folderName);
+
+        if (this.isUsedByProgramData(folderName)) {
+            var list = this.StorageSpaceEntity().where(s -> s.getFolderName().equals(folderName)).toList();
+            for (var storageSpaceEntity : list) {
+                this.entityManager.remove(storageSpaceEntity);
+            }
+            return true;
+        }
+
+        if (!this.StorageSpaceEntity().where(s -> s.getFolderName().equals(folderName)).exists()) {
+            this.createStorageSpaceEntity(folderName);
+        }
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.MILLISECOND, Long.valueOf(0 - this.tempFileSurvivalDuration.toMillis()).intValue());
+        Date expireDate = calendar.getTime();
+        var isUsed = !this.StorageSpaceEntity().where(s -> s.getFolderName().equals(folderName))
+                .where(s -> s.getUpdateDate().before(expireDate))
+                .where((s, t) -> !t.stream(StorageSpaceEntity.class).where(m -> m.getFolderName().equals(folderName))
+                        .where(m -> expireDate.before(m.getUpdateDate())).exists())
+                .exists();
+        return isUsed;
+    }
+
+    public void deleteStorageSpaceEntity(String folderName) {
+        this.checkIsValidFolderName(folderName);
+        if (this.isUsed(folderName)) {
+            return;
+        }
+        for (var storageSpaceEntity : this.StorageSpaceEntity().where(s -> s.getFolderName().equals(folderName))
+                .toList()) {
+            this.entityManager.remove(storageSpaceEntity);
+        }
+        this.storage.delete(folderName);
+    }
+
+    private StorageSpaceModel createStorageSpaceEntity(String folderName) {
         this.checkIsValidFolderName(folderName);
         if (this.StorageSpaceEntity().where(s -> s.getFolderName().equals(folderName)).exists()) {
             StorageSpaceEntity storageSpaceEntity = this.StorageSpaceEntity()
@@ -36,52 +82,11 @@ public class StorageSpaceService extends BaseService {
         }
     }
 
-    public void deleteStorageSpaceEntity(String folderName) {
-        this.checkIsValidFolderName(folderName);
-        if (this.isUsed(folderName)) {
-            return;
-        }
-        for (var storageSpaceEntity : this.StorageSpaceEntity().where(s -> s.getFolderName().equals(folderName))
-                .toList()) {
-            this.entityManager.remove(storageSpaceEntity);
-        }
-        this.storage.delete(folderName);
-    }
-
-    private boolean isUserByProgramData(String folderName) {
+    private boolean isUsedByProgramData(String folderName) {
         if (this.UserMessageEntity().where(s -> s.getFolderName().equals(folderName)).exists()) {
             return true;
         }
         return false;
-    }
-
-    public boolean isUsed(String folderName) {
-        this.checkIsValidFolderName(folderName);
-        if (!this.StorageSpaceEntity().where(s -> s.getFolderName().equals(folderName)).exists()) {
-            this.createStorageSpaceEntity(folderName);
-        }
-
-        if (this.isUserByProgramData(folderName)) {
-            return true;
-        }
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        calendar.add(Calendar.MILLISECOND, Long.valueOf(0 - this.tempFileSurvivalDuration.toMillis()).intValue());
-        Date expireDate = calendar.getTime();
-        var isUsed = !this.StorageSpaceEntity().where(s -> s.getFolderName().equals(folderName))
-                .where(s -> s.getUpdateDate().before(expireDate))
-                .where((s, t) -> !t.stream(StorageSpaceEntity.class).where(m -> m.getFolderName().equals(folderName))
-                        .where(m -> expireDate.before(m.getUpdateDate())).exists())
-                .exists();
-        return isUsed;
-    }
-
-    public PaginationModel<StorageSpaceModel> getStorageSpaceListByPagination(int pageNum, int pageSize) {
-        var stream = this.StorageSpaceEntity().sortedBy(s -> s.getId()).sortedBy(s -> s.getCreateDate());
-        var storageSpacePaginationModel = new PaginationModel<>(pageNum, pageSize, stream,
-                (s) -> this.storageSpaceFormatter.format(s));
-        return storageSpacePaginationModel;
     }
 
     private void checkIsValidFolderName(String folderName) {

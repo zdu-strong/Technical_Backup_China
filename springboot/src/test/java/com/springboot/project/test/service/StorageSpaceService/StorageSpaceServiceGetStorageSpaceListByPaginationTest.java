@@ -24,7 +24,7 @@ public class StorageSpaceServiceGetStorageSpaceListByPaginationTest extends Base
 
     @BeforeEach
     public void beforeEach() {
-        this.storageSpaceService.createStorageSpaceEntity(folderName);
+        this.storageSpaceService.isUsed(folderName);
     }
 
     @AfterEach
