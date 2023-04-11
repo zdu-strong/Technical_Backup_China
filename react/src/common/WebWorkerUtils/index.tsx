@@ -1,8 +1,7 @@
 import { ReplaySubject } from "rxjs";
 import WebworkerPromise from 'webworker-promise'
 
-export async function runWoker(url: URL, params?: any) {
-  const worker = new Worker(url, { type: "module" });
+export async function runWoker(worker: Worker, params?: any) {
   const workerSubject = new ReplaySubject();
   worker.onerror = () => {
     workerSubject.error(new Error("Webworker file load failed!"));
