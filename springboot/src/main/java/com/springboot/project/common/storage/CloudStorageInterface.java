@@ -12,6 +12,8 @@ public interface CloudStorageInterface {
 
     void storageResource(File sourceFileOrSourceFolder, String key);
 
+    void storageResource(SequenceResource sourceFile, String key);
+
     void delete(String key);
 
     /**

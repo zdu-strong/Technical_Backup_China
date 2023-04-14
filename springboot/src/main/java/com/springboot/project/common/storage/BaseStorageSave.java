@@ -66,23 +66,34 @@ public class BaseStorageSave extends BaseStorageCreateTempFile {
                 if (!sourceFile.exists()) {
                     throw new RuntimeException("Resource does not exist");
                 }
-                if (sourceFile.isDirectory()) {
-                    FileUtils.copyDirectory(sourceFile,
-                            new File(this.getRootPath(), storageFileModel.getRelativePath()));
-                } else {
-                    FileUtils.copyFile(sourceFile, new File(this.getRootPath(), storageFileModel.getRelativePath()));
-                }
                 if (this.cloud.enabled()) {
                     this.cloud.storageResource(sourceFile, storageFileModel.getRelativePath());
+                } else {
+                    if (sourceFile.isDirectory()) {
+                        FileUtils.copyDirectory(sourceFile,
+                                new File(this.getRootPath(), storageFileModel.getRelativePath()));
+                    } else {
+                        FileUtils.copyFile(sourceFile,
+                                new File(this.getRootPath(), storageFileModel.getRelativePath()));
+                    }
                 }
             } else {
-                try (var input = resource.getInputStream()) {
-                    FileUtils.copyToFile(input, new File(this.getRootPath(), storageFileModel.getRelativePath()));
-                }
                 if (this.cloud.enabled()) {
-                    this.cloud.storageResource(new File(this.getRootPath(), storageFileModel.getRelativePath()),
-                            storageFileModel.getRelativePath());
-                    this.delete(new File(this.getRootPath(), storageFileModel.getRelativePath()));
+                    if (resource instanceof SequenceResource) {
+                        this.cloud.storageResource((SequenceResource) resource, relativePath);
+                    } else {
+                        try (var input = resource.getInputStream()) {
+                            FileUtils.copyToFile(input,
+                                    new File(this.getRootPath(), storageFileModel.getRelativePath()));
+                        }
+                        this.cloud.storageResource(new File(this.getRootPath(), storageFileModel.getRelativePath()),
+                                storageFileModel.getRelativePath());
+                        this.delete(new File(this.getRootPath(), storageFileModel.getRelativePath()));
+                    }
+                } else {
+                    try (var input = resource.getInputStream()) {
+                        FileUtils.copyToFile(input, new File(this.getRootPath(), storageFileModel.getRelativePath()));
+                    }
                 }
             }
             return storageFileModel;

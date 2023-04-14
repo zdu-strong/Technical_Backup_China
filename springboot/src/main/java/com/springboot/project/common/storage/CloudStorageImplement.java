@@ -21,6 +21,11 @@ public class CloudStorageImplement implements CloudStorageInterface {
     }
 
     @Override
+    public void storageResource(SequenceResource sourceFile, String key) {
+        this.getCloud().storageResource(sourceFile, key);
+    }
+
+    @Override
     public void delete(String key) {
         this.getCloud().delete(key);
     }
