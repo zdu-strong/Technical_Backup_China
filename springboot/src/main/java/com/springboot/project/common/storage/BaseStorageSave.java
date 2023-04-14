@@ -82,13 +82,8 @@ public class BaseStorageSave extends BaseStorageCreateTempFile {
                     if (resource instanceof SequenceResource) {
                         this.cloud.storageResource((SequenceResource) resource, relativePath);
                     } else {
-                        try (var input = resource.getInputStream()) {
-                            FileUtils.copyToFile(input,
-                                    new File(this.getRootPath(), storageFileModel.getRelativePath()));
-                        }
-                        this.cloud.storageResource(new File(this.getRootPath(), storageFileModel.getRelativePath()),
-                                storageFileModel.getRelativePath());
-                        this.delete(new File(this.getRootPath(), storageFileModel.getRelativePath()));
+                        this.cloud.storageResource(new SequenceResource(this.getFileNameFromResource(resource),
+                                Lists.newArrayList(resource)), relativePath);
                     }
                 } else {
                     try (var input = resource.getInputStream()) {
