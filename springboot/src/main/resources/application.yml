@@ -48,6 +48,7 @@ logging:
 server:
   error:
     include-message: always
+    include-stacktrace: never
   tomcat:
     max-http-form-post-size: -1
 properties:

@@ -1,7 +1,7 @@
 import '@/common/axios-config/AxiosConfig'
 import registerWebworker from 'webworker-promise/lib/register'
 import axios from "axios";
-import { concatMap, from, map, range, toArray } from "rxjs";
+import { catchError, concatMap, from, map, of, range, toArray } from "rxjs";
 import * as mathjs from 'mathjs'
 import { getLongTermTask } from '@/api/LongTermTask';
 
@@ -15,8 +15,8 @@ registerWebworker(async ({
   if (!ServerAddress) {
     throw new Error("Server Address cannot be empty");
   }
-  /* Each piece is 100MB */
-  const everySize = 1024 * 1024 * 100;
+  /* Each piece is 10MB */
+  const everySize = 1024 * 1024 * 10;
   const url: String | undefined = await range(1, mathjs.max(mathjs.ceil(mathjs.divide(file.size, everySize)), 1)).pipe(
     concatMap((pageNum) => {
       const formData = new FormData();
@@ -25,8 +25,17 @@ registerWebworker(async ({
     }),
     map((response) => response.data),
     toArray(),
-    concatMap(urlList => from(axios.post<string>(`${ServerAddress}/upload/merge`, urlList))),
-    concatMap(response => from(getLongTermTask(`${ServerAddress}${response.data}`, String))),
+    concatMap(urlList => of(null).pipe(
+      concatMap(() => from(axios.post<string>(`${ServerAddress}/upload/merge`, urlList))),
+      concatMap(response => from(getLongTermTask(`${ServerAddress}${response.data}`, String))),
+      catchError((error, caught) => {
+        if (typeof error!.message === 'string' && error.message.includes("The task failed because it stopped")) {
+          return caught;
+        } else {
+          throw error;
+        }
+      }),
+    )),
   ).toPromise();
   return {
     url: `${ServerAddress}${url!}`,

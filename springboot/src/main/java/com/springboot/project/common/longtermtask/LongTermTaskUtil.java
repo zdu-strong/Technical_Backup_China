@@ -14,45 +14,43 @@ import io.reactivex.rxjava3.core.Observable;
 
 @Component
 public class LongTermTaskUtil {
-	@Autowired
-	private LongTermTaskService longTermTaskService;
+    @Autowired
+    private LongTermTaskService longTermTaskService;
 
-	@Autowired
-	private EncryptDecryptService encryptDecryptService;
+    @Autowired
+    private EncryptDecryptService encryptDecryptService;
 
-	/**
-	 * The return value of the executed method will be stored in the database as a
-	 * json string, and will be converted into a json object or json object array
-	 * and returned after success. This method will return a relative url, can call
-	 * a get request to get the result.
-	 * 
-	 * @param runnable
-	 * @return
-	 */
-	public ResponseEntity<String> run(Supplier<ResponseEntity<?>> supplier) {
-		String idOfLongTermTask = this.longTermTaskService.createLongTermTask();
-		CompletableFuture.runAsync(() -> {
-			var taskOfUpdateLongTermTaskToRefreshUpdateDate = CompletableFuture.runAsync(() -> {
-				Observable.interval(10, TimeUnit.SECONDS).map((s) -> {
-					this.longTermTaskService.updateLongTermTaskToRefreshUpdateDate(idOfLongTermTask);
-					return null;
-				}).blockingSubscribe();
-			});
-			try {
-				var result = supplier.get();
-				this.longTermTaskService.updateLongTermTaskByResult(idOfLongTermTask, result);
-			} catch (Throwable e) {
-				this.longTermTaskService.updateLongTermTaskByErrorMessage(idOfLongTermTask, e);
-			} finally {
-				taskOfUpdateLongTermTaskToRefreshUpdateDate.cancel(true);
-			}
-		});
-		try {
-			var url = new URIBuilder("/long_term_task").setParameter("id",
-					this.encryptDecryptService.encryptByAES(idOfLongTermTask)).build();
-			return ResponseEntity.accepted().body(url.toString());
-		} catch (URISyntaxException e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
-	}
+    /**
+     * The return value of the executed method will be stored in the database as a
+     * json string, and will be converted into a json object or json object array
+     * and returned after success. This method will return a relative url, can call
+     * a get request to get the result.
+     * 
+     * @param runnable
+     * @return
+     */
+    public ResponseEntity<String> run(Supplier<ResponseEntity<?>> supplier) {
+        String idOfLongTermTask = this.longTermTaskService.createLongTermTask();
+        CompletableFuture.runAsync(() -> {
+            var subscription = Observable.just("").delay(1, TimeUnit.SECONDS).map((a) -> {
+                this.longTermTaskService.updateLongTermTaskToRefreshUpdateDate(idOfLongTermTask);
+                return "";
+            }).repeat().subscribe();
+            try {
+                var result = CompletableFuture.supplyAsync(() -> supplier.get()).get();
+                this.longTermTaskService.updateLongTermTaskByResult(idOfLongTermTask, result);
+            } catch (Throwable e) {
+                this.longTermTaskService.updateLongTermTaskByErrorMessage(idOfLongTermTask, e);
+            } finally {
+                subscription.dispose();
+            }
+        });
+        try {
+            var url = new URIBuilder("/long_term_task").setParameter("id",
+                    this.encryptDecryptService.encryptByAES(idOfLongTermTask)).build();
+            return ResponseEntity.accepted().body(url.toString());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
 }
