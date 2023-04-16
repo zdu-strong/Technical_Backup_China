@@ -2,6 +2,7 @@ package com.springboot.project.common.longtermtask;
 
 import java.net.URISyntaxException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import org.apache.http.client.utils.URIBuilder;
@@ -40,7 +41,12 @@ public class LongTermTaskUtil {
                 var result = CompletableFuture.supplyAsync(() -> supplier.get()).get();
                 this.longTermTaskService.updateLongTermTaskByResult(idOfLongTermTask, result);
             } catch (Throwable e) {
-                this.longTermTaskService.updateLongTermTaskByErrorMessage(idOfLongTermTask, e);
+                if (e instanceof ExecutionException && e.getCause() != null) {
+                    this.longTermTaskService.updateLongTermTaskByErrorMessage(idOfLongTermTask,
+                            ((ExecutionException) e).getCause());
+                } else {
+                    this.longTermTaskService.updateLongTermTaskByErrorMessage(idOfLongTermTask, e);
+                }
             } finally {
                 subscription.dispose();
             }
