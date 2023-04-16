@@ -7,6 +7,7 @@ export async function loadWindowFromRelativeUrl(
   browserWindow: BrowserWindow,
   url: string
 ) {
+  await Promise.resolve(null);
   if (!url.startsWith("/")) {
     throw new Error("Unsupport url");
   }
