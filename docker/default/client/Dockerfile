@@ -18,7 +18,7 @@ ENV LC_ALL C.UTF-8
 # install serve
 RUN dnf module install -y nodejs:18
 RUN npm config set registry https://registry.yarnpkg.com
-RUN npm install --location=global serve@14.0.1
+RUN npm install --location=global serve@14.2.0
 
 # run test
 FROM first_docker as second_docker
