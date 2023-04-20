@@ -4,7 +4,7 @@ import BootLoadingComponent from "./BootLoadingComponent";
 import { Button, Link as LinkAlias } from "@mui/material";
 import { keyframes, stylesheet } from 'typestyle';
 import { observer, useMobxState } from 'mobx-react-use-autorun';
-import { useCpuUsage } from './js/useCpuUsage';
+import { useRandomNumber } from './js/useRandomNumber';
 import { useReadyForApplication } from './js/useReadyForApplication';
 import CircularProgress from '@mui/material/CircularProgress';
 import GameDialog from '@/component/Game/GameDialog';
@@ -52,7 +52,7 @@ export default observer(() => {
       }
     }),
   }, {
-    cpuUsage: useCpuUsage(),
+    randomNumber: useRandomNumber(),
     ready: useReadyForApplication(),
   })
 
@@ -75,10 +75,10 @@ export default observer(() => {
           className={state.css.batteryContainer}
         >
           {
-            state.cpuUsage !== null ? (<div className="flex flex-col">
+            state.randomNumber !== null ? (<div className="flex flex-col">
               <div className="text-center">
-                <FormattedMessage id="CurrentCpuUsage" defaultMessage="当前cpu使用率" />
-                {":" + Math.round(state.cpuUsage!) + "%"}
+                <FormattedMessage id="RandomNumber" defaultMessage="Random number" />
+                {`:  ${state.randomNumber}`}
               </div>
             </div>) : (
               <div className="flex flex-row justify-center">
