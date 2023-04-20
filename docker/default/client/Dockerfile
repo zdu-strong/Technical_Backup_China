@@ -49,4 +49,4 @@ COPY --from=second_docker /all_code/react/build /build
 EXPOSE 443
 
 # start server
-ENTRYPOINT ["serve", "--single", "--cors", "--no-clipboard", "--no-port-switching", "--listen=443", "build"]
+ENTRYPOINT ["serve", "--single", "--cors", "--no-clipboard", "--no-port-switching", "--no-request-logging", "--listen=443", "build"]
