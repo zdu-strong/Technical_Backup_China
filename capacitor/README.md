@@ -102,7 +102,7 @@ Define componentized css, & represents the current class name.
 
 ## Learn More
 
-1. React UI framework (https://reactjs.org)<br/>
+1. React UI framework (https://react.dev)<br/>
 2. mobx-react-use-autorun (https://www.npmjs.com/package/mobx-react-use-autorun)
 3. typestyle (https://www.npmjs.com/package/typestyle)<br/>
 4. Material UI Components (https://material-ui.com)<br/>
