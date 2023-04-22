@@ -2,7 +2,7 @@ import action from '../../src/action'
 import { ProgramType } from '../../src/page';
 
 test('', async () => {
-  const CurrentCPUUsage = await Program.page.Home.CurrentCPUUsage();
+  const CurrentCPUUsage = await Program.page.Home.CurrentRandomNumber();
   expect(await CurrentCPUUsage.isVisible()).toBeTruthy()
 })
 

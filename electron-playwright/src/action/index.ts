@@ -13,7 +13,7 @@ export default {
     });
     const window = await electron.firstWindow();
     const page = PageClassFunction(window);
-    const CPUUsageText = await page.Home.CurrentCPUUsage()
+    const CPUUsageText = await page.Home.CurrentRandomNumber()
     expect(await CPUUsageText.isVisible()).toBeTruthy()
     return { electron, window, page }
   }

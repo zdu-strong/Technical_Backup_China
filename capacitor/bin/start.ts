@@ -201,6 +201,9 @@ async function getDeviceList(isRunAndroid: boolean) {
 
     const androidDeviceOutputList = linq.from(androidDeviceOutput.split("\r\n")).selectMany(item => item.split("\n")).toArray();
     const startIndex = androidDeviceOutputList.findIndex((item: string) => item.includes('-----'));
+    if (startIndex < 0) {
+      throw new Error("No available Device!")
+    }
     deviceList = linq.from(androidDeviceOutputList).skip(startIndex + 1).select(item => linq.from(item.split("|")).select(item => item.trim()).toArray()).select(s => linq.from(s).last()).toArray();
     if (!deviceList.length) {
       throw new Error("No available Device!")
