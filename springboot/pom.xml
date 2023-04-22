@@ -167,7 +167,6 @@
                     <failOnNoGitDirectory>true</failOnNoGitDirectory>
                     <dotGitDirectory>
                         ${project.basedir}/../.git</dotGitDirectory>
-                    <useNativeGit>true</useNativeGit>
                     <offline>true</offline>
                 </configuration>
             </plugin>
