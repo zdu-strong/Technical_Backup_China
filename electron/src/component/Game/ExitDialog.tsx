@@ -2,6 +2,7 @@ import { Button, Dialog, DialogActions, DialogTitle, Fab } from "@mui/material";
 import { observer, useMobxState } from "mobx-react-use-autorun";
 import { FormattedMessage } from "react-intl";
 import CloseIcon from '@mui/icons-material/Close';
+import remote from "@/remote";
 
 export default observer((props: { closeDialog: () => void, exit: () => void }) => {
 
@@ -40,7 +41,17 @@ export default observer((props: { closeDialog: () => void, exit: () => void }) =
         style={{ textTransform: "none", marginLeft: "1em" }}
         color="primary"
       >
-        <FormattedMessage id="Yes" defaultMessage="Yes" />
+        <FormattedMessage id="EndTheGame" defaultMessage="End Game" />
+      </Button>
+      <Button
+        variant="contained"
+        style={{ textTransform: "none", marginRight: "1em" }}
+        onClick={() => {
+          remote.app.exit()
+        }}
+        color="secondary"
+      >
+        <FormattedMessage id="ExitTheProgram" defaultMessage="Exit" />
       </Button>
     </DialogActions>
   </Dialog>

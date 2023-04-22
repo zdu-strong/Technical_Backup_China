@@ -12,5 +12,7 @@
   "ClickTheCloseButton": "点击关闭按钮",
   "ClickTheBackgroundBoard": "点击背景板",
   "Yes": "是",
-  "RandomNumber": "随机数"
+  "RandomNumber": "随机数",
+  "EndTheGame": "结束游戏",
+  "ExitTheProgram": "退出"
 }

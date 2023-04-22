@@ -12,5 +12,7 @@
   "ClickTheCloseButton": "Click the close button",
   "ClickTheBackgroundBoard": "Click the background board",
   "Yes": "Yes",
-  "RandomNumber": "Random number"
+  "RandomNumber": "Random number",
+  "EndTheGame": "End Game",
+  "ExitTheProgram": "Exit"
 }
