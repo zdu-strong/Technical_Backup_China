@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.springboot.project.test.BaseTest;
@@ -12,12 +13,13 @@ public class LongTermTaskServiceUpdateLongTermTaskByErrorMessageTest extends Bas
     private String longTermtaskId;
 
     @Test
+    @SuppressWarnings("unchecked")
     public void test() {
         this.longTermTaskService.updateLongTermTaskByErrorMessage(this.longTermtaskId,
                 new RuntimeException("Internal Server Error"));
-        var longTermTask = this.longTermTaskService.getLongTermTask(this.longTermtaskId);
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, longTermTask.getStatusCode());
-        assertEquals("Internal Server Error", ((JsonNode) ((Object) longTermTask.getBody())).get("message").asText());
+        var result = (ResponseEntity<JsonNode>) this.longTermTaskService.getLongTermTask(this.longTermtaskId);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
+        assertEquals("Internal Server Error", result.getBody().get("message").asText());
     }
 
     @BeforeEach

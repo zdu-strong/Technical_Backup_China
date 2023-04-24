@@ -16,14 +16,14 @@ public class LongTermTaskServiceGetLongTermTaskTest extends BaseTest {
     private String longTermtaskId;
 
     @Test
+    @SuppressWarnings("unchecked")
     public void test() {
-        @SuppressWarnings("unchecked")
-        var longTermTask = (ResponseEntity<LongTermTaskModel<?>>) this.longTermTaskService
+        var result = (ResponseEntity<LongTermTaskModel<?>>) this.longTermTaskService
                 .getLongTermTask(this.longTermtaskId);
-        assertNotNull(longTermTask);
-        assertEquals(HttpStatus.ACCEPTED, longTermTask.getStatusCode());
-        assertNotNull(longTermTask.getBody().getId());
-        assertFalse(longTermTask.getBody().getIsDone());
+        assertNotNull(result);
+        assertEquals(HttpStatus.ACCEPTED, result.getStatusCode());
+        assertNotNull(result.getBody().getId());
+        assertFalse(result.getBody().getIsDone());
     }
 
     @BeforeEach
