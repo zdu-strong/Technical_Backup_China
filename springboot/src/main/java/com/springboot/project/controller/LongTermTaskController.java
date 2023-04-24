@@ -40,7 +40,7 @@ public class LongTermTaskController extends BaseController {
                     .getLongTermTask(this.encryptDecryptService.decryptByAES(id));
             if (result.getBody() instanceof LongTermTaskModel) {
                 @SuppressWarnings("unchecked")
-                final var longTermTaskResult = (ResponseEntity<LongTermTaskModel<?>>) result;
+                var longTermTaskResult = (ResponseEntity<LongTermTaskModel<?>>) result;
                 if (longTermTaskResult.getBody().getIsDone()) {
                     return longTermTaskResult;
                 }
