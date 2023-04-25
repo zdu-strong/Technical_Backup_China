@@ -52,7 +52,7 @@ The following dependencies are currently unable to continue to be upgraded:<br/>
 
 1. Press "F5" to start.<br/>
 2. In debug mode, "F10" Step over, "F11" Step into, "Shipt+F11" Step out, "F5" Skip breakpoint.<br/>
-3. In Testing, expand current project, then run tests.<br/>
+3. In Testing. First Delete the code of the current project. Then run command "git reset --hard". Next expand current project and run tests.<br/>
 
 ## Notes - jinq - Things to note
 
