@@ -31,4 +31,5 @@
     "java.debug.settings.stepping.skipConstructors": true,
     "java.debug.settings.stepping.skipStaticInitializers": true,
     "extensions.ignoreRecommendations": true,
+    "java.silentNotification": true,
 }
