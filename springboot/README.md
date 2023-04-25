@@ -48,6 +48,12 @@ The following dependencies are currently unable to continue to be upgraded:<br/>
         <artifactId>liquibase-core</artifactId>
     </dependency>
 
+## Notes - How to use vscode
+
+1. Press "F5" to start.<br/>
+2. In debug mode, "F10" Step over, "F11" Step into, "Shipt+F11" Step out, "F5" Skip breakpoint.<br/>
+3. In Testing, expand current project, then run tests.<br/>
+
 ## Notes - jinq - Things to note
 
 Some experience in use, if you already know it, you can skip it.
