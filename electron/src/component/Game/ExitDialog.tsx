@@ -4,7 +4,11 @@ import { FormattedMessage } from "react-intl";
 import CloseIcon from '@mui/icons-material/Close';
 import remote from "@/remote";
 
-export default observer((props: { closeDialog: () => void, exit: () => void }) => {
+export default observer((props: {
+  closeDialog: () => void,
+  exit: () => void,
+  canvasRef: React.MutableRefObject<HTMLCanvasElement | undefined>
+}) => {
 
   const state = useMobxState({}, {
     ...props
@@ -12,7 +16,11 @@ export default observer((props: { closeDialog: () => void, exit: () => void }) =
 
   return <Dialog
     open={true}
-    onClose={state.closeDialog}
+    onClose={async ()=>{
+      state.closeDialog();
+      await Promise.resolve(null);
+      state.canvasRef.current!.focus();
+    }}
     aria-labelledby="alert-dialog-title"
     aria-describedby="alert-dialog-description"
   >
@@ -25,9 +33,13 @@ export default observer((props: { closeDialog: () => void, exit: () => void }) =
       }}
     >
       <div style={{ fontWeight: "bold", marginRight: "2em" }}>
-        <FormattedMessage id="Quit" defaultMessage="Quit?" />
+        <FormattedMessage id="AreYouSure" defaultMessage="Are you sure?" />
       </div>
-      <Fab size="small" color="default" onClick={state.closeDialog}>
+      <Fab size="small" color="default" onClick={async () => {
+        state.closeDialog();
+        await Promise.resolve(null);
+        state.canvasRef.current!.focus();
+      }}>
         <CloseIcon />
       </Fab>
     </DialogTitle>

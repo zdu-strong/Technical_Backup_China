@@ -6,7 +6,10 @@ import { useMount, useUnmount } from "mobx-react-use-autorun";
 import { Subscription } from "rxjs";
 import SettingsIcon from '@mui/icons-material/Settings';
 
-export default observer((props: { exit: () => void }) => {
+export default observer((props: {
+  exit: () => void,
+  canvasRef: React.MutableRefObject<HTMLCanvasElement | undefined>
+}) => {
   const state = useMobxState({
     exitDialog: {
       open: false,
@@ -52,6 +55,12 @@ export default observer((props: { exit: () => void }) => {
         <SettingsIcon />
       </Fab>}
     </div>
-    {state.exitDialog.open && <ExitDialog exit={state.exit} closeDialog={() => { state.exitDialog.open = false }} />}
+    {state.exitDialog.open && <ExitDialog
+      canvasRef={state.canvasRef}
+      exit={state.exit}
+      closeDialog={() => {
+        state.exitDialog.open = false
+      }}
+    />}
   </>
 })
