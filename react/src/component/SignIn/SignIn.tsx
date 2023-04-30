@@ -124,6 +124,7 @@ export default observer(() => {
         InputProps={{
           endAdornment: <HelpIcon color="primary" style={{ cursor: "pointer" }} onClick={() => state.usernameTooltipDialog.open = true} />
         }}
+        autoFocus={true}
       />
     </div>
     <div style={{ marginTop: "1em" }} className="flex flex-col w-full">
@@ -151,6 +152,7 @@ export default observer(() => {
         InputProps={{
           endAdornment: <HelpIcon color="primary" style={{ cursor: "pointer" }} onClick={() => state.passwordTooltipDialog.open = true} />
         }}
+        autoFocus={true}
       />}
       {!state.showPasswordInput && <Button
         variant="outlined"

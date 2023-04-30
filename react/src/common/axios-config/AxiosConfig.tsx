@@ -53,6 +53,10 @@ export function setGlobalUserInfo(userInfo: UserModel): void {
   GlobalUserInfo.decryptByPublicKeyOfRSA = userInfo.decryptByPublicKeyOfRSA;
 }
 
+export async function removeUserIdOfGlobalUserInfo() {
+    GlobalUserInfo.id = '';
+}
+
 const existWindow = (() => {
   try {
     if (window) {

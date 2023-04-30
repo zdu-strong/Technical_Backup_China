@@ -22,7 +22,7 @@ export default async () => {
     height: Math.floor(height),
     x: Math.floor(display.workArea.x + (display.workArea.width - width) / 2),
     y: Math.floor(display.workArea.y + (display.workArea.height - height) / 2),
-    title: "React App (加载中..., 请稍候)",
+    title: "React App (Loading... Please wait)",
     webPreferences: {
       contextIsolation: false,
       nodeIntegration: true,

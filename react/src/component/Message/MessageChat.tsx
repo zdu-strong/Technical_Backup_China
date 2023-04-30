@@ -2,14 +2,14 @@ import { observer, useMobxState } from "mobx-react-use-autorun";
 import { stylesheet } from "typestyle";
 import { MessageService } from "@/common/MessageService";
 import api from '@/api'
-import { AppBar, Box, Button, CircularProgress, Fab, TextField, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Button, CircularProgress, TextField, Toolbar, Typography } from "@mui/material";
 import SendIcon from '@mui/icons-material/Send'
 import { FormattedMessage, useIntl } from "react-intl";
 import { v1 } from 'uuid'
 import { isMobilePhone } from "@/common/is-mobile-phone";
 import AddIcon from '@mui/icons-material/Add';
 import MessageUnlimitedList from "./MessageUnlimitedList";
-import { concatMap, from, map, toArray } from "rxjs";
+import { concatMap, from, map, timer, toArray } from "rxjs";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useRef } from "react";
 import MessageMoreActionDialog from "../MessageMoreAction/MessageMoreActionDialog";
@@ -76,9 +76,10 @@ export default observer((props: { username: string, userId: string }) => {
   async function sendMessageForFileList(fileList: FileList) {
     if (isMobilePhone) {
       state.moreActionDialog.open = false;
-      state.textareaRef.current?.blur();
-      state.textareaRef.current?.focus();
+      await timer(1).toPromise();
     }
+
+    state.textareaRef.current?.focus();
 
     if (state.loadingOfSend) {
       return;
@@ -113,7 +114,7 @@ export default observer((props: { username: string, userId: string }) => {
     <Box style={{ marginBottom: "1em", width: "100%" }}>
       <AppBar position="static">
         <Toolbar className="flex flex-row justify-end" style={{ paddingLeft: "0px" }}>
-          <div className="flex flex-row">
+          <div className="flex flex-row items-center">
             <Typography variant="h6" component="div" sx={{ flexWrap: "nowrap" }}>
               <div style={{ marginLeft: "1em", ...(isMobilePhone ? { fontSize: "x-small" } : {}) }}>
                 {state.username}
@@ -166,15 +167,19 @@ export default observer((props: { username: string, userId: string }) => {
               return;
             }
             if (!e.shiftKey && e.key === "Enter") {
-              sendMessage();
               e.preventDefault();
+              if (!state.messageContent) {
+                return;
+              }
+              sendMessage();
             }
           }}
           autoComplete="off"
           id={state.messageInputId}
           multiline={true}
           rows={isMobilePhone ? 1 : 4}
-          ref={state.textareaRef as any}
+          inputRef={state.textareaRef}
+          autoFocus={true}
         />
         {!isMobilePhone && <Button
           variant="contained"
@@ -212,7 +217,21 @@ export default observer((props: { username: string, userId: string }) => {
               <FormattedMessage id="Upload" defaultMessage="Upload" />
           }
         </Button>}
-        {isMobilePhone && <Fab
+        {isMobilePhone && <Button
+          variant="contained"
+          style={{
+            marginLeft: "0.5em",
+            textTransform: "none",
+            whiteSpace: "nowrap",
+          }}
+          startIcon={state.loadingOfSend ? <CircularProgress
+            size="22px"
+            style={{ color: "white" }}
+          /> : (state.messageContent.trim() ?
+            <SendIcon style={{ fontSize: "large" }} />
+            :
+            <AddIcon style={{ fontSize: "large" }} />
+          )}
           onClick={() => {
             if (state.loadingOfSend) {
               return;
@@ -229,22 +248,9 @@ export default observer((props: { username: string, userId: string }) => {
           onMouseUp={(e) => {
             e.preventDefault()
           }}
-          style={{
-            marginLeft: "1em",
-            textTransform: "none",
-            whiteSpace: "nowrap",
-          }}
-          color={state.messageContent.trim() ? "primary" : "secondary"}
         >
-          {state.loadingOfSend ? <CircularProgress
-            size="22px"
-            color={state.messageContent.trim() ? "secondary" : "primary"}
-          /> : (state.messageContent.trim() ?
-            <SendIcon style={{ fontSize: "xx-large" }} />
-            :
-            <AddIcon style={{ fontSize: "xx-large" }} />
-          )}
-        </Fab>}
+          {state.messageContent ? "Send" : "More"}
+        </Button>}
       </div>
     </div>
     <input
@@ -259,7 +265,6 @@ export default observer((props: { username: string, userId: string }) => {
     {state.moreActionDialog.open && <MessageMoreActionDialog
       closeDialog={() => {
         state.moreActionDialog.open = false;
-        state.textareaRef.current?.blur();
         state.textareaRef.current?.focus();
       }}
       uploadFile={() => state.inputFileRef.current.click()}

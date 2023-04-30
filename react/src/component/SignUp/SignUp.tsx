@@ -214,9 +214,11 @@ export default observer(() => {
               style={{ marginTop: "1em" }}
               onKeyDown={(e) => {
                 if (!e.shiftKey && e.key === "Enter") {
+                  e.preventDefault()
                   nextStep();
                 }
               }}
+              autoFocus={true}
             />
           </div>}
           {state.activeStep !== 0 && (<div className="flex flex-row" style={{ marginTop: "1em" }}>
@@ -266,6 +268,7 @@ export default observer(() => {
               rows={6}
               error={!!state.error.password()}
               helperText={state.error.password()}
+              autoFocus={true}
             />
           </div>}
           {state.activeStep > 1 && <Divider style={{ marginTop: "1em", marginBottom: "1em" }} />}
@@ -303,6 +306,7 @@ export default observer(() => {
                 className="w-full"
                 error={!!state.error.email(s)}
                 helperText={state.error.email(s)}
+                autoFocus={true}
               />
               <div>
                 <Button

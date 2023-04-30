@@ -16,13 +16,12 @@ export default observer((props: {
 
   return <Dialog
     open={true}
-    onClose={async ()=>{
+    onClose={async () => {
       state.closeDialog();
       await Promise.resolve(null);
       state.canvasRef.current!.focus();
     }}
-    aria-labelledby="alert-dialog-title"
-    aria-describedby="alert-dialog-description"
+    disableRestoreFocus={true}
   >
     <DialogTitle
       id="alert-dialog-title"

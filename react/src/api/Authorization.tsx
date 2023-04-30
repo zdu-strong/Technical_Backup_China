@@ -1,7 +1,7 @@
 import { UserModel } from "@/model/UserModel";
 import axios from "axios";
 import { UserEmailModel } from "@/model/UserEmailModel";
-import { getAccessToken, getPrivateKeyOfRSA, GlobalUserInfo, removeAccessToken, removePrivateKeyOfRSA, setAccessToken, setGlobalUserInfo, setPrivateKeyOfRSA } from "@/common/axios-config/AxiosConfig";
+import { getAccessToken, getPrivateKeyOfRSA, GlobalUserInfo, removeAccessToken, removePrivateKeyOfRSA, removeUserIdOfGlobalUserInfo, setAccessToken, setGlobalUserInfo, setPrivateKeyOfRSA } from "@/common/axios-config/AxiosConfig";
 import { decryptByPrivateKeyOfRSA, encryptByPublicKeyOfRSA, encryptByPrivateKeyOfRSA, decryptByPublicKeyOfRSA, generateKeyPairOfRSA } from "@/common/RSAUtils";
 import { decryptByAES, encryptByAES, generateSecretKeyOfAES } from '@/common/AESUtils';
 
@@ -67,6 +67,7 @@ export async function signOut() {
   }
   await removeAccessToken();
   await removePrivateKeyOfRSA();
+  await removeUserIdOfGlobalUserInfo();
 }
 
 export async function isSignIn() {
