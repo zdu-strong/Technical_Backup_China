@@ -73,25 +73,6 @@ Define componentized css, & represents the current class name.
       return <div className={state.css.container}></div>
     })
 
-## Notes - typedjson
-
-    import { jsonArrayMember, jsonMember, jsonObject } from 'typedjson'
-    import { makeAutoObservable } from 'mobx-react-use-autorun'
-
-    @jsonObject
-    export class UserModel {
-
-      @jsonMember(String)
-      username!: string;
-
-      @jsonArrayMember(UserModel)
-      childList!: UserModel[];
-
-      constructor() {
-        makeAutoObservable(this);
-      }
-    }
-
 ## Learn More
 
 1. React UI framework (https://react.dev)<br/>
