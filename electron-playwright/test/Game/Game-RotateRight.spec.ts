@@ -24,4 +24,4 @@ afterEach(async () => {
   await Program.electron.close();
 })
 
-let Program: ProgramType = null as any;
+let Program!: ProgramType;
