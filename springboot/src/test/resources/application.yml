@@ -12,7 +12,7 @@ spring:
     properties:
       hibernate:
         jdbc:
-          '[time_zone]': UTC
+          "[time_zone]": UTC
   servlet:
     multipart:
       max-file-size: -1
