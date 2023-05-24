@@ -1,5 +1,7 @@
 package com.springboot.project.scheduled;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,6 +18,9 @@ public class StorageSpaceScheduled {
 
     @Autowired
     private Storage storage;
+
+    private Logger log = LoggerFactory.getLogger(getClass());
+
     private int pageSize = 1;
 
     @Scheduled(initialDelay = 1000, fixedDelay = 60 * 60 * 1000)
@@ -33,11 +38,11 @@ public class StorageSpaceScheduled {
                             }
                         }
                     } catch (Throwable e) {
-                        // do nothing
+                        log.error("Failed to delete folder of database records", e);
                     }
                 }
             } catch (Throwable e) {
-                // do nothing
+                log.error("Failed to get number of folders for database records", e);
             }
         }
 
@@ -48,7 +53,7 @@ public class StorageSpaceScheduled {
                         this.storageSpaceService.deleteStorageSpaceEntity(folderName);
                     }
                 } catch (Throwable e) {
-                    // do nothing
+                    log.error("Failed to delete local folder \"" + folderName + "\"", e);
                 }
                 return Observable.empty();
             }).blockingSubscribe();
