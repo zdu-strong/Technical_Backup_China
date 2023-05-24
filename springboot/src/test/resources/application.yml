@@ -7,7 +7,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: false
     database-platform: com.springboot.project.common.database.CustomH2Dialect
     open-in-view: false
     properties:
@@ -36,15 +35,19 @@ spring:
       matching-strategy: ant_path_matcher
   task:
     scheduling:
-        pool:
-          size: 1000
+      pool:
+        size: 1000
 logging:
   level:
     org:
       hibernate:
-          dialect:
-              function:
-                  TemplateRenderer: ERROR
+        dialect:
+          function:
+            TemplateRenderer: ERROR
+        SQL: DEBUG
+        orm:
+          jdbc:
+            bind: TRACE
 server:
   error:
     include-message: always

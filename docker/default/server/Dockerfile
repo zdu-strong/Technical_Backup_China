@@ -36,6 +36,8 @@ RUN mv target/*.jar target/server.jar
 FROM first_docker
 COPY --from=second_docker /all_code/springboot/target/server.jar /server.jar
 ENV SERVER_SHUTDOWN GRACEFUL
+ENV LOGGING_LEVEL_ORG_HIBERNATE_SQL OFF
+ENV LOGGING_LEVEL_ORG_HIBERNATE_ORM_JDBC_BIND OFF
 
 # 8080 is server port, Since the server port is configured as 8080 in the client, the server port must be 8080 during runtime
 EXPOSE 8080
