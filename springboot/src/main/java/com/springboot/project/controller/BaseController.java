@@ -2,8 +2,6 @@ package com.springboot.project.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.GitProperties;
 import org.springframework.web.bind.annotation.RestController;
@@ -85,7 +83,5 @@ public class BaseController {
 
     @Autowired
     protected LongTermTaskUtil longTermTaskUtil;
-
-    protected Logger log = LoggerFactory.getLogger(this.getClass());
 
 }

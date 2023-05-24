@@ -1,7 +1,5 @@
 package com.springboot.project.scheduled;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -9,17 +7,17 @@ import org.springframework.stereotype.Component;
 import com.springboot.project.common.storage.Storage;
 import com.springboot.project.service.StorageSpaceService;
 import io.reactivex.rxjava3.core.Observable;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @EnableScheduling
+@Slf4j
 public class StorageSpaceScheduled {
     @Autowired
     private StorageSpaceService storageSpaceService;
 
     @Autowired
     private Storage storage;
-
-    private Logger log = LoggerFactory.getLogger(getClass());
 
     private int pageSize = 1;
 

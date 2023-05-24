@@ -3,17 +3,16 @@ package com.springboot.project.scheduled;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import org.jinq.orm.stream.JinqStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import com.springboot.project.controller.UserMessageWebSocketController;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @EnableScheduling
+@Slf4j
 public class MessageScheduled {
-    private Logger log = LoggerFactory.getLogger(getClass());
 
     @Scheduled(initialDelay = 1000, fixedDelay = 1)
     public void scheduled() throws InterruptedException, ExecutionException {
