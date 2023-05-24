@@ -44,10 +44,10 @@ logging:
         dialect:
           function:
             TemplateRenderer: ERROR
-        SQL: DEBUG
+        SQL: OFF
         orm:
           jdbc:
-            bind: TRACE
+            bind: OFF
 server:
   error:
     include-message: always
