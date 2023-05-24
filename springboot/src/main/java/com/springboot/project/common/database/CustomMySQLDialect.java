@@ -1,11 +1,11 @@
 package com.springboot.project.common.database;
 
+import org.hibernate.boot.model.FunctionContributions;
 import org.hibernate.dialect.DatabaseVersion;
 import org.hibernate.dialect.MySQLDialect;
 import org.hibernate.dialect.MySQLServerConfiguration;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.engine.jdbc.dialect.spi.DialectResolutionInfo;
-import org.hibernate.query.spi.QueryEngine;
 import org.hibernate.query.sqm.function.SqmFunctionRegistry;
 import org.hibernate.type.BasicTypeRegistry;
 import org.hibernate.type.StandardBasicTypes;
@@ -20,10 +20,10 @@ import org.hibernate.type.StandardBasicTypes;
 public class CustomMySQLDialect extends MySQLDialect {
 
     @Override
-    public void initializeFunctionRegistry(QueryEngine queryEngine) {
-        super.initializeFunctionRegistry(queryEngine);
-        BasicTypeRegistry basicTypeRegistry = queryEngine.getTypeConfiguration().getBasicTypeRegistry();
-        SqmFunctionRegistry functionRegistry = queryEngine.getSqmFunctionRegistry();
+    public void initializeFunctionRegistry(FunctionContributions functionContributions) {
+        super.initializeFunctionRegistry(functionContributions);
+        BasicTypeRegistry basicTypeRegistry = functionContributions.getTypeConfiguration().getBasicTypeRegistry();
+        SqmFunctionRegistry functionRegistry = functionContributions.getFunctionRegistry();
         functionRegistry.register("IFNULL", new StandardSQLFunction("IFNULL", StandardBasicTypes.LONG));
         functionRegistry.registerPattern("FOUND_ROWS", "COUNT(*) OVER()",
                 basicTypeRegistry.resolve(StandardBasicTypes.LONG));
