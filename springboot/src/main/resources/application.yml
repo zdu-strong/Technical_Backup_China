@@ -12,7 +12,7 @@ spring:
     properties:
       hibernate:
         jdbc:
-          time_zone: UTC
+          '[time_zone]': UTC
   servlet:
     multipart:
       max-file-size: -1
@@ -32,7 +32,7 @@ spring:
     allow-circular-references: true
   mvc:
     pathmatch:
-      matching-strategy: ant_path_matcher
+      matching-strategy: ANT_PATH_MATCHER
   task:
     scheduling:
       pool:
