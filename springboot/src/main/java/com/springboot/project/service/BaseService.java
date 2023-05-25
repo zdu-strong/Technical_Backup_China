@@ -95,6 +95,10 @@ public abstract class BaseService {
         return this.streamAll(FriendshipEntity.class);
     }
 
+    protected JPAJinqStream<LoggerEntity> LoggerEntity() {
+        return this.streamAll(LoggerEntity.class);
+    }
+
     private <U> JPAJinqStream<U> streamAll(Class<U> entity) {
         if (this.jinqJPAStreamProvider == null) {
             synchronized (getClass()) {
