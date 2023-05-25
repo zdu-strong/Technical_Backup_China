@@ -1,11 +1,15 @@
 package com.springboot.project.common.logger;
 
+import java.util.Date;
 import java.util.function.Consumer;
 import org.apache.commons.lang3.StringUtils;
+import org.jinq.orm.stream.JinqStream;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.info.GitProperties;
 import org.springframework.stereotype.Component;
 import com.google.common.collect.Lists;
+import com.springboot.project.model.LoggerModel;
 import com.springboot.project.properties.StorageRootPathProperties;
 import com.springboot.project.service.LoggerService;
 import ch.qos.logback.classic.Level;
@@ -24,6 +28,9 @@ public class LoggerAppender extends AppenderBase<ILoggingEvent> {
     @Autowired
     private StorageRootPathProperties storageRootPathProperties;
 
+    @Autowired
+    protected GitProperties gitProperties;
+
     @Override
     protected void append(ILoggingEvent eventObject) {
         if (storageRootPathProperties.isTestEnviroment()) {
@@ -32,12 +39,29 @@ public class LoggerAppender extends AppenderBase<ILoggingEvent> {
         if (!Lists.newArrayList(Level.ERROR, Level.WARN).contains(eventObject.getLevel())) {
             return;
         }
-        var message = eventObject.getMessage();
-        if (StringUtils.isBlank(message)) {
-            message = "";
+        var loggerModel = new LoggerModel().setLevel(eventObject.getLevel()).setMessage(eventObject.getMessage())
+                .setHasException(false)
+                .setExceptionClassName("")
+                .setExceptionMessage("").setExceptionStackTrace(Lists.newArrayList())
+                .setLoggerName(eventObject.getLoggerName());
+
+        if (StringUtils.isBlank(loggerModel.getMessage())) {
+            loggerModel.setMessage("");
         }
+        if (eventObject.getThrowableProxy() != null) {
+            loggerModel.setHasException(true);
+            loggerModel.setExceptionClassName(eventObject.getThrowableProxy().getClassName());
+            loggerModel.setExceptionMessage(eventObject.getThrowableProxy().getMessage());
+            loggerModel.setExceptionStackTrace(JinqStream
+                    .from(Lists.newArrayList(eventObject.getThrowableProxy().getStackTraceElementProxyArray()))
+                    .select(s -> s.getSTEAsString()).toList());
+        }
+
+        loggerModel.setGitCommitId(gitProperties.getCommitId());
+        loggerModel.setGitCommitDate(Date.from(gitProperties.getCommitTime()));
+
         try {
-            loggerService.addLogger(message);
+            loggerService.createLogger(loggerModel);
         } catch (Throwable e) {
             // do nothing
         }

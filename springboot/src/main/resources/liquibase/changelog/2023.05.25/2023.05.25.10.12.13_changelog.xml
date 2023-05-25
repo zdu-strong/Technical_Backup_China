@@ -1,0 +1,38 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="zdu (generated)" id="1685009546766-1">
+        <addColumn tableName="logger_entity">
+            <column name="exception_class_name" type="LONGTEXT(2147483647)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="zdu (generated)" id="1685009546766-2">
+        <addColumn tableName="logger_entity">
+            <column name="exception_message" type="LONGTEXT(2147483647)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="zdu (generated)" id="1685009546766-3">
+        <addColumn tableName="logger_entity">
+            <column name="exception_stack_trace" type="LONGTEXT(2147483647)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="zdu (generated)" id="1685009546766-4">
+        <addColumn tableName="logger_entity">
+            <column name="has_exception" type="BIT(1)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="zdu (generated)" id="1685009546766-5">
+        <addColumn tableName="logger_entity">
+            <column name="logger_name" type="LONGTEXT(2147483647)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

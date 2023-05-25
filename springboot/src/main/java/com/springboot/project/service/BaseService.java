@@ -19,6 +19,7 @@ import com.springboot.project.entity.UserEntity;
 import com.springboot.project.entity.UserMessageEntity;
 import com.springboot.project.entity.*;
 import com.springboot.project.format.FriendshipFormatter;
+import com.springboot.project.format.LoggerFormatter;
 import com.springboot.project.format.LongTermTaskFormatter;
 import com.springboot.project.format.OrganizeFormatter;
 import com.springboot.project.format.StorageSpaceFormatter;
@@ -56,6 +57,9 @@ public abstract class BaseService {
 
     @Autowired
     protected FriendshipFormatter friendshipFormatter;
+
+    @Autowired
+    protected LoggerFormatter loggerFormatter;
 
     private JinqJPAStreamProvider jinqJPAStreamProvider;
 
