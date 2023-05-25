@@ -32,7 +32,11 @@ public class LoggerAppender extends AppenderBase<ILoggingEvent> {
         if (StringUtils.isBlank(message)) {
             message = "";
         }
-        loggerService.addLogger(message);
+        try {
+            loggerService.addLogger(message);
+        } catch (Throwable e) {
+            // do nothing
+        }
     }
 
     @PostConstruct
