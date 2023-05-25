@@ -50,7 +50,7 @@ public class LoggerAppender extends AppenderBase<ILoggingEvent> {
 
             @Override
             public void accept(Logger logger) {
-                if ("ROOT".equals(logger.getName())) {
+                if (Logger.ROOT_LOGGER_NAME.equals(logger.getName())) {
                     logger.addAppender(LoggerAppender.this);
                 }
             }
