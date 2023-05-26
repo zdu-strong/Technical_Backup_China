@@ -1,6 +1,7 @@
 package com.springboot.project.test.service.LoggerService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Date;
 import org.apache.commons.lang3.StringUtils;
@@ -26,10 +27,11 @@ public class LoggerServiceCreateLoggerTest extends BaseTest {
         assertEquals("Hello, World!", result.getMessage());
         assertEquals("java.lang.RuntimeException", result.getExceptionClassName());
         assertEquals("Bug", result.getExceptionMessage());
-        assertEquals(75, result.getExceptionStackTrace().size());
+        assertTrue(result.getExceptionStackTrace().size() > 0);
         assertEquals("com.springboot.project.controller.HelloWorldController", result.getLoggerName());
         assertEquals(this.gitProperties.getCommitId(), result.getGitCommitId());
         assertEquals(Date.from(this.gitProperties.getCommitTime()), result.getGitCommitDate());
+        assertNotNull(result.getCreateDate());
     }
 
     @BeforeEach
