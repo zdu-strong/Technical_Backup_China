@@ -2,7 +2,6 @@ package com.springboot.project.model;
 
 import java.util.Date;
 import java.util.List;
-import ch.qos.logback.classic.Level;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -18,7 +17,7 @@ public class LoggerModel {
 
     private Date createDate;
 
-    private Level level;
+    private String level;
 
     private Boolean hasException;
 

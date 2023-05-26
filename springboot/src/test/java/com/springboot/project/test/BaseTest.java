@@ -23,6 +23,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.devtools.remote.client.HttpHeaderInterceptor;
+import org.springframework.boot.info.GitProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -51,6 +52,7 @@ import com.springboot.project.properties.StorageRootPathProperties;
 import com.springboot.project.scheduled.StorageSpaceScheduled;
 import com.springboot.project.service.EncryptDecryptService;
 import com.springboot.project.service.FriendshipService;
+import com.springboot.project.service.LoggerService;
 import com.springboot.project.service.LongTermTaskService;
 import com.springboot.project.service.OrganizeService;
 import com.springboot.project.service.StorageSpaceService;
@@ -115,6 +117,9 @@ public class BaseTest {
     protected FriendshipService friendshipService;
 
     @Autowired
+    protected LoggerService loggerService;
+
+    @Autowired
     protected PermissionUtil permissionUtil;
 
     @Autowired
@@ -128,6 +133,9 @@ public class BaseTest {
 
     @Autowired
     protected LongTermTaskUtil longTermTaskUtil;
+
+    @Autowired
+    protected GitProperties gitProperties;
 
     @BeforeEach
     public void beforeEachOfBaseTest() {

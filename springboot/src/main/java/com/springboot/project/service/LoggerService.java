@@ -11,12 +11,12 @@ import com.springboot.project.model.LoggerModel;
 @Service
 public class LoggerService extends BaseService {
 
-    public void createLogger(LoggerModel loggerModel) {
+    public LoggerModel createLogger(LoggerModel loggerModel) {
         var loggerEntity = new LoggerEntity();
         loggerEntity.setId(Generators.timeBasedGenerator().generate().toString());
         loggerEntity.setCreateDate(new Date());
         loggerEntity.setMessage(loggerModel.getMessage());
-        loggerEntity.setLevel(loggerModel.getLevel().toString());
+        loggerEntity.setLevel(loggerModel.getLevel());
         loggerEntity.setLoggerName(loggerModel.getLoggerName());
         loggerEntity.setHasException(loggerModel.getHasException());
         loggerEntity.setExceptionClassName(loggerModel.getExceptionClassName());
@@ -30,6 +30,8 @@ public class LoggerService extends BaseService {
         loggerEntity.setGitCommitId(loggerModel.getGitCommitId());
         loggerEntity.setGitCommitDate(loggerModel.getGitCommitDate());
         this.entityManager.persist(loggerEntity);
+
+        return this.loggerFormatter.format(loggerEntity);
     }
 
 }

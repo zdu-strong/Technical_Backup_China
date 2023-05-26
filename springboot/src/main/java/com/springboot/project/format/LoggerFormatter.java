@@ -16,7 +16,7 @@ public class LoggerFormatter extends BaseService {
     public LoggerModel format(LoggerEntity loggerEntity) {
         try {
             var loggerModel = new LoggerModel().setId(loggerEntity.getId()).setCreateDate(loggerEntity.getCreateDate())
-                    .setMessage(loggerEntity.getMessage()).setLevel(Level.toLevel(loggerEntity.getLevel()))
+                    .setMessage(loggerEntity.getMessage()).setLevel(Level.toLevel(loggerEntity.getLevel()).levelStr)
                     .setLoggerName(loggerEntity.getLoggerName())
                     .setHasException(loggerEntity.getHasException())
                     .setExceptionClassName(loggerEntity.getExceptionClassName())

@@ -39,7 +39,7 @@ public class LoggerAppender extends AppenderBase<ILoggingEvent> {
         if (!Lists.newArrayList(Level.ERROR, Level.WARN).contains(eventObject.getLevel())) {
             return;
         }
-        var loggerModel = new LoggerModel().setLevel(eventObject.getLevel()).setMessage(eventObject.getMessage())
+        var loggerModel = new LoggerModel().setLevel(eventObject.getLevel().levelStr).setMessage(eventObject.getMessage())
                 .setHasException(false)
                 .setExceptionClassName("")
                 .setExceptionMessage("").setExceptionStackTrace(Lists.newArrayList())
