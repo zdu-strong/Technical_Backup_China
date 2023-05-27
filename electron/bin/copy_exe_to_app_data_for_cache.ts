@@ -27,7 +27,12 @@ async function removeActionOfCopyExeForCache() {
       toArray(),
     ));
     const textOfNeedRemoveLine = "      !insertmacro copyFile \"$EXEPATH\" \"$LOCALAPPDATA\\${APP_INSTALLER_STORE_FILE}\"";
-    const textOfNewContentOfNshOfInstallerJSFile = textList!.filter((s: string) => s !== textOfNeedRemoveLine).join("\n");
+    const index = textList.findIndex((s: string) => s == textOfNeedRemoveLine);
+    const textOfToReplaceLine = "      !insertmacro copyFile \"$EXEPATH\" \"$APPDATA\\${APP_PACKAGE_NAME}\\${APP_INSTALLER_STORE_FILE}\"";
+    if (index >= 0) {
+      textList.splice(index, 1, textOfToReplaceLine);
+    }
+    const textOfNewContentOfNshOfInstallerJSFile = textList!.join("\n");
     await fs.promises.writeFile(nshOfInstallerJSFilePath, textOfNewContentOfNshOfInstallerJSFile, { encoding: "utf-8" });
   }
 }

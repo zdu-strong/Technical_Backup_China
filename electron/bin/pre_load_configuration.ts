@@ -8,7 +8,7 @@ async function main() {
   await deleteDistFolder();
   await deleteOutputFolder();
   await installDependencies();
-  await cancelCopyExeForCache();
+  await copyExeToAppDataForCache();
   await rebuildDependenciesOfElectron();
   await compileCode();
   process.exit();
@@ -93,10 +93,10 @@ async function compileCode() {
   );
 }
 
-async function cancelCopyExeForCache() {
+async function copyExeToAppDataForCache() {
   execSync(
     [
-      "npx -y -p typescript -p ts-node ts-node --skipProject bin/cancel_copy_exe_for_cache.ts"
+      "npx -y -p typescript -p ts-node ts-node --skipProject bin/copy_exe_to_app_data_for_cache.ts"
     ].join(" "),
     {
       stdio: "inherit",
