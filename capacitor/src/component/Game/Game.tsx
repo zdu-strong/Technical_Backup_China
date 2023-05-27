@@ -83,7 +83,7 @@ export default observer(() => {
 
   useMount(async () => {
     try {
-      for (let i = 10; i > 0; i--) {
+      for (let i = 100; i > 0; i--) {
         await timer(1).toPromise();
       }
       await loadSafeAreaInsets();
