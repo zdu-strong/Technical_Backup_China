@@ -39,7 +39,8 @@ public class LoggerAppender extends AppenderBase<ILoggingEvent> {
         if (!Lists.newArrayList(Level.ERROR, Level.WARN).contains(eventObject.getLevel())) {
             return;
         }
-        var loggerModel = new LoggerModel().setLevel(eventObject.getLevel().levelStr).setMessage(eventObject.getMessage())
+        var loggerModel = new LoggerModel().setLevel(eventObject.getLevel().levelStr)
+                .setMessage(eventObject.getMessage())
                 .setHasException(false)
                 .setExceptionClassName("")
                 .setExceptionMessage("").setExceptionStackTrace(Lists.newArrayList())
@@ -58,6 +59,16 @@ public class LoggerAppender extends AppenderBase<ILoggingEvent> {
                     .from(Lists.newArrayList(eventObject.getThrowableProxy().getStackTraceElementProxyArray()))
                     .select(s -> s.getSTEAsString()).toList());
         }
+
+        var stackTraceElementList = new Throwable().getStackTrace();
+        var stackTraceElement = JinqStream.from(Lists.newArrayList(stackTraceElementList)).skip(9)
+                .findFirst().get();
+        var callerClassName = stackTraceElement.getClassName();
+        var callerMethodName = stackTraceElement.getMethodName();
+        var callerLineNumber = stackTraceElement.getLineNumber();
+        loggerModel.setCallerClassName(callerClassName);
+        loggerModel.setCallerMethodName(callerMethodName);
+        loggerModel.setCallerLineNumber(callerLineNumber);
 
         try {
             loggerService.createLogger(loggerModel);

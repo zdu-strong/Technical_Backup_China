@@ -29,6 +29,9 @@ public class LoggerService extends BaseService {
         }
         loggerEntity.setGitCommitId(loggerModel.getGitCommitId());
         loggerEntity.setGitCommitDate(loggerModel.getGitCommitDate());
+        loggerEntity.setCallerClassName(loggerModel.getCallerClassName());
+        loggerEntity.setCallerMethodName(loggerModel.getCallerMethodName());
+        loggerEntity.setCallerLineNumber(loggerModel.getCallerLineNumber());
         this.entityManager.persist(loggerEntity);
 
         return this.loggerFormatter.format(loggerEntity);

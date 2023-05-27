@@ -32,6 +32,9 @@ public class LoggerServiceCreateLoggerTest extends BaseTest {
         assertEquals(this.gitProperties.getCommitId(), result.getGitCommitId());
         assertEquals(Date.from(this.gitProperties.getCommitTime()), result.getGitCommitDate());
         assertNotNull(result.getCreateDate());
+        assertEquals("com.springboot.project.controller.HelloWorldController", result.getCallerClassName());
+        assertEquals("helloWorld", result.getCallerMethodName());
+        assertEquals(15, result.getCallerLineNumber());
     }
 
     @BeforeEach
@@ -46,7 +49,10 @@ public class LoggerServiceCreateLoggerTest extends BaseTest {
                         .toList())
                 .setLoggerName("com.springboot.project.controller.HelloWorldController")
                 .setGitCommitId(this.gitProperties.getCommitId())
-                .setGitCommitDate(Date.from(this.gitProperties.getCommitTime()));
+                .setGitCommitDate(Date.from(this.gitProperties.getCommitTime()))
+                .setCallerClassName("com.springboot.project.controller.HelloWorldController")
+                .setCallerMethodName("helloWorld")
+                .setCallerLineNumber(15);
     }
 
 }

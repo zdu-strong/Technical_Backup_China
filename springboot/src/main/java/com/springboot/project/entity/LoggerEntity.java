@@ -46,4 +46,13 @@ public class LoggerEntity {
     @Column(nullable = false)
     private Date gitCommitDate;
 
+    @Column(nullable = false, length = 1024 * 1024 * 1024)
+    private String callerClassName;
+
+    @Column(nullable = false, length = 1024 * 1024 * 1024)
+    private String callerMethodName;
+
+    @Column(nullable = false)
+    private Integer callerLineNumber;
+
 }

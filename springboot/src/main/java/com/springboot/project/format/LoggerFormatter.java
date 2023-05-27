@@ -25,7 +25,10 @@ public class LoggerFormatter extends BaseService {
                             new TypeReference<List<String>>() {
                             }))
                     .setGitCommitId(loggerEntity.getGitCommitId())
-                    .setGitCommitDate(loggerEntity.getGitCommitDate());
+                    .setGitCommitDate(loggerEntity.getGitCommitDate())
+                    .setCallerClassName(loggerEntity.getCallerClassName())
+                    .setCallerMethodName(loggerEntity.getCallerMethodName())
+                    .setCallerLineNumber(loggerEntity.getCallerLineNumber());
             return loggerModel;
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e.getMessage(), e);

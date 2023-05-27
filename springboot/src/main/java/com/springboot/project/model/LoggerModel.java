@@ -33,4 +33,10 @@ public class LoggerModel {
 
     private Date gitCommitDate;
 
+    private String callerClassName;
+
+    private String callerMethodName;
+
+    private Integer callerLineNumber;
+
 }
