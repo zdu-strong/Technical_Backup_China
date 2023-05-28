@@ -162,7 +162,8 @@ public class BaseStorage {
             if (resource instanceof UrlResource || resource instanceof RangeUrlResource
                     || resource instanceof CloudStorageUrlResource
                     || resource instanceof RangeCloudStorageUrlResource) {
-                var pathSegments = Lists.newArrayList(new URIBuilder(resource.getFilename()).getPathSegments());
+                var pathSegments = Lists
+                        .newArrayList(new URIBuilder(((UrlResource) resource).getURI()).getPathSegments());
                 Collections.reverse(pathSegments);
                 String fileName = pathSegments.stream().findFirst().get();
                 return fileName;
@@ -178,8 +179,6 @@ public class BaseStorage {
                 }
             }
             return resource.getFilename();
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e.getMessage(), e);
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
