@@ -32,8 +32,8 @@ public class BaseStorageDeleteResource extends BaseStorage {
         if (path.equals(this.getRootPath())) {
             throw new RuntimeException("Unsupported path");
         }
-        return Paths.get(this.getRootPath()).relativize(Paths.get(path)).normalize().toString()
-                .replaceAll(Pattern.quote("\\"), "/");
+        return this.getRelativePathFromResourcePath(
+                Paths.get(this.getRootPath()).relativize(Paths.get(path)).normalize().toString());
     }
 
 }
