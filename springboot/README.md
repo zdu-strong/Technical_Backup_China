@@ -64,7 +64,18 @@ Some experience in use, if you already know it, you can skip it.
 3. Jinq does not support union and union all. It doesn't matter, we can add database association table for query.
 4. Jinq doest not support right join. This does not matter, we can use left join.
 5. Jinq doest not support outer join. It doesn't matter, we can add database association table for query.
-6. If the data of other tables is called through a foreign key, the inner join is used by default. If not, please use the left join first and then use the data directly.
+6. If the data of other tables is called through a foreign key, "inner join" is used by default. If "inner join" is not expected, please use "left join", and then use it in "on" or allow empty lines.<br/>
+
+Example:<br/>
+
+    this.UserEmailEntity().leftOuterJoin(
+        (s, t) -> JinqStream.of(s.getUser()),
+        (s, t) -> s.getUser().getUsername().equals("nobody")
+    );
+
+    this.UserEmailEntity()
+        .leftOuterJoin((s) -> JinqStream.of(s.getUser()))
+        .where(s -> s.getTwo() == null || s.getTwo().getUsername().equals("nobody"));
 
 ## Notes - jinq - getOnlyValue
 
