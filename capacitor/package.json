@@ -34,6 +34,7 @@
     "@awesome-cordova-plugins/android-full-screen": "6.3.0",
     "@awesome-cordova-plugins/android-notch": "6.3.0",
     "@awesome-cordova-plugins/screen-orientation": "6.3.0",
+    "@babel/plugin-proposal-private-property-in-object": "7.21.10",
     "@babylonjs/core": "6.0.0",
     "@capacitor/action-sheet": "4.1.0",
     "@capacitor/android": "4.7.3",
