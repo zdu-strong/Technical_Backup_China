@@ -8,6 +8,7 @@ async function main() {
   await runCapacitorTest();
   await runElectronTest();
   await buildMysqlDiff();
+  await buildCloud();
 }
 
 async function runElectronTest() {
@@ -96,6 +97,21 @@ async function buildMysqlDiff() {
     {
       stdio: "inherit",
       cwd: path.join(__dirname, "./MysqlDiff"),
+    }
+  );
+}
+
+async function buildCloud() {
+  execSync(
+    [
+      "docker build",
+      "-t cloud",
+      "-f ./Dockerfile",
+      "../../../",
+    ].join(" "),
+    {
+      stdio: "inherit",
+      cwd: path.join(__dirname, "./AliyunCloud"),
     }
   );
 }
