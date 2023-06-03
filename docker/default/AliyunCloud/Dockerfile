@@ -66,8 +66,6 @@ RUN mv target/*.jar target/server.jar
 FROM cloud_docker
 COPY --from=three_docker /all_code/springboot/target/server.jar /server.jar
 ENV SERVER_SHUTDOWN GRACEFUL
-ENV LOGGING_LEVEL_ORG_HIBERNATE_SQL OFF
-ENV LOGGING_LEVEL_ORG_HIBERNATE_ORM_JDBC_BIND OFF
 
 # 443 is client port
 EXPOSE 443
