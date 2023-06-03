@@ -56,7 +56,8 @@ After upgrading the dependencies, please make sure that the project runs normall
 After upgrading the dependencies, please make sure that the dependent versions in package.json are all accurate versions.<br/>
 
 The following dependencies are currently unable to continue to be upgraded:<br/>
-execa<br/>
+execa <br/>
+typescript <br/>
 
 # Demonstration of the animation effect of the video
 
