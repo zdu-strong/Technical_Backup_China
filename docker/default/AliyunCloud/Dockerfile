@@ -68,11 +68,11 @@ FROM cloud_docker
 COPY --from=three_docker /all_code/springboot/target/server.jar /server.jar
 ENV SERVER_SHUTDOWN GRACEFUL
 
-# 443 is client port
-EXPOSE 443
-
 # 8080 is server port, Since the server port is configured as 8080 in the client, the server port must be 8080 during runtime
 EXPOSE 8080
+
+# 443 is client port
+EXPOSE 443
 
 # start server
 ENTRYPOINT ["concurrently", "wait-on http://localhost:8080 && serve --single --cors --no-clipboard --no-port-switching --no-request-logging --listen=443 build", "java -jar server.jar"]
