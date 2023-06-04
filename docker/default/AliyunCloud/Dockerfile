@@ -74,4 +74,4 @@ EXPOSE 443
 EXPOSE 8080
 
 # start server
-ENTRYPOINT ["concurrently", "\"", "serve", "--single", "--cors", "--no-clipboard", "--no-port-switching", "--no-request-logging", "--listen=443", "build", "\"", "\"", "java", "-jar", "server.jar", "\""]
+ENTRYPOINT ["concurrently", "serve --single --cors --no-clipboard --no-port-switching --no-request-logging --listen=443 build", "java -jar server.jar"]
