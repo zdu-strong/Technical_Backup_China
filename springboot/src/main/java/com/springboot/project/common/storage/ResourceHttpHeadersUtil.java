@@ -180,7 +180,13 @@ public class ResourceHttpHeadersUtil {
     }
 
     public void checkIsCorrectRangeIfNeed(long totalContentLength, HttpServletRequest request) {
-        var rangeList = this.getRangeList(request);
+        List<HttpRange> rangeList;
+        try {
+            rangeList = this.getRangeList(request);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE, e.getMessage());
+        }
+
         if (rangeList.size() > 0) {
             for (var range : rangeList) {
                 var start = range.getRangeStart(totalContentLength);
