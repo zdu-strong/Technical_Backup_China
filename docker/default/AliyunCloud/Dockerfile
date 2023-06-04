@@ -21,6 +21,7 @@ RUN npm config set registry https://registry.yarnpkg.com
 RUN npm install --location=global serve@14.2.0
 
 # install concurrently
+RUN npm install --location=global wait-on@7.0.1
 RUN npm install --location=global concurrently@8.1.0
 
 # Install java
@@ -74,4 +75,4 @@ EXPOSE 443
 EXPOSE 8080
 
 # start server
-ENTRYPOINT ["concurrently", "serve --single --cors --no-clipboard --no-port-switching --no-request-logging --listen=443 build", "java -jar server.jar"]
+ENTRYPOINT ["concurrently", "wait-on http://localhost:8080 && serve --single --cors --no-clipboard --no-port-switching --no-request-logging --listen=443 build", "java -jar server.jar"]
