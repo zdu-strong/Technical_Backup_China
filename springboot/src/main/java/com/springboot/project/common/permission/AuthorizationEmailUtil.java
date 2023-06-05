@@ -8,6 +8,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
@@ -49,7 +50,7 @@ public class AuthorizationEmailUtil {
     }
 
     private String getEmailOfBody(String verificationCode) {
-        try (InputStream input = ClassLoader.getSystemResourceAsStream("email/email.html")) {
+        try (InputStream input = new ClassPathResource("email/email.html").getInputStream()) {
             String text = IOUtils.toString(input, StandardCharsets.UTF_8);
             String content = text.replaceAll(this.getRegex("verificationCode"), verificationCode);
             return content;

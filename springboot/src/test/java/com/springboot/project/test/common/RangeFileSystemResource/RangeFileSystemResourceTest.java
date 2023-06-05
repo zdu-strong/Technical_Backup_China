@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.UrlResource;
+import org.springframework.core.io.ClassPathResource;
 import com.springboot.project.common.storage.RangeFileSystemResource;
 import com.springboot.project.test.BaseTest;
 
@@ -22,6 +22,6 @@ public class RangeFileSystemResourceTest extends BaseTest {
     @BeforeEach
     public void beforeEach() {
         this.tempFile = this.storage
-                .createTempFile(new UrlResource(ClassLoader.getSystemResource("image/default.jpg")));
+                .createTempFile(new ClassPathResource("image/default.jpg"));
     }
 }
