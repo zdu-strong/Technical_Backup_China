@@ -36,7 +36,7 @@ public class LongTermTaskUtil {
             var subscription = Observable.just("").delay(1, TimeUnit.SECONDS).map((a) -> {
                 this.longTermTaskService.updateLongTermTaskToRefreshUpdateDate(idOfLongTermTask);
                 return "";
-            }).repeat().subscribe();
+            }).repeat().retry().subscribe();
             try {
                 var result = CompletableFuture.supplyAsync(() -> supplier.get()).get();
                 this.longTermTaskService.updateLongTermTaskByResult(idOfLongTermTask, result);
