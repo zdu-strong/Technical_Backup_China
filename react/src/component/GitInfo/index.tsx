@@ -1,11 +1,11 @@
 import { observer, useMobxState } from "mobx-react-use-autorun";
-import { Alert, CircularProgress } from "@mui/material";
 import GitInfo from 'react-git-info/macro'
 import { useMount } from "mobx-react-use-autorun";
 import { format, parseJSON } from "date-fns";
 import api from "@/api";
 import { GitPropertiesModel } from "@/model/GitPropertiesModel";
 import { FormattedMessage } from "react-intl";
+import LoadingOrErrorComponent from "@/common/MessageService/LoadingOrErrorComponent";
 
 export default observer(() => {
 
@@ -26,50 +26,52 @@ export default observer(() => {
       await loadServerGitInfo();
       state.ready = true;
     } catch {
-      state.error = true;
+      state.error = "服务器访问出错哦";
     }
   })
 
-  return <div className="w-full h-full flex justify-center flex-col items-center">
-    {!state.error && !state.ready && <CircularProgress style={{ width: "40px", height: "40px" }} />}
-    {state.error && <Alert severity="error">服务器访问出错哦</Alert>}
-    {state.ready && <>
-      <div className="flex flex-row">
-        <div className="flex flex-row">
-          <FormattedMessage id="FrontEndCommitId" defaultMessage="Front-end commit id" />
-          {`: `}
+  return <LoadingOrErrorComponent ready={state.ready} error={state.error}>
+    {
+      state.ready && <>
+        <div className="w-full h-full flex justify-center flex-col items-center">
+          <div className="flex flex-row">
+            <div className="flex flex-row">
+              <FormattedMessage id="FrontEndCommitId" defaultMessage="Front-end commit id" />
+              {`: `}
+            </div>
+            <div className="flex flex-row" id="FrontEndCommitIdInfo" style={{ marginLeft: "1em" }}>
+              {state.clientGitInfo.commit.hash}
+            </div>
+          </div>
+          <div className="flex flex-row">
+            <div className="flex flex-row">
+              <FormattedMessage id="BackendCommitId" defaultMessage="Backend commit id" />
+              {`: `}
+            </div>
+            <div className="flex flex-row" id="BackendCommitIdInfo" style={{ marginLeft: "1em" }}>
+              {state.serverGitInfo.commitId}
+            </div>
+          </div>
+          <div className="flex flex-row">
+            <div className="flex flex-row">
+              <FormattedMessage id="FrontEndUpdateTime" defaultMessage="Front-end update time" />
+              {`: `}
+            </div>
+            <div className="flex flex-row" id="FrondEndUpdateDateInfo" style={{ marginLeft: "1em" }}>
+              {format(parseJSON(state.clientGitInfo.commit.date), "yyyy-MM-dd HH:mm")}
+            </div>
+          </div>
+          <div className="flex flex-row">
+            <div className="flex flex-row">
+              <FormattedMessage id="BackendUpdateTime" defaultMessage="Backend update time" />
+              {`: `}
+            </div>
+            <div className="flex flex-row" id="BackendUpdateDateInfo" style={{ marginLeft: "1em" }}>
+              {format(state.serverGitInfo.commitDate, "yyyy-MM-dd HH:mm")}
+            </div>
+          </div>
         </div>
-        <div className="flex flex-row" id="FrontEndCommitIdInfo" style={{ marginLeft: "1em" }}>
-          {state.clientGitInfo.commit.hash}
-        </div>
-      </div>
-      <div className="flex flex-row">
-        <div className="flex flex-row">
-          <FormattedMessage id="BackendCommitId" defaultMessage="Backend commit id" />
-          {`: `}
-        </div>
-        <div className="flex flex-row" id="BackendCommitIdInfo" style={{ marginLeft: "1em" }}>
-          {state.serverGitInfo.commitId}
-        </div>
-      </div>
-      <div className="flex flex-row">
-        <div className="flex flex-row">
-          <FormattedMessage id="FrontEndUpdateTime" defaultMessage="Front-end update time" />
-          {`: `}
-        </div>
-        <div className="flex flex-row" id="FrondEndUpdateDateInfo" style={{ marginLeft: "1em" }}>
-          {format(parseJSON(state.clientGitInfo.commit.date), "yyyy-MM-dd HH:mm")}
-        </div>
-      </div>
-      <div className="flex flex-row">
-        <div className="flex flex-row">
-          <FormattedMessage id="BackendUpdateTime" defaultMessage="Backend update time" />
-          {`: `}
-        </div>
-        <div className="flex flex-row" id="BackendUpdateDateInfo" style={{ marginLeft: "1em" }}>
-          {format(state.serverGitInfo.commitDate, "yyyy-MM-dd HH:mm")}
-        </div>
-      </div>
-    </>}
-  </div>
+      </>
+    }
+  </LoadingOrErrorComponent>
 })
