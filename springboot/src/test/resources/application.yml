@@ -25,7 +25,6 @@ spring:
       enabled: false
   mail:
     host: smtp.163.com
-    port: 465
     username: zdu_20230408001@163.com
     password: INCFTHKUALEWKKTK
     default-encoding: UTF-8
