@@ -9,7 +9,7 @@ import org.apache.commons.io.FileUtils;
 import org.jinq.orm.stream.JinqStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.UrlResource;
+import org.springframework.core.io.ClassPathResource;
 import com.springboot.project.test.BaseTest;
 import io.reactivex.rxjava3.core.Observable;
 
@@ -40,7 +40,7 @@ public class StorageSpaceScheduledScheduledTest extends BaseTest {
     public void beforeEach() {
         FileUtils.deleteQuietly(new File(this.storage.getRootPath()));
         var storageFileModel = this.storage
-                .storageResource(new UrlResource(ClassLoader.getSystemResource("image/default.jpg")));
+                .storageResource(new ClassPathResource("image/default.jpg"));
         this.folderName = storageFileModel.getFolderName();
     }
 

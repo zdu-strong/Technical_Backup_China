@@ -7,7 +7,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import org.apache.http.client.utils.URIBuilder;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.UrlResource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
@@ -19,7 +19,7 @@ public class ResourceControllerUploadResourceTest extends BaseTest {
     public void test() throws URISyntaxException {
         var url = new URIBuilder("/upload/resource").build();
         var body = new LinkedMultiValueMap<Object, Object>();
-        body.set("file", new UrlResource(ClassLoader.getSystemResource("image/default.jpg")));
+        body.set("file", new ClassPathResource("image/default.jpg"));
         var response = this.testRestTemplate.postForEntity(url, body, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getBody().startsWith("/resource/"));

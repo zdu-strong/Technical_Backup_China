@@ -14,7 +14,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.core.io.UrlResource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -62,7 +62,7 @@ public class ResourceControllerUploadMergeTest extends BaseTest {
 
     @BeforeEach
     public void beforeEach() throws IOException {
-        var imageResource = new UrlResource(ClassLoader.getSystemResource("image/default.jpg"));
+        var imageResource = new ClassPathResource("image/default.jpg");
         var everySize = 100;
         this.urlList = Observable
                 .range(0,
