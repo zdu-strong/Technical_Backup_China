@@ -29,6 +29,9 @@ public class BaseStorageSave extends BaseStorageCreateTempFile {
 
             /* 设置文件名称 */
             storageFileModel.setFileName(this.getFileNameFromResource(resource));
+            if (resource.isFile() && resource.getFile().isDirectory()) {
+                storageFileModel.setFileName(null);
+            }
 
             /* 设置文件夹大小 */
             if (resource.isFile()) {
@@ -118,11 +121,12 @@ public class BaseStorageSave extends BaseStorageCreateTempFile {
         var mockHttpServletRequest = new MockHttpServletRequest();
         mockHttpServletRequest.setRequestURI(url);
         var relativePath = this.getRelativePathFromRequest(mockHttpServletRequest);
+        var list = Lists.newArrayList(StringUtils.split(relativePath, "/"));
         var storageFileModel = new StorageFileModel().setFolderName(
-                JinqStream.from(Lists.newArrayList(StringUtils.split(relativePath, "/"))).findFirst().get());
-        var resource = this.getResourceFromRequest(mockHttpServletRequest);
+                JinqStream.from(list).findFirst().get());
         storageFileModel.setFolderSize(this.getResourceSizeByRelativePath(relativePath));
-        storageFileModel.setFileName(this.getFileNameFromResource(resource));
+        storageFileModel.setFileName(JinqStream.from(list).skip(list.size() > 1 ? list.size() - 1 : 1)
+                .findFirst().orElse(null));
         storageFileModel.setRelativePath(relativePath);
 
         /* 设置相对url */

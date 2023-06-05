@@ -165,16 +165,6 @@ public class BaseStorage {
                 Collections.reverse(pathSegments);
                 String fileName = pathSegments.stream().findFirst().get();
                 return fileName;
-            } else {
-                if (resource.isFile()) {
-                    File sourceFile = resource.getFile();
-                    if (!sourceFile.exists()) {
-                        throw new RuntimeException("Resource does not exist");
-                    }
-                    if (sourceFile.isDirectory()) {
-                        return null;
-                    }
-                }
             }
             return resource.getFilename();
         } catch (IOException e) {
