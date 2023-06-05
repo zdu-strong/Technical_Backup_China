@@ -30,7 +30,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-17-openjdk
 ENV PATH $PATH:$JAVA_HOME/bin
 
 # compile server code
-FROM cloud_docker as second_docker
+FROM first_docker as second_docker
 RUN dnf install -y git
 COPY ./ /all_code
 WORKDIR /all_code/springboot
