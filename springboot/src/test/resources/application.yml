@@ -25,9 +25,15 @@ spring:
       enabled: false
   mail:
     host: smtp.163.com
-    username: zdu_202104121637@163.com
-    password: WTMZGHSLRALWKLDY
+    port: 465
+    username: zdu_20230408001@163.com
+    password: INCFTHKUALEWKKTK
     default-encoding: UTF-8
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable: true
   main:
     allow-circular-references: true
   mvc:
