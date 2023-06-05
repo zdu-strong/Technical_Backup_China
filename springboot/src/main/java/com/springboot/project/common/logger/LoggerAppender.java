@@ -10,6 +10,7 @@ import org.springframework.boot.info.GitProperties;
 import org.springframework.stereotype.Component;
 import com.google.common.collect.Lists;
 import com.springboot.project.model.LoggerModel;
+import com.springboot.project.properties.StorageRootPathProperties;
 import com.springboot.project.service.LoggerService;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -27,8 +28,16 @@ public class LoggerAppender extends AppenderBase<ILoggingEvent> {
     @Autowired
     protected GitProperties gitProperties;
 
+    @Autowired
+    private StorageRootPathProperties storageRootPathProperties;
+
     @Override
     protected void append(ILoggingEvent eventObject) {
+
+        if (storageRootPathProperties.isTestEnviroment()) {
+            return;
+        }
+
         if (!Lists.newArrayList(Level.ERROR, Level.WARN).contains(eventObject.getLevel())) {
             return;
         }
