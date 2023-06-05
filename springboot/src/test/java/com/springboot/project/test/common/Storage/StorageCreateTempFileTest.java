@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.File;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.UrlResource;
+import org.springframework.core.io.ClassPathResource;
 import com.springboot.project.test.BaseTest;
 
 public class StorageCreateTempFileTest extends BaseTest {
@@ -20,7 +20,7 @@ public class StorageCreateTempFileTest extends BaseTest {
     @BeforeEach
     public void beforeEach() {
         this.resourcePath = this.storage
-                .storageResource(new UrlResource(ClassLoader.getSystemResource("image/default.jpg")))
+                .storageResource(new ClassPathResource("image/default.jpg"))
                 .getRelativePath();
     }
 }

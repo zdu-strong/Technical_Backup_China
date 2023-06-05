@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.UrlResource;
+import org.springframework.core.io.ClassPathResource;
 import com.springboot.project.test.BaseTest;
 
 public class StorageGetResoureUrlFromResourcePathTest extends BaseTest {
@@ -23,6 +23,6 @@ public class StorageGetResoureUrlFromResourcePathTest extends BaseTest {
     @BeforeEach
     public void beforeEach() {
         this.resoucePath = this.storage
-                .storageResource(new UrlResource(ClassLoader.getSystemResource("image/default.jpg"))).getRelativePath();
+                .storageResource(new ClassPathResource("image/default.jpg")).getRelativePath();
     }
 }

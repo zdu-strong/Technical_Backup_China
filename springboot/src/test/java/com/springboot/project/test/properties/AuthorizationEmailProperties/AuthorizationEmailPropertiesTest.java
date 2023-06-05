@@ -8,7 +8,7 @@ public class AuthorizationEmailPropertiesTest extends BaseTest {
 
     @Test
     public void test() {
-        assertEquals("zdu_202104121637@163.com",
+        assertEquals("zdu_20230408001@163.com",
                 this.authorizationEmailProperties.getSenderEmail());
     }
 }

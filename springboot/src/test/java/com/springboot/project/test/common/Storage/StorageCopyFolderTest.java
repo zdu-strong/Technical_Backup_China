@@ -6,8 +6,8 @@ import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.UrlResource;
 import com.springboot.project.test.BaseTest;
 
 public class StorageCopyFolderTest extends BaseTest {
@@ -29,7 +29,7 @@ public class StorageCopyFolderTest extends BaseTest {
     @BeforeEach
     public void beforeEach() {
         this.tempFolder = this.storage.createTempFolderByDecompressingZipResource(
-                new UrlResource(ClassLoader.getSystemResource("zip/default.zip")));
+                new ClassPathResource("zip/default.zip"));
     }
 
     @AfterEach

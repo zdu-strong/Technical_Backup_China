@@ -5,8 +5,8 @@ import java.io.File;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import com.springboot.project.test.BaseTest;
 
 public class StorageCreateTempFolderFromResourceTest extends BaseTest {
@@ -23,6 +23,6 @@ public class StorageCreateTempFolderFromResourceTest extends BaseTest {
 
     @BeforeEach
     public void beforeEach() {
-        this.resource = new UrlResource(ClassLoader.getSystemResource("zip/default.zip"));
+        this.resource = new ClassPathResource("zip/default.zip");
     }
 }

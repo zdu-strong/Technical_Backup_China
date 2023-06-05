@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import com.springboot.project.test.BaseTest;
 
 public class StorageGetResourceFromRequestByRangeTest extends BaseTest {
@@ -20,7 +20,7 @@ public class StorageGetResourceFromRequestByRangeTest extends BaseTest {
     @BeforeEach
     public void beforeEach() {
         var storageFileModel = this.storage
-                .storageResource(new UrlResource(ClassLoader.getSystemResource("image/default.jpg")));
+                .storageResource(new ClassPathResource("image/default.jpg"));
         this.request.setRequestURI(storageFileModel.getRelativeUrl());
     }
 }

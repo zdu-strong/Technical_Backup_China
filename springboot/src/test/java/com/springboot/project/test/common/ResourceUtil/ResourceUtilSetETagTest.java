@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.UrlResource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import com.springboot.project.test.BaseTest;
 
@@ -22,7 +22,7 @@ public class ResourceUtilSetETagTest extends BaseTest {
     public void beforeEach() {
         httpHeaders = new HttpHeaders();
         var storageFileModel = this.storage
-                .storageResource(new UrlResource(ClassLoader.getSystemResource("image/default.jpg")));
+                .storageResource(new ClassPathResource("image/default.jpg"));
         this.request.setRequestURI(storageFileModel.getRelativeUrl());
     }
 }

@@ -7,9 +7,9 @@ import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.mock.web.MockHttpServletRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springboot.project.test.BaseTest;
@@ -29,7 +29,7 @@ public class StorageGetResourceFromRequestByFolderTest extends BaseTest {
 
     @BeforeEach
     public void beforeEach() {
-        var resource = new UrlResource(ClassLoader.getSystemResource("zip/default.zip"));
+        var resource = new ClassPathResource("zip/default.zip");
         File tempFolder = this.storage.createTempFolderByDecompressingZipResource(resource);
         var mockHttpServletRequest = new MockHttpServletRequest();
         mockHttpServletRequest

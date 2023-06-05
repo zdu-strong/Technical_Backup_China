@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
 import org.apache.http.client.utils.URIBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.UrlResource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import com.springboot.project.test.BaseTest;
@@ -37,7 +37,7 @@ public class ResourceControllerGetResourceTest extends BaseTest {
     @BeforeEach
     public void beforeEach() {
         var storageFileModel = this.storage
-                .storageResource(new UrlResource(ClassLoader.getSystemResource("image/default.jpg")));
+                .storageResource(new ClassPathResource("image/default.jpg"));
         this.resourceUrl = storageFileModel.getRelativeUrl();
     }
 }

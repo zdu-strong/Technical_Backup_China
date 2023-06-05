@@ -3,8 +3,8 @@ package com.springboot.project.test.common.Storage;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.web.multipart.MultipartFile;
 import com.springboot.project.test.BaseTest;
 
@@ -20,6 +20,6 @@ public class StorageCreateTempMultipartFileTest extends BaseTest {
 
     @BeforeEach
     public void beforeEach() {
-        this.resource = new UrlResource(ClassLoader.getSystemResource("image/default.jpg"));
+        this.resource = new ClassPathResource("image/default.jpg");
     }
 }
