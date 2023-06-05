@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import com.google.common.net.HttpHeaders;
 import com.springboot.project.test.BaseTest;
 
@@ -22,7 +22,7 @@ public class ResourceUtilGetResourceFromRequestByMultipartRangeTest extends Base
 
     @BeforeEach
     public void beforeEach() {
-        this.resource = new UrlResource(ClassLoader.getSystemResource("image/default.jpg"));
+        this.resource = new ClassPathResource("image/default.jpg");
         var storageFileModel = this.storage.storageResource(resource);
         this.request.setRequestURI(storageFileModel.getRelativeUrl());
         this.request.addHeader(HttpHeaders.RANGE, "bytes= 0-99,700-799,2000-2099");

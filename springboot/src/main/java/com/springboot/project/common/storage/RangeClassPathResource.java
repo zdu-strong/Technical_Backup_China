@@ -2,16 +2,15 @@ package com.springboot.project.common.storage;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import org.apache.commons.io.input.BoundedInputStream;
-import org.springframework.core.io.UrlResource;
+import org.springframework.core.io.ClassPathResource;
 
-public class RangeUrlResource extends UrlResource {
+public class RangeClassPathResource extends ClassPathResource {
     private long start;
     private long contentLength;
 
-    public RangeUrlResource(URL url, long start, long length) {
-        super(url);
+    public RangeClassPathResource(String path, long start, long length) {
+        super(path);
         this.start = start;
         this.contentLength = length;
     }

@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.core.io.UrlResource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import com.springboot.project.test.BaseTest;
@@ -31,7 +31,7 @@ public class ResourceUtilSetContentDispositionTest extends BaseTest {
     public void beforeEach() {
         httpHeaders = new HttpHeaders();
         var storageFileModel = this.storage
-                .storageResource(new UrlResource(ClassLoader.getSystemResource("image/default.jpg")));
+                .storageResource(new ClassPathResource("image/default.jpg"));
         this.request.setRequestURI(storageFileModel.getRelativeUrl());
     }
 }

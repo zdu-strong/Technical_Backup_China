@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import com.springboot.project.test.BaseTest;
 
@@ -24,7 +24,7 @@ public class ResourceUtilSetContentLengthByMultipartRangeTest extends BaseTest {
     @BeforeEach
     public void beforeEach() {
         httpHeaders = new HttpHeaders();
-        this.resource = new UrlResource(ClassLoader.getSystemResource("image/default.jpg"));
+        this.resource = new ClassPathResource("image/default.jpg");
         var storageFileModel = this.storage.storageResource(this.resource);
         this.request.setRequestURI(storageFileModel.getRelativeUrl());
         this.request.addHeader(HttpHeaders.RANGE, "bytes= 0-99,400-499,1900-1999");

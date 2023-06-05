@@ -10,7 +10,6 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.http.client.utils.URIBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
-import com.springboot.project.common.storage.RangeUrlResource;
+import com.springboot.project.common.storage.RangeClassPathResource;
 import com.springboot.project.model.LongTermTaskModel;
 import com.springboot.project.test.BaseTest;
 import io.reactivex.rxjava3.core.Observable;
@@ -76,7 +75,7 @@ public class ResourceControllerUploadMergeTest extends BaseTest {
                     if (imageResource.contentLength() < startIndex * everySize + everySize) {
                         rangeLength = Long.valueOf(imageResource.contentLength() - startIndex * everySize).intValue();
                     }
-                    body.set("file", new RangeUrlResource(ClassLoader.getSystemResource("image/default.jpg"),
+                    body.set("file", new RangeClassPathResource("image/default.jpg",
                             startIndex * everySize, rangeLength));
                     var response = this.testRestTemplate.postForEntity(url, body, String.class);
                     assertEquals(HttpStatus.OK, response.getStatusCode());

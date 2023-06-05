@@ -2,7 +2,6 @@ package com.springboot.project.common.storage;
 
 import java.io.IOException;
 import java.net.URL;
-
 import org.springframework.core.io.UrlResource;
 
 public class CloudStorageUrlResource extends UrlResource {

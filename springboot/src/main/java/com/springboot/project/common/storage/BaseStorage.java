@@ -159,9 +159,7 @@ public class BaseStorage {
 
     public String getFileNameFromResource(Resource resource) {
         try {
-            if (resource instanceof UrlResource || resource instanceof RangeUrlResource
-                    || resource instanceof CloudStorageUrlResource
-                    || resource instanceof RangeCloudStorageUrlResource) {
+            if (resource instanceof UrlResource) {
                 var pathSegments = Lists
                         .newArrayList(new URIBuilder(((UrlResource) resource).getURI()).getPathSegments());
                 Collections.reverse(pathSegments);
