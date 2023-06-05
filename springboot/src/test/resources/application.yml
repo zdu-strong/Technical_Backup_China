@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:test?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC&createDatabaseIfNotExist=true;MODE=MySQL;DB_CLOSE_DELAY=-1;LOCK_MODE=1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:test?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC&createDatabaseIfNotExist=true;MODE=MySQL;DB_CLOSE_DELAY=-1;LOCK_MODE=1;DB_CLOSE_ON_EXIT=FALSE;DEFAULT_LOCK_TIMEOUT=600000
     username: sa
     password: sa
     driver-class-name: org.h2.Driver

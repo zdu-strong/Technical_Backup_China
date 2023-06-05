@@ -32,7 +32,7 @@ async function startServer() {
       cwd: path.join(__dirname, '../../springboot'),
       extendEnv: true,
       env: {
-        "SPRING_DATASOURCE_URL": `jdbc:h2:mem:test?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC&createDatabaseIfNotExist=true;MODE=MYSQL;DB_CLOSE_DELAY=-1;LOCK_MODE=1;DB_CLOSE_ON_EXIT=FALSE`,
+        "SPRING_DATASOURCE_URL": `jdbc:h2:mem:test?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC&createDatabaseIfNotExist=true;MODE=MySQL;DB_CLOSE_DELAY=-1;LOCK_MODE=1;DB_CLOSE_ON_EXIT=FALSE;DEFAULT_LOCK_TIMEOUT=600000`,
         "SERVER_PORT": `${availableServerPort}`,
         "SPRING_DATASOURCE_USERNAME": `sa`,
         "SPRING_DATASOURCE_PASSWORD": `sa`,
