@@ -41,7 +41,9 @@ public class LongTermTaskUtil {
             }).repeat().retry().subscribe();
             try {
                 var result = CompletableFuture.supplyAsync(() -> supplier.get()).get();
-                this.longTermTaskService.updateLongTermTaskByResult(idOfLongTermTask, result);
+                CompletableFuture.runAsync(() -> {
+                    this.longTermTaskService.updateLongTermTaskByResult(idOfLongTermTask, result);
+                }).get();
             } catch (Throwable e) {
                 CompletableFuture.runAsync(() -> {
                     if (e instanceof ExecutionException && e.getCause() != null) {
