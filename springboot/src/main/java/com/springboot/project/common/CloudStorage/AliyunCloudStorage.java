@@ -3,23 +3,36 @@ package com.springboot.project.common.CloudStorage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-
+import java.time.Duration;
+import java.util.Calendar;
+import java.util.Date;
+import org.apache.commons.lang3.ArrayUtils;
+import org.jinq.orm.stream.JinqStream;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
+import com.aliyun.oss.model.GetObjectRequest;
 import com.aliyun.oss.model.ListObjectsV2Request;
 import com.aliyun.oss.model.ListObjectsV2Result;
 import com.aliyun.oss.model.OSSObjectSummary;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
+import com.springboot.project.common.storage.BaseStorage;
+import com.springboot.project.common.storage.CloudStorageUrlResource;
+import com.springboot.project.common.storage.RangeCloudStorageUrlResource;
 import com.springboot.project.common.storage.SequenceResource;
 import com.springboot.project.properties.AliyunCloudStorageProperties;
 import io.reactivex.rxjava3.core.Observable;
 
 @Component
-public class AliyunCloudStorage implements CloudStorageInterface {
+public class AliyunCloudStorage extends BaseStorage implements CloudStorageInterface {
+
+    private Duration tempUrlSurvivalDuration = Duration.ofDays(1);
 
     @Autowired
     private AliyunCloudStorageProperties aliyunCloudStorageProperties;
@@ -39,7 +52,8 @@ public class AliyunCloudStorage implements CloudStorageInterface {
                         new ByteArrayInputStream(new byte[] {}));
                 for (var childOfSourceFileOrSourceFolder : sourceFileOrSourceFolder.listFiles()) {
                     this.storageResource(childOfSourceFileOrSourceFolder,
-                            key + childOfSourceFileOrSourceFolder.getName());
+                            key + this.getFileNameFromResource(
+                                    new FileSystemResource(childOfSourceFileOrSourceFolder)));
                 }
             } else {
                 try (var input = new FileSystemResource(sourceFileOrSourceFolder).getInputStream()) {
@@ -81,47 +95,117 @@ public class AliyunCloudStorage implements CloudStorageInterface {
 
     @Override
     public Resource getResource(String key) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getResource'");
+        var list = this.getList(key + "/").toList().blockingGet();
+        if (!list.isEmpty()) {
+            try {
+                return new ByteArrayResource(
+                        new ObjectMapper().writeValueAsBytes(JinqStream.from(list).where(s -> !s.equals(key + "/"))
+                                .select(s -> this.getFileNameFromResource(new FileSystemResource(s))).toList()));
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
+        }
+
+        var calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.MILLISECOND, Long.valueOf(this.tempUrlSurvivalDuration.toMillis()).intValue());
+        Date expireDate = calendar.getTime();
+
+        var ossClient = this.getOssClientClient();
+        try {
+            var url = ossClient.generatePresignedUrl(this.aliyunCloudStorageProperties.getBucketName(), key,
+                    expireDate);
+            var getObjectRequest = new GetObjectRequest(this.aliyunCloudStorageProperties.getBucketName(),
+                    key);
+            var ossObject = ossClient.getObject(getObjectRequest);
+            return new CloudStorageUrlResource(url, ossObject.getResponse().getContentLength());
+        } finally {
+            ossClient.shutdown();
+        }
     }
 
     @Override
     public Resource getResource(String key, long startIndex, long rangeContentLength) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getResource'");
+        var list = this.getList(key + "/").toList().blockingGet();
+        if (!list.isEmpty()) {
+            try {
+                return new ByteArrayResource(ArrayUtils.toPrimitive(
+                        Lists.newArrayList(
+                                JinqStream
+                                        .of(Lists.newArrayList(new ObjectMapper().writeValueAsBytes(JinqStream
+                                                .from(list).where(s -> !s.equals(key + "/"))
+                                                .select(s -> this.getFileNameFromResource(new FileSystemResource(s)))
+                                                .toList())))
+                                        .skip(startIndex).limit(rangeContentLength).toArray())
+                                .toArray(new Byte[] {})));
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
+        }
+
+        var calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.MILLISECOND, Long.valueOf(this.tempUrlSurvivalDuration.toMillis()).intValue());
+        Date expireDate = calendar.getTime();
+
+        var ossClient = this.getOssClientClient();
+        try {
+            var url = ossClient.generatePresignedUrl(this.aliyunCloudStorageProperties.getBucketName(), key,
+                    expireDate);
+            return new RangeCloudStorageUrlResource(url, startIndex, rangeContentLength);
+        } finally {
+            ossClient.shutdown();
+        }
     }
 
     @Override
     public Observable<String> getRootList() {
-        var ossClient = this.getOssClientClient();
-        try {
-            String nextContinuationToken = null;
-            ListObjectsV2Result result = null;
+        return getList("").map(s -> this.getFileNameFromResource(new FileSystemResource(s)));
+    }
 
-            do {
-                ListObjectsV2Request listObjectsV2Request = new ListObjectsV2Request(
-                        this.aliyunCloudStorageProperties.getBucketName()).withMaxKeys(200);
-                listObjectsV2Request.setPrefix("");
-                listObjectsV2Request.setDelimiter("/");
-                listObjectsV2Request.setContinuationToken(nextContinuationToken);
-                result = ossClient.listObjectsV2(listObjectsV2Request);
+    private Observable<String> getList(String prefix) {
+        return Observable.create((emitter) -> {
+            try {
+                String nextContinuationToken = null;
+                ListObjectsV2Result result = null;
+                do {
+                    if (emitter.isDisposed()) {
+                        return;
+                    }
+                    ListObjectsV2Request listObjectsV2Request = new ListObjectsV2Request(
+                            this.aliyunCloudStorageProperties.getBucketName()).withMaxKeys(200);
+                    listObjectsV2Request.setPrefix(prefix);
+                    listObjectsV2Request.setDelimiter("/");
+                    listObjectsV2Request.setContinuationToken(nextContinuationToken);
+                    var ossClient = this.getOssClientClient();
+                    try {
+                        result = ossClient.listObjectsV2(listObjectsV2Request);
+                    } finally {
+                        ossClient.shutdown();
+                    }
+                    for (OSSObjectSummary objectSummary : result.getObjectSummaries()) {
+                        if (emitter.isDisposed()) {
+                            return;
+                        }
+                        emitter.onNext(objectSummary.getKey());
+                        Thread.sleep(0);
+                    }
 
-                for (OSSObjectSummary objectSummary : result.getObjectSummaries()) {
-                    System.out.println(objectSummary.getKey());
-                }
+                    for (String commonPrefix : result.getCommonPrefixes()) {
+                        if (emitter.isDisposed()) {
+                            return;
+                        }
+                        emitter.onNext(commonPrefix);
+                        Thread.sleep(0);
+                    }
 
-                for (String commonPrefix : result.getCommonPrefixes()) {
-                    System.out.println(commonPrefix);
-                }
-
-                nextContinuationToken = result.getNextContinuationToken();
-
-            } while (result.isTruncated());
-        } finally {
-            ossClient.shutdown();
-        }
-
-        return Observable.fromArray(new String[] {});
+                    nextContinuationToken = result.getNextContinuationToken();
+                } while (result.isTruncated());
+                emitter.onComplete();
+            } catch (Throwable e) {
+                emitter.onError(e);
+            }
+        });
     }
 
     private OSS getOssClientClient() {
