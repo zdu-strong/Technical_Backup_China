@@ -87,8 +87,17 @@ public class AliyunCloudStorage extends BaseStorage implements CloudStorageInter
     public void delete(String key) {
         var ossClient = this.getOssClientClient();
         try {
+            var list = this.getList(key + "/").toList().blockingGet();
+            if (!list.isEmpty()) {
+                JinqStream.from(list).where(s -> !s.equals(key + "/"))
+                        .select(s -> this.getFileNameFromResource(new FileSystemResource(s)))
+                        .select(s -> {
+                            this.delete(key + "/" + s);
+                            return "";
+                        }).toList();
+                ossClient.deleteObject(this.aliyunCloudStorageProperties.getBucketName(), key + "/");
+            }
             ossClient.deleteObject(this.aliyunCloudStorageProperties.getBucketName(), key);
-            ossClient.deleteObject(this.aliyunCloudStorageProperties.getBucketName(), key + "/");
         } finally {
             ossClient.shutdown();
         }
