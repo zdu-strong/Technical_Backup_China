@@ -18,7 +18,7 @@ public interface CloudStorageInterface {
     void delete(String key);
 
     /**
-     * If it is a directory, return like: JSON.toString(["childFile", "childDirectory/"])
+     * If it is a directory, return like: JSON.toString(["childFile", "childDirectory"])
      * If it is a directory, return ByteArrayStream, else CloudStorageUrlResource.
      * @param key
      * @return
@@ -26,7 +26,7 @@ public interface CloudStorageInterface {
     Resource getResource(String key);
 
     /**
-     * If it is a directory, return like: JSON.toString(["childFile", "childDirectory/"])
+     * If it is a directory, return like: JSON.toString(["childFile", "childDirectory"])
      * If it is a directory, return ByteArrayStream. else RangeCloudStorageUrlResource.
      * @param key
      * @param startIndex
