@@ -50,7 +50,7 @@ public class BaseStorageSave extends BaseStorageCreateTempFile {
 
             /* 获取相对路径 */
             String relativePath = this.getRelativePathFromResourcePath(storageFileModel.getFolderName());
-            if (storageFileModel.getFileName() != null) {
+            if (StringUtils.isNotBlank(storageFileModel.getFileName())) {
                 relativePath = this.getRelativePathFromResourcePath(
                         Paths.get(storageFileModel.getFolderName(), storageFileModel.getFileName()).toString());
             }

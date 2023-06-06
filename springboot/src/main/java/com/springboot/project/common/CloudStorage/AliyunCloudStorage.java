@@ -73,6 +73,7 @@ public class AliyunCloudStorage implements CloudStorageInterface {
         var ossClient = this.getOssClientClient();
         try {
             ossClient.deleteObject(this.aliyunCloudStorageProperties.getBucketName(), key);
+            ossClient.deleteObject(this.aliyunCloudStorageProperties.getBucketName(), key + "/");
         } finally {
             ossClient.shutdown();
         }

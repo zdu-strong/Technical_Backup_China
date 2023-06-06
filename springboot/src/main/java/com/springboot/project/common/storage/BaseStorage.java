@@ -165,9 +165,9 @@ public class BaseStorage {
                         .newArrayList(new URIBuilder(((UrlResource) resource).getURI()).getPathSegments());
                 Collections.reverse(pathSegments);
                 String fileName = pathSegments.stream().findFirst().get();
-                return fileName;
+                return this.getRelativePathFromResourcePath(fileName);
             }
-            return resource.getFilename();
+            return this.getRelativePathFromResourcePath(resource.getFilename());
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
