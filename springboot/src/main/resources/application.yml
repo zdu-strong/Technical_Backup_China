@@ -61,11 +61,11 @@ server:
 properties:
   storage:
     root:
-      path: ${StorageRootPath}
+      path: ${storage.root.path}
     cloud:
       aliyun:
-        enabled: false
-        endpoint: ""
-        bucketName: ""
-        accessKeyId: ""
-        accessKeySecret: ""
+        enabled: ${storage.cloud.aliyun.enabled}
+        endpoint: ${storage.cloud.aliyun.endpoint}
+        bucketName: ${storage.cloud.aliyun.bucketName}
+        accessKeyId: ${storage.cloud.aliyun.accessKeyId}
+        accessKeySecret: ${storage.cloud.aliyun.accessKeySecret}
