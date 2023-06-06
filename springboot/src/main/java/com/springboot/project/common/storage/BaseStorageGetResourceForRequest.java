@@ -32,10 +32,9 @@ public class BaseStorageGetResourceForRequest extends BaseStorageDeleteResource 
             }
             var file = new File(this.getRootPath(), relativePath);
             if (file.isDirectory()) {
-
                 var jsonString = new ObjectMapper().writeValueAsString(getChildFileNameListFromDirectory(file));
-
-                return new ByteArrayResource(jsonString.getBytes(StandardCharsets.UTF_8));
+                var jsonBytes = jsonString.getBytes(StandardCharsets.UTF_8);
+                return new ByteArrayResource(jsonBytes);
             }
             return new FileSystemResource(file);
         } catch (JsonProcessingException e) {
@@ -64,14 +63,13 @@ public class BaseStorageGetResourceForRequest extends BaseStorageDeleteResource 
             }
             var file = new File(this.getRootPath(), relativePath);
             if (file.isDirectory()) {
-
                 var jsonString = new ObjectMapper().writeValueAsString(getChildFileNameListFromDirectory(file));
-
-                return new ByteArrayResource(ArrayUtils.toPrimitive(
-                        Lists.newArrayList(
-                                JinqStream.of(Lists.newArrayList(jsonString.getBytes(StandardCharsets.UTF_8)))
-                                        .skip(start).limit(length).toArray())
-                                .toArray(new Byte[] {})));
+                var jsonBytes = jsonString.getBytes(StandardCharsets.UTF_8);
+                var bytes = ArrayUtils.toPrimitive(
+                        JinqStream.from(Lists.newArrayList(ArrayUtils.toObject(jsonBytes))).skip(start)
+                                .limit(length)
+                                .toList().toArray(new Byte[] {}));
+                return new ByteArrayResource(bytes);
             }
             return new RangeFileSystemResource(file, start, length);
         } catch (JsonProcessingException e) {

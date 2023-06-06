@@ -67,11 +67,12 @@ public class ResourceHttpHeadersUtil {
             var rangeList = this.getRangeList(request);
             if (rangeList.size() > 1) {
                 httpHeaders.setContentType(MediaType.parseMediaType("multipart/byteranges; boundary=" + this.boundary));
+                return;
+            }
+
+            if (resource instanceof ByteArrayResource) {
+                httpHeaders.setContentType(MediaType.APPLICATION_JSON);
             } else {
-                if (resource instanceof ByteArrayResource) {
-                    httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-                    return;
-                }
                 ArrayList<String> pathSegments = Lists
                         .newArrayList(new URIBuilder(request.getRequestURI()).getPathSegments());
                 Collections.reverse(pathSegments);
@@ -109,9 +110,6 @@ public class ResourceHttpHeadersUtil {
             var pathSegments = Lists.newArrayList(new URIBuilder(request.getRequestURI()).getPathSegments());
             Collections.reverse(pathSegments);
             String fileName = pathSegments.stream().findFirst().get();
-            if (resource instanceof ByteArrayResource) {
-                fileName += ".json";
-            }
             ContentDisposition contentDisposition = contentDispositionBuilder.filename(fileName, StandardCharsets.UTF_8)
                     .build();
             httpHeaders.setContentDisposition(contentDisposition);

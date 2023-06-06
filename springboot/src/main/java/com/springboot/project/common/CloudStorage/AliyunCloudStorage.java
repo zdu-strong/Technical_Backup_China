@@ -3,6 +3,7 @@ package com.springboot.project.common.CloudStorage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Calendar;
 import java.util.Date;
@@ -98,9 +99,11 @@ public class AliyunCloudStorage extends BaseStorage implements CloudStorageInter
         var list = this.getList(key + "/").toList().blockingGet();
         if (!list.isEmpty()) {
             try {
-                return new ByteArrayResource(
-                        new ObjectMapper().writeValueAsBytes(JinqStream.from(list).where(s -> !s.equals(key + "/"))
-                                .select(s -> this.getFileNameFromResource(new FileSystemResource(s))).toList()));
+                var jsonString = new ObjectMapper()
+                        .writeValueAsString(JinqStream.from(list).where(s -> !s.equals(key + "/"))
+                                .select(s -> this.getFileNameFromResource(new FileSystemResource(s))).toList());
+                var jsonBytes = jsonString.getBytes(StandardCharsets.UTF_8);
+                return new ByteArrayResource(jsonBytes);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e.getMessage(), e);
             }
@@ -129,15 +132,15 @@ public class AliyunCloudStorage extends BaseStorage implements CloudStorageInter
         var list = this.getList(key + "/").toList().blockingGet();
         if (!list.isEmpty()) {
             try {
-                return new ByteArrayResource(ArrayUtils.toPrimitive(
-                        Lists.newArrayList(
-                                JinqStream
-                                        .of(Lists.newArrayList(new ObjectMapper().writeValueAsBytes(JinqStream
-                                                .from(list).where(s -> !s.equals(key + "/"))
-                                                .select(s -> this.getFileNameFromResource(new FileSystemResource(s)))
-                                                .toList())))
-                                        .skip(startIndex).limit(rangeContentLength).toArray())
-                                .toArray(new Byte[] {})));
+                var jsonString = new ObjectMapper()
+                        .writeValueAsString(JinqStream.from(list).where(s -> !s.equals(key + "/"))
+                                .select(s -> this.getFileNameFromResource(new FileSystemResource(s))).toList());
+                var jsonBytes = jsonString.getBytes(StandardCharsets.UTF_8);
+                var bytes = ArrayUtils.toPrimitive(
+                        JinqStream.from(Lists.newArrayList(ArrayUtils.toObject(jsonBytes))).skip(startIndex)
+                                .limit(rangeContentLength)
+                                .toList().toArray(new Byte[] {}));
+                return new ByteArrayResource(bytes);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException(e.getMessage(), e);
             }
