@@ -33,7 +33,7 @@ import io.reactivex.rxjava3.core.Observable;
 @Component
 public class AliyunCloudStorage extends BaseStorage implements CloudStorageInterface {
 
-    private Duration tempUrlSurvivalDuration = Duration.ofDays(1);
+    private Duration tempUrlSurvivalDuration = Duration.ofDays(7);
 
     @Autowired
     private AliyunCloudStorageProperties aliyunCloudStorageProperties;
