@@ -33,20 +33,24 @@ public class LongTermTaskUtil {
     public ResponseEntity<String> run(Supplier<ResponseEntity<?>> supplier) {
         String idOfLongTermTask = this.longTermTaskService.createLongTermTask();
         CompletableFuture.runAsync(() -> {
-            var subscription = Observable.just("").delay(1, TimeUnit.SECONDS).map((a) -> {
-                this.longTermTaskService.updateLongTermTaskToRefreshUpdateDate(idOfLongTermTask);
-                return "";
+            var subscription = Observable.just("").delay(1, TimeUnit.SECONDS).concatMap((a) -> {
+                CompletableFuture.runAsync(() -> {
+                    this.longTermTaskService.updateLongTermTaskToRefreshUpdateDate(idOfLongTermTask);
+                }).get();
+                return Observable.empty();
             }).repeat().retry().subscribe();
             try {
                 var result = CompletableFuture.supplyAsync(() -> supplier.get()).get();
                 this.longTermTaskService.updateLongTermTaskByResult(idOfLongTermTask, result);
             } catch (Throwable e) {
-                if (e instanceof ExecutionException && e.getCause() != null) {
-                    this.longTermTaskService.updateLongTermTaskByErrorMessage(idOfLongTermTask,
-                            ((ExecutionException) e).getCause());
-                } else {
-                    this.longTermTaskService.updateLongTermTaskByErrorMessage(idOfLongTermTask, e);
-                }
+                CompletableFuture.runAsync(() -> {
+                    if (e instanceof ExecutionException && e.getCause() != null) {
+                        this.longTermTaskService.updateLongTermTaskByErrorMessage(idOfLongTermTask,
+                                ((ExecutionException) e).getCause());
+                    } else {
+                        this.longTermTaskService.updateLongTermTaskByErrorMessage(idOfLongTermTask, e);
+                    }
+                });
             } finally {
                 subscription.dispose();
             }
