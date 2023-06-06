@@ -19,7 +19,7 @@ public class StorageRootPathProperties {
     @Autowired
     private Environment environment;
 
-    @Value("${properties.StorageRootPath}")
+    @Value("${properties.storage.root.path}")
     private String storageRootPath;
 
     public boolean isTestEnviroment() {

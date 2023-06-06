@@ -18,11 +18,11 @@ public class AliyunCloudStorageProperties {
     @Autowired
     private Environment environment;
 
-    @Value("${properties.CloudStorage.aliyun.enabled}")
+    @Value("${properties.storage.cloud.aliyun.enabled}")
     private Boolean enabled;
 
     public Boolean getEnabled() {
         return Boolean.valueOf(
-                this.environment.getProperty("PROPERTIES_CLOUD_STORAGE_ALIYUN_ENABLED", String.valueOf(this.enabled)));
+                this.environment.getProperty("PROPERTIES_STORAGE_CLOUD_ALIYUN_ENABLED", String.valueOf(this.enabled)));
     }
 }

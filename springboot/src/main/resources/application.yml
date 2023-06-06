@@ -59,11 +59,13 @@ server:
   tomcat:
     max-http-form-post-size: -1
 properties:
-  StorageRootPath: ${StorageRootPath}
-  CloudStorage:
-    aliyun:
-      enabled: false
-      endpoint: ""
-      bucketName: ""
-      accessKeyId: ""
-      accessKeySecret: ""
+  storage:
+    root:
+      path: ${StorageRootPath}
+    cloud:
+      aliyun:
+        enabled: false
+        endpoint: ""
+        bucketName: ""
+        accessKeyId: ""
+        accessKeySecret: ""
