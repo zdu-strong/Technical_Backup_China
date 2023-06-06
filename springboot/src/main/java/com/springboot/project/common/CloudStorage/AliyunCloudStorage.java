@@ -3,12 +3,17 @@ package com.springboot.project.common.CloudStorage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
+import com.aliyun.oss.model.ListObjectsV2Request;
+import com.aliyun.oss.model.ListObjectsV2Result;
+import com.aliyun.oss.model.OSSObjectSummary;
 import com.springboot.project.common.storage.SequenceResource;
 import com.springboot.project.properties.AliyunCloudStorageProperties;
 import io.reactivex.rxjava3.core.Observable;
@@ -87,8 +92,35 @@ public class AliyunCloudStorage implements CloudStorageInterface {
 
     @Override
     public Observable<String> getRootList() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getRootList'");
+        var ossClient = this.getOssClientClient();
+        try {
+            String nextContinuationToken = null;
+            ListObjectsV2Result result = null;
+
+            do {
+                ListObjectsV2Request listObjectsV2Request = new ListObjectsV2Request(
+                        this.aliyunCloudStorageProperties.getBucketName()).withMaxKeys(200);
+                listObjectsV2Request.setPrefix("");
+                listObjectsV2Request.setDelimiter("/");
+                listObjectsV2Request.setContinuationToken(nextContinuationToken);
+                result = ossClient.listObjectsV2(listObjectsV2Request);
+
+                for (OSSObjectSummary objectSummary : result.getObjectSummaries()) {
+                    System.out.println(objectSummary.getKey());
+                }
+
+                for (String commonPrefix : result.getCommonPrefixes()) {
+                    System.out.println(commonPrefix);
+                }
+
+                nextContinuationToken = result.getNextContinuationToken();
+
+            } while (result.isTruncated());
+        } finally {
+            ossClient.shutdown();
+        }
+
+        return Observable.fromArray(new String[] {});
     }
 
     private OSS getOssClientClient() {

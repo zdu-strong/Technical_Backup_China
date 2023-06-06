@@ -126,8 +126,9 @@ public class BaseStorage {
                     this.encryptDecryptService.getAES().decryptStr(
                             Base64.getUrlDecoder().decode(JinqStream.from(pathSegmentList).findFirst().get())),
                     ResourceAccessLegalModel.class);
-            return String.join("/", Lists.asList(resourceAccessLegalModel.getRootFolderName(),
-                    JinqStream.from(pathSegmentList).skip(1).toArray(String[]::new)));
+            return this.getRelativePathFromResourcePath(
+                    String.join("/", Lists.asList(resourceAccessLegalModel.getRootFolderName(),
+                            JinqStream.from(pathSegmentList).skip(1).toArray(String[]::new))));
         } catch (URISyntaxException | JsonProcessingException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
