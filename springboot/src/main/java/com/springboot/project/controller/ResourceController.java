@@ -1,7 +1,6 @@
 package com.springboot.project.controller;
 
 import java.io.IOException;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -94,13 +93,8 @@ public class ResourceController extends BaseController {
 
     @GetMapping("/is_directory/resource/**/*")
     public ResponseEntity<?> isDirectoryOfResource() throws IOException {
-        try {
-            var resource = this.storage.getResourceFromRequest(request);
-            var isFolder = resource instanceof ByteArrayResource;
-            return ResponseEntity.ok(isFolder);
-        } catch (Throwable e) {
-            return ResponseEntity.ok(false);
-        }
+        var isDirectory = this.storage.isDirectory(request);
+        return ResponseEntity.ok(isDirectory);
     }
 
 }

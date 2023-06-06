@@ -21,7 +21,7 @@ import com.fasterxml.uuid.Generators;
 import cn.hutool.core.util.ZipUtil;
 
 @Component
-public class BaseStorageCreateTempFile extends BaseStorageGetResourceForRequest {
+public class BaseStorageCreateTempFile extends BaseStorageIsDirectory {
 
     /**
      * Create temporary files or folders based on the relative path of the resource

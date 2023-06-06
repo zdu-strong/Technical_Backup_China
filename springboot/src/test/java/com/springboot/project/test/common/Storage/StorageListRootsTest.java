@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.utils.URIBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -22,9 +21,7 @@ public class StorageListRootsTest extends BaseTest {
             assertTrue(StringUtils.isNotBlank(folderName));
             assertTrue(!folderName.contains("/"));
             assertTrue(!folderName.contains("\\"));
-            assertTrue(this.testRestTemplate.getForObject(
-                    new URIBuilder("/is_directory/" + this.storage.getResoureUrlFromResourcePath(folderName)).build(),
-                    Boolean.class));
+            assertTrue(this.storage.isDirectory(folderName));
         }
     }
 
