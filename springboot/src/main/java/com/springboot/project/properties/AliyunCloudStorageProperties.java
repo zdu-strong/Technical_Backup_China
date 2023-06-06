@@ -21,8 +21,36 @@ public class AliyunCloudStorageProperties {
     @Value("${properties.storage.cloud.aliyun.enabled}")
     private Boolean enabled;
 
+    @Value("${properties.storage.cloud.aliyun.endpoint}")
+    private String endpoint;
+
+    @Value("${properties.storage.cloud.aliyun.bucketName}")
+    private String bucketName;
+
+    @Value("${properties.storage.cloud.aliyun.accessKeyId}")
+    private String accessKeyId;
+
+    @Value("${properties.storage.cloud.aliyun.accessKeySecret}")
+    private String accessKeySecret;
+
     public Boolean getEnabled() {
         return Boolean.valueOf(
                 this.environment.getProperty("PROPERTIES_STORAGE_CLOUD_ALIYUN_ENABLED", String.valueOf(this.enabled)));
+    }
+
+    public String getEndpoint() {
+        return this.environment.getProperty("PROPERTIES_STORAGE_CLOUD_ALIYUN_ENDPOINT", this.endpoint);
+    }
+
+    public String getBucketName() {
+        return this.environment.getProperty("PROPERTIES_STORAGE_CLOUD_ALIYUN_BUCKET_NAME", this.bucketName);
+    }
+
+    public String getAccessKeyId() {
+        return this.environment.getProperty("PROPERTIES_STORAGE_CLOUD_ALIYUN_ACCESS_KEY_ID", this.accessKeyId);
+    }
+
+    public String getAccessKeySecret() {
+        return this.environment.getProperty("PROPERTIES_STORAGE_CLOUD_ALIYUN_ACCESS_KEY_SECRET", this.accessKeySecret);
     }
 }
