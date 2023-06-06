@@ -81,7 +81,7 @@ async function startServer() {
       cwd: path.join(__dirname, '../../springboot'),
       extendEnv: true,
       env: {
-        "SPRING_DATASOURCE_URL": `jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;`,
+        "SPRING_DATASOURCE_URL": `jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE`,
         "SERVER_PORT": `${availableServerPort}`,
         "SPRING_DATASOURCE_USERNAME": `sa`,
         "SPRING_DATASOURCE_PASSWORD": `sa`,
