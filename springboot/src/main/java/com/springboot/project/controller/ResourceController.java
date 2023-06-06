@@ -94,9 +94,13 @@ public class ResourceController extends BaseController {
 
     @GetMapping("/is_directory/resource/**/*")
     public ResponseEntity<?> isDirectoryOfResource() throws IOException {
-        var resource = this.storage.getResourceFromRequest(request);
-        var isFolder = resource instanceof ByteArrayResource;
-        return ResponseEntity.ok(isFolder);
+        try {
+            var resource = this.storage.getResourceFromRequest(request);
+            var isFolder = resource instanceof ByteArrayResource;
+            return ResponseEntity.ok(isFolder);
+        } catch (Throwable e) {
+            return ResponseEntity.ok(false);
+        }
     }
 
 }

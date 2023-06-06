@@ -40,11 +40,15 @@ public class BaseStorage {
     protected String storageRootPath;
 
     public Observable<String> listRoots() {
+        var list = new File(this.getRootPath()).list();
+        if (list == null) {
+            list = new String[] {};
+        }
         if (this.cloud.enabled()) {
-            return Observable.concat(Observable.fromArray(new File(this.getRootPath()).list()),
+            return Observable.concat(Observable.fromArray(list),
                     this.cloud.getRootList());
         } else {
-            return Observable.fromArray(new File(this.getRootPath()).list());
+            return Observable.fromArray(list);
         }
     }
 

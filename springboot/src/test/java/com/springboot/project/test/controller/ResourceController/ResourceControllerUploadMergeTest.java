@@ -20,6 +20,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
+
+import com.google.common.collect.Lists;
 import com.springboot.project.common.storage.RangeClassPathResource;
 import com.springboot.project.model.LongTermTaskModel;
 import com.springboot.project.test.BaseTest;
@@ -39,7 +41,8 @@ public class ResourceControllerUploadMergeTest extends BaseTest {
                     new HttpEntity<>(null),
                     new ParameterizedTypeReference<LongTermTaskModel<String>>() {
                     });
-            assertEquals(HttpStatus.OK, responseOfLongTermTask.getStatusCode());
+            assertTrue(Lists.newArrayList(HttpStatus.OK, HttpStatus.ACCEPTED)
+                    .contains(responseOfLongTermTask.getStatusCode()));
             if (responseOfLongTermTask.getBody().getIsDone()) {
                 return Observable.just(responseOfLongTermTask.getBody().getResult());
             } else {

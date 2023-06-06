@@ -45,7 +45,7 @@ public class BaseStorageGetResourceForRequest extends BaseStorageDeleteResource 
 
     private List<String> getChildFileNameListFromDirectory(File file) {
         return Lists.newArrayList(file.listFiles()).stream()
-                .map((childFile) -> childFile.getName() + (childFile.isDirectory() ? "/" : ""))
+                .map((childFile) -> this.getFileNameFromResource(new FileSystemResource(childFile)))
                 .toList();
     }
 
