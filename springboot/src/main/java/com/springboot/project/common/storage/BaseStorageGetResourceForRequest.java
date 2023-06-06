@@ -18,7 +18,7 @@ import com.google.common.collect.Lists;
 public class BaseStorageGetResourceForRequest extends BaseStorageDeleteResource {
     /**
      * If it is a directory, return like: JSON.toString(["childFile",
-     * "childDirectory/"])
+     * "childDirectory"])
      * If it is a directory, return ByteArrayStream, else not.
      * 
      * @param request
@@ -50,7 +50,7 @@ public class BaseStorageGetResourceForRequest extends BaseStorageDeleteResource 
 
     /**
      * If it is a directory, return like: JSON.toString(["childFile",
-     * "childDirectory/"])
+     * "childDirectory"])
      * If it is a directory, return ByteArrayStream, else not.
      * 
      * @return
