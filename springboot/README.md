@@ -266,3 +266,4 @@ java:
 ## Learn More
 
 1. Jinq (http://www.jinq.org/docs/queries.html)
+2. Learn SQL (https://www.sqlcourse.com)
