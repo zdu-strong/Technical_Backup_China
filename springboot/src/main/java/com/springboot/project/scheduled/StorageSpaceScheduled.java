@@ -45,16 +45,20 @@ public class StorageSpaceScheduled {
         }
 
         {
-            this.storage.listRoots().concatMap(folderName -> {
-                try {
-                    if (!this.storageSpaceService.isUsed(folderName)) {
-                        this.storageSpaceService.deleteStorageSpaceEntity(folderName);
+            try {
+                this.storage.listRoots().concatMap(folderName -> {
+                    try {
+                        if (!this.storageSpaceService.isUsed(folderName)) {
+                            this.storageSpaceService.deleteStorageSpaceEntity(folderName);
+                        }
+                    } catch (Throwable e) {
+                        log.error("Failed to delete local folder \"" + folderName + "\"", e);
                     }
-                } catch (Throwable e) {
-                    log.error("Failed to delete local folder \"" + folderName + "\"", e);
-                }
-                return Observable.empty();
-            }).blockingSubscribe();
+                    return Observable.empty();
+                }).blockingSubscribe();
+            } catch (Throwable e) {
+                log.error("Failed to get list of files in root directory", e);
+            }
         }
     }
 }
