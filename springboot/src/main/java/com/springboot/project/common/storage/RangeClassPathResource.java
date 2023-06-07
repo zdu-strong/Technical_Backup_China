@@ -6,18 +6,18 @@ import org.apache.commons.io.input.BoundedInputStream;
 import org.springframework.core.io.ClassPathResource;
 
 public class RangeClassPathResource extends ClassPathResource {
-    private long start;
-    private long contentLength;
+    private long startIndex;
+    private long rangeContentLength;
 
-    public RangeClassPathResource(String path, long start, long length) {
+    public RangeClassPathResource(String path, long startIndex, long rangeContentLength) {
         super(path);
-        this.start = start;
-        this.contentLength = length;
+        this.startIndex = startIndex;
+        this.rangeContentLength = rangeContentLength;
     }
 
     @Override
     public long contentLength() {
-        return this.contentLength;
+        return this.rangeContentLength;
     }
 
     @Override
@@ -25,8 +25,8 @@ public class RangeClassPathResource extends ClassPathResource {
         InputStream input = null;
         try {
             input = super.getInputStream();
-            input.skip(this.start);
-            return new BoundedInputStream(input, this.contentLength);
+            input.skip(this.startIndex);
+            return new BoundedInputStream(input, this.rangeContentLength);
         } catch (Throwable e) {
             if (input != null) {
                 input.close();

@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 
 @Component
-public class BaseStorageGetResourceForRequest extends BaseStorageDeleteResource {
+public class BaseStorageGetResourceForRequest extends BaseStorageGetClassPathResourceFromRequest {
     /**
      * If it is a directory, return like: JSON.toString(["childFile",
      * "childDirectory"])
@@ -25,6 +25,10 @@ public class BaseStorageGetResourceForRequest extends BaseStorageDeleteResource 
      * @return
      */
     public Resource getResourceFromRequest(HttpServletRequest request) {
+        if (this.isClassPathResource(request)) {
+            return this.getClassPathResource(request);
+        }
+
         try {
             String relativePath = this.getRelativePathFromRequest(request);
             if (this.cloud.enabled()) {
@@ -42,12 +46,6 @@ public class BaseStorageGetResourceForRequest extends BaseStorageDeleteResource 
         }
     }
 
-    private List<String> getChildFileNameListFromDirectory(File file) {
-        return Lists.newArrayList(file.listFiles()).stream()
-                .map((childFile) -> this.getFileNameFromResource(new FileSystemResource(childFile)))
-                .toList();
-    }
-
     /**
      * If it is a directory, return like: JSON.toString(["childFile",
      * "childDirectory"])
@@ -55,25 +53,35 @@ public class BaseStorageGetResourceForRequest extends BaseStorageDeleteResource 
      * 
      * @return
      */
-    public Resource getResourceFromRequest(HttpServletRequest request, long start, long length) {
+    public Resource getResourceFromRequest(HttpServletRequest request, long startIndex, long rangeContentLength) {
+        if (this.isClassPathResource(request)) {
+            return this.getClassPathResource(request, startIndex, rangeContentLength);
+        }
+
         try {
             String relativePath = this.getRelativePathFromRequest(request);
             if (this.cloud.enabled()) {
-                return this.cloud.getResource(relativePath, start, length);
+                return this.cloud.getResource(relativePath, startIndex, rangeContentLength);
             }
             var file = new File(this.getRootPath(), relativePath);
             if (file.isDirectory()) {
                 var jsonString = new ObjectMapper().writeValueAsString(getChildFileNameListFromDirectory(file));
                 var jsonBytes = jsonString.getBytes(StandardCharsets.UTF_8);
                 var bytes = ArrayUtils.toPrimitive(
-                        JinqStream.from(Lists.newArrayList(ArrayUtils.toObject(jsonBytes))).skip(start)
-                                .limit(length)
+                        JinqStream.from(Lists.newArrayList(ArrayUtils.toObject(jsonBytes))).skip(startIndex)
+                                .limit(rangeContentLength)
                                 .toList().toArray(new Byte[] {}));
                 return new ByteArrayResource(bytes);
             }
-            return new RangeFileSystemResource(file, start, length);
+            return new RangeFileSystemResource(file, startIndex, rangeContentLength);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
+    }
+
+    private List<String> getChildFileNameListFromDirectory(File file) {
+        return Lists.newArrayList(file.listFiles()).stream()
+                .map((childFile) -> this.getFileNameFromResource(new FileSystemResource(childFile)))
+                .toList();
     }
 }

@@ -10,15 +10,15 @@ import org.springframework.core.io.FileSystemResource;
 
 public class RangeFileSystemResource extends FileSystemResource {
 
-    private long contentLength;
+    private long rangeContentLength;
     private File file;
-    private long start;
+    private long startIndex;
 
-    public RangeFileSystemResource(File file, long start, long length) {
+    public RangeFileSystemResource(File file, long startIndex, long rangeContentLength) {
         super(file);
-        this.contentLength = length;
+        this.rangeContentLength = rangeContentLength;
         this.file = file;
-        this.start = start;
+        this.startIndex = startIndex;
     }
 
     @Override
@@ -26,8 +26,8 @@ public class RangeFileSystemResource extends FileSystemResource {
         InputStream input = null;
         try {
             input = new RandomAccessFileInputStream(new RandomAccessFile(this.file, "r"));
-            input.skip(start);
-            return new BoundedInputStream(input, this.contentLength);
+            input.skip(startIndex);
+            return new BoundedInputStream(input, this.rangeContentLength);
         } catch (Throwable e) {
             if (input != null) {
                 input.close();
@@ -38,7 +38,7 @@ public class RangeFileSystemResource extends FileSystemResource {
 
     @Override
     public long contentLength() throws IOException {
-        return this.contentLength;
+        return this.rangeContentLength;
     }
 
 }
