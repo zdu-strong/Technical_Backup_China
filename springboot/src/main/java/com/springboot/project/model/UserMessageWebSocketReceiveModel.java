@@ -8,7 +8,8 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public class UserMessageWebSocketReceiveModel {
-    private Integer pageNum;
+
+    private Long pageNum;
 
     private Boolean isCancel;
 }

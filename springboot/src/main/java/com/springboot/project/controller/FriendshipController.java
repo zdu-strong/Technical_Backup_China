@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class FriendshipController extends BaseController {
 
     @GetMapping("/get_friend_list")
-    public ResponseEntity<?> getFriendList(@RequestParam int pageNum, @RequestParam int pageSize) throws IOException {
+    public ResponseEntity<?> getFriendList(@RequestParam Long pageNum, @RequestParam Long pageSize) throws IOException {
         this.permissionUtil.checkIsSignIn(request);
 
         var userId = this.permissionUtil.getUserId(request);
@@ -21,7 +21,7 @@ public class FriendshipController extends BaseController {
     }
 
     @GetMapping("/get_stranger_list")
-    public ResponseEntity<?> getStrangerList(@RequestParam int pageNum, @RequestParam int pageSize) throws IOException {
+    public ResponseEntity<?> getStrangerList(@RequestParam Long pageNum, @RequestParam Long pageSize) throws IOException {
         this.permissionUtil.checkIsSignIn(request);
 
         var userId = this.permissionUtil.getUserId(request);
@@ -31,7 +31,7 @@ public class FriendshipController extends BaseController {
     }
 
     @GetMapping("/get_blacklist")
-    public ResponseEntity<?> getBlacklist(@RequestParam int pageNum, @RequestParam int pageSize) throws IOException {
+    public ResponseEntity<?> getBlacklist(@RequestParam Long pageNum, @RequestParam Long pageSize) throws IOException {
         this.permissionUtil.checkIsSignIn(request);
 
         var userId = this.permissionUtil.getUserId(request);

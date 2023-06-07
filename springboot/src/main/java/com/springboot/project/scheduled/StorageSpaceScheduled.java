@@ -19,13 +19,13 @@ public class StorageSpaceScheduled {
     @Autowired
     private Storage storage;
 
-    private int pageSize = 1;
+    private Long pageSize = 1L;
 
     @Scheduled(initialDelay = 1000, fixedDelay = 60 * 60 * 1000)
     public void scheduled() {
         {
             try {
-                int totalPage = this.storageSpaceService.getStorageSpaceListByPagination(1, pageSize).getTotalPage();
+                long totalPage = this.storageSpaceService.getStorageSpaceListByPagination(1L, pageSize).getTotalPage();
                 for (var pageNum = totalPage; pageNum > 0; pageNum--) {
                     try {
                         for (var storageSpaceModel : this.storageSpaceService

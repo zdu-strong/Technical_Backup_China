@@ -61,7 +61,7 @@ public class UserMessageWebSocketController {
     private String userId;
     private Session session;
     private CopyOnWriteArrayList<UserMessageModel> lastMessage = new CopyOnWriteArrayList<>();
-    private ConcurrentMap<Integer, UserMessageModel> onlineMessageMap = new ConcurrentHashMap<>();
+    private ConcurrentMap<Long, UserMessageModel> onlineMessageMap = new ConcurrentHashMap<>();
     private boolean ready = false;
 
     @Autowired

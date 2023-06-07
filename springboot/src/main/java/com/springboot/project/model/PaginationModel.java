@@ -6,9 +6,7 @@ import java.util.List;
 import java.util.function.Function;
 import org.jinq.jpa.JPAJinqStream;
 import org.jinq.orm.stream.JinqStream;
-
 import com.springboot.project.common.database.JPQLFunction;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -17,13 +15,13 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public class PaginationModel<T> {
-    private Integer pageNum;
-    private Integer pageSize;
+    private Long pageNum;
+    private Long pageSize;
     private Long totalRecord;
-    private Integer totalPage;
+    private Long totalPage;
     private List<T> list;
 
-    public PaginationModel(Integer pageNum, Integer pageSize, JinqStream<T> stream) {
+    public PaginationModel(Long pageNum, Long pageSize, JinqStream<T> stream) {
         if (pageNum < 1) {
             throw new RuntimeException("Page num must be greater than 1");
         }
@@ -40,15 +38,15 @@ public class PaginationModel<T> {
                     stream.skip((pageNum - 1) * pageSize).limit(pageSize).toList());
         } else {
             var dataList = stream.toList();
-            this.totalRecord = Integer.valueOf(dataList.size()).longValue();
+            this.totalRecord = Long.valueOf(dataList.size());
             this.setList(JinqStream.from(dataList).skip((pageNum - 1) * pageSize).limit(pageSize)
                     .toList());
         }
         this.totalPage = new BigDecimal(this.totalRecord).divide(new BigDecimal(pageSize), 2, RoundingMode.FLOOR)
-                .setScale(0, RoundingMode.CEILING).intValue();
+                .setScale(0, RoundingMode.CEILING).longValue();
     }
 
-    public <U> PaginationModel(Integer pageNum, Integer pageSize, JinqStream<U> stream, Function<U, T> formatCallback) {
+    public <U> PaginationModel(Long pageNum, Long pageSize, JinqStream<U> stream, Function<U, T> formatCallback) {
         if (pageNum < 1) {
             throw new RuntimeException("Page num must be greater than 1");
         }
@@ -66,12 +64,12 @@ public class PaginationModel<T> {
                             .toList());
         } else {
             var dataList = stream.toList();
-            this.totalRecord = Integer.valueOf(dataList.size()).longValue();
+            this.totalRecord = Long.valueOf(dataList.size());
             this.setList(JinqStream.from(dataList).skip((pageNum - 1) * pageSize).limit(pageSize).map(formatCallback)
                     .toList());
         }
         this.totalPage = new BigDecimal(this.totalRecord).divide(new BigDecimal(pageSize), 2, RoundingMode.FLOOR)
-                .setScale(0, RoundingMode.CEILING).intValue();
+                .setScale(0, RoundingMode.CEILING).longValue();
     }
 
 }

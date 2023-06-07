@@ -42,7 +42,7 @@ public class UserMessageFormatter extends BaseService {
                         || (crateDate.equals(s.getCreateDate())
                                 && JPQLFunction.isSortAtBefore(s.getId(), id)))
                 .count();
-        userMessage.setPageNum(Long.valueOf(pageNum).intValue() + 1);
+        userMessage.setPageNum(pageNum + 1);
         if (!userMessage.getUser().getId().equals(userId)) {
             userMessage.setIsDelete(false);
         }

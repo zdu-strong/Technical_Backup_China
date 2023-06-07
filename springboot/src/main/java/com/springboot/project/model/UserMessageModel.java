@@ -25,7 +25,7 @@ public class UserMessageModel {
 
     private Long totalPage;
 
-    private Integer pageNum;
+    private Long pageNum;
 
     private String url;
 }

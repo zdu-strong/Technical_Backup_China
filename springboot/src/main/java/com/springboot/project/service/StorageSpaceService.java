@@ -16,7 +16,7 @@ public class StorageSpaceService extends BaseService {
 
     private Duration tempFileSurvivalDuration = Duration.ofDays(1);
 
-    public PaginationModel<StorageSpaceModel> getStorageSpaceListByPagination(int pageNum, int pageSize) {
+    public PaginationModel<StorageSpaceModel> getStorageSpaceListByPagination(Long pageNum, Long pageSize) {
         var stream = this.StorageSpaceEntity().sortedBy(s -> s.getId()).sortedBy(s -> s.getCreateDate());
         var storageSpacePaginationModel = new PaginationModel<>(pageNum, pageSize, stream,
                 (s) -> this.storageSpaceFormatter.format(s));

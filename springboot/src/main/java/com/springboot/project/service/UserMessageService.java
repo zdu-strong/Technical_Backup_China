@@ -43,10 +43,10 @@ public class UserMessageService extends BaseService {
         return this.userMessageFormatter.format(userMessageEntity);
     }
 
-    public List<UserMessageModel> getMessageListOnlyContainsOneByPageNum(Integer pageNum, String userId) {
+    public List<UserMessageModel> getMessageListOnlyContainsOneByPageNum(Long pageNum, String userId) {
         var stream = this.UserMessageEntity().sortedBy(s -> s.getId())
                 .sortedBy(s -> s.getCreateDate());
-        var userMessageList = new PaginationModel<>(pageNum, 1, stream,
+        var userMessageList = new PaginationModel<>(pageNum, 1L, stream,
                 (s) -> this.userMessageFormatter.formatForUserId(s, userId)).getList();
         return userMessageList;
     }

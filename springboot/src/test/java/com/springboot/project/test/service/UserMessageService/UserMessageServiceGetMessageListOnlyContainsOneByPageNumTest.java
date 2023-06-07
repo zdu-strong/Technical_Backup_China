@@ -20,7 +20,7 @@ public class UserMessageServiceGetMessageListOnlyContainsOneByPageNumTest extend
 
     @Test
     public void test() throws URISyntaxException {
-        var messageList = this.userMessageService.getMessageListOnlyContainsOneByPageNum(1,
+        var messageList = this.userMessageService.getMessageListOnlyContainsOneByPageNum(1L,
                 this.userMessage.getUser().getId());
         var message = JinqStream.from(messageList).getOnlyValue();
         assertEquals(1, messageList.size());

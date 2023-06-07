@@ -14,7 +14,7 @@ public class StorageSpaceServiceGetStorageSpaceListByPaginationTest extends Base
 
     @Test
     public void test() throws URISyntaxException {
-        var result = this.storageSpaceService.getStorageSpaceListByPagination(1, 1);
+        var result = this.storageSpaceService.getStorageSpaceListByPagination(1L, 1L);
         assertEquals(1, result.getPageNum());
         assertEquals(1, result.getPageSize());
         assertTrue(result.getTotalRecord() > 0);

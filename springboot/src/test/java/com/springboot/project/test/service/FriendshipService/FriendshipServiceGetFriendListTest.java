@@ -23,7 +23,7 @@ public class FriendshipServiceGetFriendListTest extends BaseTest {
 
     @Test
     public void test() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        var result = this.friendshipService.getFriendList(1, 10, this.user.getUserModel().getId());
+        var result = this.friendshipService.getFriendList(1L, 10L, this.user.getUserModel().getId());
         assertEquals(1, result.getTotalRecord());
         assertEquals(user.getUserModel().getId(),
                 JinqStream.from(result.getList()).select(s -> s.getUser().getId()).getOnlyValue());

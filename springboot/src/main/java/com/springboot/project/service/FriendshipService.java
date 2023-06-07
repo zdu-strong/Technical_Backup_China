@@ -118,7 +118,7 @@ public class FriendshipService extends BaseService {
                         .where(s -> s.getFriend().getId().equals(friendId)).getOnlyValue());
     }
 
-    public PaginationModel<FriendshipModel> getFriendList(int pageNum, int pageSize, String userId) {
+    public PaginationModel<FriendshipModel> getFriendList(Long pageNum, Long pageSize, String userId) {
         var stream = this.FriendshipEntity()
                 .where(s -> s.getUser().getId().equals(userId))
                 .where(s -> s.getUser().getDeleteKey().equals(""))
@@ -127,7 +127,7 @@ public class FriendshipService extends BaseService {
         return new PaginationModel<>(pageNum, pageSize, stream, (s) -> this.friendshipFormatter.format(s));
     }
 
-    public PaginationModel<FriendshipModel> getStrangerList(int pageNum, int pageSize, String userId) {
+    public PaginationModel<FriendshipModel> getStrangerList(Long pageNum, Long pageSize, String userId) {
         var userEntity = this.UserEntity().where(s -> s.getId().equals(userId)).where(s -> s.getDeleteKey().equals(""))
                 .getOnlyValue();
         var stream = this.UserEntity()
@@ -142,7 +142,7 @@ public class FriendshipService extends BaseService {
                 (s) -> this.friendshipFormatter.format(s.getTwo(), userEntity, s.getOne()));
     }
 
-    public PaginationModel<FriendshipModel> getBlackList(int pageNum, int pageSize, String userId) {
+    public PaginationModel<FriendshipModel> getBlackList(Long pageNum, Long pageSize, String userId) {
         var stream = this.FriendshipEntity()
                 .where(s -> s.getUser().getId().equals(userId))
                 .where(s -> s.getUser().getDeleteKey().equals(""))

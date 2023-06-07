@@ -19,11 +19,11 @@ public class StorageSpaceScheduledScheduledTest extends BaseTest {
     @Test
     public void test() {
         this.storageSpaceScheduled.scheduled();
-        var totalPage = this.storageSpaceService.getStorageSpaceListByPagination(1, 1).getTotalPage();
+        var totalPage = this.storageSpaceService.getStorageSpaceListByPagination(1L, 1L).getTotalPage();
         var list = Observable.interval(0, TimeUnit.SECONDS).take(totalPage).concatMap((s) -> {
-            var pageNum = s.intValue() + 1;
+            var pageNum = s + 1;
             return Observable
-                    .fromIterable(this.storageSpaceService.getStorageSpaceListByPagination(pageNum, 1).getList());
+                    .fromIterable(this.storageSpaceService.getStorageSpaceListByPagination(pageNum, 1L).getList());
         }).toList().blockingGet();
         assertTrue(JinqStream.from(list).where(s -> s.getFolderName().equals(folderName)).exists());
         assertEquals(36,
