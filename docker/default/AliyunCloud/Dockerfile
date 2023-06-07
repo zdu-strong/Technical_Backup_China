@@ -15,13 +15,17 @@ RUN dnf install -y glibc-common
 ENV LANG en_US.UTF-8
 ENV LC_ALL C.UTF-8
 
-# install serve
+# install Node.js
 RUN dnf module install -y nodejs:18
 RUN npm config set registry https://registry.yarnpkg.com
+
+# install serve
 RUN npm install --location=global serve@14.2.0
 
-# install concurrently
+# install wait-on
 RUN npm install --location=global wait-on@7.0.1
+
+# install concurrently
 RUN npm install --location=global concurrently@8.1.0
 
 # Install java
@@ -44,7 +48,7 @@ RUN mv target/*.jar target/server.jar
 FROM first_docker as cloud_docker
 COPY --from=second_docker /all_code/springboot/target/server.jar /server.jar
 
-# run client test
+# compile client code
 FROM cloud_docker as three_docker
 RUN dnf install -y git
 RUN dnf install -y procps
@@ -58,8 +62,6 @@ WORKDIR /all_code/react-cypress
 RUN rm -rf ../react/node_modules
 RUN rm -rf ./node_modules
 RUN npm test
-
-# compile client code
 WORKDIR /all_code/react
 RUN npm run build
 
