@@ -15,11 +15,11 @@ import org.springframework.http.HttpStatus;
 import com.springboot.project.model.UserModel;
 import com.springboot.project.test.BaseTest;
 
-public class AuthorizationControllerGetNewAccountTest extends BaseTest {
+public class AuthorizationControllerCreateNewAccountTest extends BaseTest {
 
     @Test
     public void test() throws URISyntaxException {
-        var url = new URIBuilder("/sign_up/get_new_account").build();
+        var url = new URIBuilder("/sign_up/create_new_account").build();
         var response = this.testRestTemplate.postForEntity(url, null, UserModel.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(StringUtils.isNotBlank(response.getBody().getId()));

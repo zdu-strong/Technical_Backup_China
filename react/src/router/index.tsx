@@ -8,7 +8,7 @@ import MessageEntry from '@/component/MessageEntry/MessageEntry';
 export default (
   <BrowserRouter>
     <Routes>
-      <Route index element={<SignIn />} />
+      <Route index element={<MessageEntry />} />
       <Route path="/chat" element={<MessageEntry />} />
       <Route path="/sign_in" element={<SignIn />} />
       <Route path="/sign_up" element={<SignUp />} />

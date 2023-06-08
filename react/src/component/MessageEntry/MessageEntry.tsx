@@ -6,6 +6,7 @@ import { GlobalUserInfo } from "@/common/axios-config/AxiosConfig";
 import { useMount } from "mobx-react-use-autorun";
 import api from "@/api";
 import LoadingOrErrorComponent from "@/common/MessageService/LoadingOrErrorComponent";
+import { v1 } from "uuid";
 
 export default observer(() => {
 
@@ -29,20 +30,19 @@ export default observer(() => {
 
   useMount(async () => {
     try {
-      if (await api.Authorization.isSignIn()) {
-        state.readyForStart = true;
-      } else {
-        state.navigate('/sign_in');
+      if (!(await api.Authorization.isSignIn())) {
+        const { data: newAccount } = await api.Authorization.createNewAccountOfSignUp();
+        await api.Authorization.signUp(newAccount.id, v1(), "visitor", [], newAccount.publicKeyOfRSA);
       }
+      state.readyForStart = true;
     } catch (error) {
       state.error = error;
     }
   })
 
-  return <div className={state.css.container}>
-    <LoadingOrErrorComponent ready={state.readyForStart} error={state.error} >
+  return <LoadingOrErrorComponent ready={state.readyForStart} error={state.error} >
+    <div className={state.css.container}>
       <MessageChat userId={GlobalUserInfo.id!} username={GlobalUserInfo.username!} />
-    </LoadingOrErrorComponent>
-  </div>;
-
+    </div>
+  </LoadingOrErrorComponent>
 })

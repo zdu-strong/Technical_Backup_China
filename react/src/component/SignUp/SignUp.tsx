@@ -112,7 +112,7 @@ export default observer(() => {
   useMount(async () => {
     try {
       await initSteps();
-      await getNewAccountOfSignUp();
+      await createNewAccountOfSignUp();
       state.ready = true;
     } catch (e) {
       state.errorOfInit = e;
@@ -127,8 +127,8 @@ export default observer(() => {
     state.steps.push(state.intl.formatMessage({ id: "Complete", defaultMessage: "Complete" }));
   }
 
-  async function getNewAccountOfSignUp() {
-    const { data: user } = await api.Authorization.getNewAccountOfSignUp();
+  async function createNewAccountOfSignUp() {
+    const { data: user } = await api.Authorization.createNewAccountOfSignUp();
     state.userId = user.id;
     state.publicKeyOfRSA = user.publicKeyOfRSA;
   }

@@ -5,8 +5,8 @@ import { getAccessToken, getPrivateKeyOfRSA, GlobalUserInfo, removeAccessToken, 
 import { decryptByPrivateKeyOfRSA, encryptByPublicKeyOfRSA, encryptByPrivateKeyOfRSA, decryptByPublicKeyOfRSA, generateKeyPairOfRSA } from "@/common/RSAUtils";
 import { decryptByAES, encryptByAES, generateSecretKeyOfAES } from '@/common/AESUtils';
 
-export async function getNewAccountOfSignUp() {
-  return axios.post<UserModel>("/sign_up/get_new_account");
+export async function createNewAccountOfSignUp() {
+  return axios.post<UserModel>("/sign_up/create_new_account");
 }
 
 export async function signUp(userId: string, password: string, nickname: string, userEmailList: UserEmailModel[], publicKeyOfRSA: string): Promise<void> {

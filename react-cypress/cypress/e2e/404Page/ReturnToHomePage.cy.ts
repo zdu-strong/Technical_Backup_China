@@ -2,7 +2,7 @@ import page from '../../page'
 
 it('', () => {
   page.NotFound.ReturnToHomeButton().click()
-  page.SignIn.signInButton().should('exist')
+  page.Chat.signOutButton().should('exist')
 })
 
 before(() => {

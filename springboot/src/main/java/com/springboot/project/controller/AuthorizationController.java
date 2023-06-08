@@ -162,9 +162,9 @@ public class AuthorizationController extends BaseController {
         return ResponseEntity.ok(user);
     }
 
-    @PostMapping("/sign_up/get_new_account")
-    public ResponseEntity<?> getNewAccount() throws InvalidKeySpecException, NoSuchAlgorithmException {
-        var user = this.userService.getNewAccountForSignUp();
+    @PostMapping("/sign_up/create_new_account")
+    public ResponseEntity<?> createNewAccount() throws InvalidKeySpecException, NoSuchAlgorithmException {
+        var user = this.userService.createNewAccountForSignUp();
         return ResponseEntity.ok(user);
     }
 

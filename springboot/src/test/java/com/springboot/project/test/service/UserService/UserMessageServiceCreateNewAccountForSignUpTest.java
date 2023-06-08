@@ -8,11 +8,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import com.springboot.project.test.BaseTest;
 
-public class UserMessageServiceGetNewAccountForSignUpTest extends BaseTest {
+public class UserMessageServiceCreateNewAccountForSignUpTest extends BaseTest {
 
     @Test
     public void test() throws URISyntaxException {
-        var result = this.userService.getNewAccountForSignUp();
+        var result = this.userService.createNewAccountForSignUp();
         assertTrue(StringUtils.isNotBlank(result.getId()));
         assertTrue(StringUtils.isNotBlank(result.getPublicKeyOfRSA()));
         assertTrue(StringUtils.isBlank(result.getUsername()));

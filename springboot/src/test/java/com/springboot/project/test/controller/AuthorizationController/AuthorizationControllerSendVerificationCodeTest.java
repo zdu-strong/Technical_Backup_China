@@ -43,13 +43,13 @@ public class AuthorizationControllerSendVerificationCodeTest extends BaseTest {
 
     @BeforeEach
     public void beforeEach() {
-        this.userModelOfNewAccount = getNewAccount();
+        this.userModelOfNewAccount = createNewAccount();
         this.email = Generators.timeBasedGenerator().generate().toString() + "zdu.strong@gmail.com";
     }
 
-    private UserModel getNewAccount() {
+    private UserModel createNewAccount() {
         try {
-            var url = new URIBuilder("/sign_up/get_new_account").build();
+            var url = new URIBuilder("/sign_up/create_new_account").build();
             var response = this.testRestTemplate.postForEntity(url, null, UserModel.class);
             assertEquals(HttpStatus.OK, response.getStatusCode());
             var userModel = response.getBody();

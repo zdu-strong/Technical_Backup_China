@@ -20,7 +20,7 @@ public class UserService extends BaseService {
     @Autowired
     private UserEmailService userEmailService;
 
-    public UserModel getNewAccountForSignUp() {
+    public UserModel createNewAccountForSignUp() {
         var user = new UserEntity();
         user.setId(Generators.timeBasedGenerator().generate().toString());
         user.setUsername("");
