@@ -25,7 +25,7 @@ public class ResourceControllerGetClassPathResourceGetDirectoryTest extends Base
     public void test() throws IOException {
         var response = this.testRestTemplate.getForEntity(url, String[].class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(14, response.getHeaders().getContentLength());
+        assertEquals(13, response.getHeaders().getContentLength());
         assertEquals(this.pathName, response.getHeaders().getContentDisposition().getFilename());
         assertEquals(1, response.getBody().length);
         assertEquals("email.xml", JinqStream.from(Lists.newArrayList(response.getBody())).getOnlyValue());

@@ -29,13 +29,13 @@ public class ResourceControllerGetRangeClassPathResourceGetDirectoryTest extends
     @Test
     public void test() throws IOException {
         var httpHeaders = new HttpHeaders();
-        httpHeaders.setRange(Lists.newArrayList(HttpRange.createByteRange(0, 11)));
+        httpHeaders.setRange(Lists.newArrayList(HttpRange.createByteRange(0, 10)));
         var response = this.testRestTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(httpHeaders),
                 byte[].class);
         assertEquals(HttpStatus.PARTIAL_CONTENT, response.getStatusCode());
-        assertEquals(12, response.getHeaders().getContentLength());
+        assertEquals(11, response.getHeaders().getContentLength());
         assertEquals(this.pathName, response.getHeaders().getContentDisposition().getFilename());
-        assertEquals(12, response.getBody().length);
+        assertEquals(11, response.getBody().length);
         assertEquals(Integer.valueOf(91).byteValue(),
                 JinqStream.from(Lists.newArrayList(ArrayUtils.toObject(response.getBody()))).findFirst().get());
         assertEquals("[\"email.xml", IOUtils.toString(response.getBody(), StandardCharsets.UTF_8.name()));
