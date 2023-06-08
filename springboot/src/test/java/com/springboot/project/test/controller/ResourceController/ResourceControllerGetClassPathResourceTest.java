@@ -9,9 +9,9 @@ import org.apache.hc.core5.net.URIBuilder;
 import org.jinq.orm.stream.JinqStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import com.google.common.collect.Lists;
-import com.springboot.project.common.ClassPathStorage.ClassPathStorageEnum;
 import com.springboot.project.test.BaseTest;
 
 public class ResourceControllerGetClassPathResourceTest extends BaseTest {
@@ -31,7 +31,6 @@ public class ResourceControllerGetClassPathResourceTest extends BaseTest {
     @BeforeEach
     public void beforeEach() throws URISyntaxException {
         this.url = new URIBuilder(
-                this.storage.getResoureUrlFromResourcePath(ClassPathStorageEnum.EMAIL_TEMPLATE_FILE.getRelativePath()))
-                .build();
+                this.storage.storageResource(new ClassPathResource("email/email.xml")).getRelativeUrl()).build();
     }
 }

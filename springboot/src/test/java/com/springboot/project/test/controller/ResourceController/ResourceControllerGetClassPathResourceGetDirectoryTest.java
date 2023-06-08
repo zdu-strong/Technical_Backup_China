@@ -4,16 +4,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-
-import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.net.URIBuilder;
 import org.jinq.orm.stream.JinqStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
-import com.springboot.project.common.ClassPathStorage.ClassPathStorageEnum;
 import com.springboot.project.test.BaseTest;
 
 public class ResourceControllerGetClassPathResourceGetDirectoryTest extends BaseTest {
@@ -34,11 +32,11 @@ public class ResourceControllerGetClassPathResourceGetDirectoryTest extends Base
 
     @BeforeEach
     public void beforeEach() throws URISyntaxException {
-        this.url = new URIBuilder(this.storage.getResoureUrlFromResourcePath(JinqStream
-                .from(Lists.newArrayList(ClassPathStorageEnum.EMAIL_TEMPLATE_FILE.getRelativePath().split("/")))
-                .findFirst().get())).build();
-        this.pathName = JinqStream.from(Lists.newArrayList(this.storage.getResoureUrlFromResourcePath(JinqStream
-                .from(Lists.newArrayList(ClassPathStorageEnum.EMAIL_TEMPLATE_FILE.getRelativePath().split("/")))
-                .findFirst().get()).split("/"))).where(s -> StringUtils.isNotBlank(s)).skip(1).getOnlyValue();
+        var relativeUrl = this.storage.storageResource(new ClassPathResource("email/email.xml")).getRelativeUrl();
+        this.pathName = JinqStream.from(Lists.newArrayList(relativeUrl.split("/")))
+                .skip(2)
+                .findFirst().get();
+        this.url = new URIBuilder(String.join("/", JinqStream.from(Lists.newArrayList(relativeUrl.split("/")))
+                .limit(relativeUrl.split("/").length - 1).toList().toArray(new String[] {}))).build();
     }
 }

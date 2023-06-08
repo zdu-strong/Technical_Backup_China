@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 
 @Component
-public class BaseStorageGetResourceForRequest extends BaseStorageGetClassPathResourceFromRequest {
+public class BaseStorageGetResourceForRequest extends BaseStorageDeleteResource {
     /**
      * If it is a directory, return like: JSON.toString(["childFile",
      * "childDirectory"])
@@ -25,10 +25,6 @@ public class BaseStorageGetResourceForRequest extends BaseStorageGetClassPathRes
      * @return
      */
     public Resource getResourceFromRequest(HttpServletRequest request) {
-        if (this.isClassPathResource(request)) {
-            return this.getClassPathResource(request);
-        }
-
         try {
             String relativePath = this.getRelativePathFromRequest(request);
             if (this.cloud.enabled()) {
@@ -54,10 +50,6 @@ public class BaseStorageGetResourceForRequest extends BaseStorageGetClassPathRes
      * @return
      */
     public Resource getResourceFromRequest(HttpServletRequest request, long startIndex, long rangeContentLength) {
-        if (this.isClassPathResource(request)) {
-            return this.getClassPathResource(request, startIndex, rangeContentLength);
-        }
-
         try {
             String relativePath = this.getRelativePathFromRequest(request);
             if (this.cloud.enabled()) {
