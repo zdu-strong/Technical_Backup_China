@@ -50,7 +50,7 @@ public class AuthorizationEmailUtil {
     }
 
     private String getEmailOfBody(String verificationCode) {
-        try (InputStream input = new ClassPathResource("email/email.html").getInputStream()) {
+        try (InputStream input = new ClassPathResource("email/email.xml").getInputStream()) {
             String text = IOUtils.toString(input, StandardCharsets.UTF_8);
             String content = text.replaceAll(this.getRegex("verificationCode"), verificationCode);
             return content;

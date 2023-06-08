@@ -9,7 +9,7 @@ import com.springboot.project.common.storage.RangeClassPathResource;
  */
 public enum ClassPathStorageEnum {
 
-    EMAIL_TEMPLATE_FILE("c3bee66c-0529-11ee-8239-5f348e78e1fc/email.html", "email/email.html");
+    EMAIL_TEMPLATE_FILE("7162b22b-05bf-11ee-aa4f-27fdc35ebd80/email.xml", "email/email.xml");
 
     private ClassPathStorageEnum(String relativePath, String pathOfClassPath) {
         this.relativePath = relativePath;

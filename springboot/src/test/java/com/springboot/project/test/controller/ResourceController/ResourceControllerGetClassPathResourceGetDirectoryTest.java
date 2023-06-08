@@ -28,8 +28,8 @@ public class ResourceControllerGetClassPathResourceGetDirectoryTest extends Base
         assertEquals(14, response.getHeaders().getContentLength());
         assertEquals(this.pathName, response.getHeaders().getContentDisposition().getFilename());
         assertEquals(1, response.getBody().length);
-        assertEquals("email.html", JinqStream.from(Lists.newArrayList(response.getBody())).getOnlyValue());
-        assertEquals("[\"email.html\"]", new Gson().toJson(response.getBody()));
+        assertEquals("email.xml", JinqStream.from(Lists.newArrayList(response.getBody())).getOnlyValue());
+        assertEquals("[\"email.xml\"]", new Gson().toJson(response.getBody()));
     }
 
     @BeforeEach

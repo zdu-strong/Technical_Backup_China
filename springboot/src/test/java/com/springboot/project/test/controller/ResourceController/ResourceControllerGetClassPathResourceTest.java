@@ -23,7 +23,7 @@ public class ResourceControllerGetClassPathResourceTest extends BaseTest {
         var response = this.testRestTemplate.getForEntity(url, byte[].class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(50, response.getHeaders().getContentLength());
-        assertEquals("email.html", response.getHeaders().getContentDisposition().getFilename());
+        assertEquals("email.xml", response.getHeaders().getContentDisposition().getFilename());
         assertEquals(Integer.valueOf(60).byteValue(),
                 JinqStream.from(Lists.newArrayList(ArrayUtils.toObject(response.getBody()))).findFirst().get());
     }

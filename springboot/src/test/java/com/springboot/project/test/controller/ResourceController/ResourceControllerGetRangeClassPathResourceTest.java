@@ -31,7 +31,7 @@ public class ResourceControllerGetRangeClassPathResourceTest extends BaseTest {
                 byte[].class);
         assertEquals(HttpStatus.PARTIAL_CONTENT, response.getStatusCode());
         assertEquals(1, response.getHeaders().getContentLength());
-        assertEquals("email.html", response.getHeaders().getContentDisposition().getFilename());
+        assertEquals("email.xml", response.getHeaders().getContentDisposition().getFilename());
         assertEquals(Integer.valueOf(60).byteValue(),
                 JinqStream.from(Lists.newArrayList(ArrayUtils.toObject(response.getBody()))).getOnlyValue());
     }

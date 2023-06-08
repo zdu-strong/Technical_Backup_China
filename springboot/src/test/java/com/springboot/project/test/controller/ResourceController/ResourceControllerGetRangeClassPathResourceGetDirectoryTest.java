@@ -38,7 +38,7 @@ public class ResourceControllerGetRangeClassPathResourceGetDirectoryTest extends
         assertEquals(12, response.getBody().length);
         assertEquals(Integer.valueOf(91).byteValue(),
                 JinqStream.from(Lists.newArrayList(ArrayUtils.toObject(response.getBody()))).findFirst().get());
-        assertEquals("[\"email.html", IOUtils.toString(response.getBody(), StandardCharsets.UTF_8.name()));
+        assertEquals("[\"email.xml", IOUtils.toString(response.getBody(), StandardCharsets.UTF_8.name()));
     }
 
     @BeforeEach
