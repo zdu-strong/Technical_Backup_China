@@ -231,7 +231,11 @@ export default observer(() => {
             </div>
           </div>)}
           {state.activeStep > 0 && <Divider style={{ marginTop: "1em", marginBottom: "1em" }} />}
-          {state.activeStep > 1 && <div>
+          {state.activeStep > 1 && <div className="flex flex-row">
+            <div className="flex flex-row" style={{ marginRight: "1em" }}>
+              <FormattedMessage id="Password" defaultMessage="Password" />
+              {":"}
+            </div>
             <FormattedMessage id="PasswordSettingIsComplete" defaultMessage="Password setting is complete" />
           </div>}
           {state.activeStep === 1 && <div className="flex flex-col">
@@ -274,9 +278,11 @@ export default observer(() => {
           {state.activeStep > 1 && <Divider style={{ marginTop: "1em", marginBottom: "1em" }} />}
           {state.activeStep > 2 && <div>
             {state.emailList.length > 0 && <div className="flex flex-col">
-              {state.emailList.map(s => <div key={s.id}>
-                <FormattedMessage id="Email" defaultMessage="Email" />
-                {": "}
+              {state.emailList.map(s => <div key={s.id} className="flex flex-row" style={{ marginBottom: "1em" }}>
+                <div className="flex flex-row" style={{ marginRight: "1em" }}>
+                  <FormattedMessage id="Email" defaultMessage="Email" />
+                  {":"}
+                </div>
                 {s.email}
               </div>)}
             </div>}
@@ -284,12 +290,6 @@ export default observer(() => {
           {state.activeStep === 2 && <div className="flex flex-col">
             <div>
               <FormattedMessage id="BindedEmailOrMobilePhoneNumber" defaultMessage="Binded email or mobile phone number" />
-            </div>
-            <div>
-              <FormattedMessage id="YouCanUseTheEmailOrMobilePhoneNumberAsAnAccountToSignIn" defaultMessage="You can use the mailbox or mobile phone number as an account to log in, and you can also unbind on the login page." />
-            </div>
-            <div>
-              <FormattedMessage id="IfYouUnfortunatelyForgetYourPasswordPleaseCreateANewAccount" defaultMessage="If you unfortunately forget your password, please create a new account, and then use an email or mobile phone number to retrieve the friend relationship of the account that you have bound to use the mailbox or mobile phone number in the user setting interface." />
             </div>
             {state.emailList.map((s, index) => <div className="flex flex-row items-center" key={s.id} style={{ marginTop: '1em' }}>
               <TextField
