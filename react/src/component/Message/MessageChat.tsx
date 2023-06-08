@@ -14,6 +14,7 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useRef } from "react";
 import MessageMoreActionDialog from "../MessageMoreAction/MessageMoreActionDialog";
 import { useNavigate } from "react-router-dom";
+import LogoutIcon from '@mui/icons-material/Logout';
 
 export default observer((props: { username: string, userId: string }) => {
   const state = useMobxState({
@@ -21,6 +22,7 @@ export default observer((props: { username: string, userId: string }) => {
     messageContent: "",
     /* 是否正在发送消息 */
     loadingOfSend: false,
+    loadingOfSignOut: false,
     inputFileId: v1(),
     messageInputId: v1(),
     textareaRef: useRef<HTMLTextAreaElement>(),
@@ -123,9 +125,19 @@ export default observer((props: { username: string, userId: string }) => {
             <Button
               variant="contained"
               color="secondary"
+              startIcon={ state.loadingOfSignOut? <CircularProgress style={{ color: "white"  }} size="22px" /> : <LogoutIcon />}
               onClick={async () => {
-                await api.Authorization.signOut();
-                state.navigate("/sign_in");
+                if (state.loadingOfSignOut) {
+                  return;
+                }
+                try {
+                  state.loadingOfSignOut = true;
+                  await api.Authorization.signOut();
+                  state.navigate("/sign_in");
+                } catch (e) {
+                  MessageService.error(e);
+                  state.loadingOfSignOut = false;
+                }
               }}
               style={{
                 marginLeft: "1em",
@@ -192,7 +204,7 @@ export default observer((props: { username: string, userId: string }) => {
           }}
           startIcon={state.loadingOfSend ? <CircularProgress
             size="22px"
-            color={state.messageContent.trim() ? "secondary" : "primary"}
+            style={{ color: "white" }}
           /> : (state.messageContent.trim() ?
             <SendIcon />
             :
