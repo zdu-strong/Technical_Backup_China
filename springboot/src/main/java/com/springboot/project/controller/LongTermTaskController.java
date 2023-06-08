@@ -35,22 +35,20 @@ public class LongTermTaskController extends BaseController {
         calendarOfWait.add(Calendar.MILLISECOND, Long.valueOf(this.tempWaitDuration.toMillis()).intValue());
         Date expireDate = calendarOfWait.getTime();
 
-        while (new Date().before(expireDate)) {
-            var result = this.longTermTaskService
+        while (true) {
+            var response = this.longTermTaskService
                     .getLongTermTask(this.encryptDecryptService.decryptByAES(id));
-            if (result.getBody() instanceof LongTermTaskModel) {
+            if (response.getBody() instanceof LongTermTaskModel) {
                 @SuppressWarnings("unchecked")
-                var longTermTaskResult = (ResponseEntity<LongTermTaskModel<?>>) result;
-                if (longTermTaskResult.getBody().getIsDone()) {
+                var longTermTaskResult = (ResponseEntity<LongTermTaskModel<?>>) response;
+                if (longTermTaskResult.getBody().getIsDone() || !new Date().before(expireDate)) {
                     return longTermTaskResult;
+                } else {
+                    Thread.sleep(1);
                 }
             } else {
-                return result;
+                return response;
             }
-            Thread.sleep(1000);
         }
-
-        return this.longTermTaskService
-                .getLongTermTask(this.encryptDecryptService.decryptByAES(id));
     }
 }

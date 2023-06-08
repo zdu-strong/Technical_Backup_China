@@ -1,9 +1,9 @@
 import axios from "axios";
-import { EMPTY, concatMap, from, interval, of, take } from "rxjs";
+import { EMPTY, concat, concatMap, from, interval, of, take } from "rxjs";
 import { Serializable, TypedJSON } from "typedjson";
 
 export async function getLongTermTask<T>(url: string, rootConstructor?: Serializable<T>): Promise<T> {
-  return await interval(1000).pipe(
+  return await concat(of(null), interval(1000)).pipe(
     concatMap(() => from(axios.get(url))),
     concatMap((response) => {
       if (response.data.isDone) {
