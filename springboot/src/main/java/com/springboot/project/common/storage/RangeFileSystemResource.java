@@ -23,15 +23,14 @@ public class RangeFileSystemResource extends FileSystemResource {
 
     @Override
     public InputStream getInputStream() throws IOException {
-        InputStream input = null;
+        InputStream input = RandomAccessFileInputStream.builder()
+                .setRandomAccessFile(new RandomAccessFile(this.file, "r"))
+                .get();
         try {
-            input = new RandomAccessFileInputStream(new RandomAccessFile(this.file, "r"));
             input.skip(startIndex);
             return new BoundedInputStream(input, this.rangeContentLength);
         } catch (Throwable e) {
-            if (input != null) {
-                input.close();
-            }
+            input.close();
             throw e;
         }
     }
