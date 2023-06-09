@@ -1,20 +1,16 @@
 import { observer, useMobxState } from "mobx-react-use-autorun";
-import { stylesheet } from "typestyle";
 import { MessageService } from "@/common/MessageService";
 import api from '@/api'
-import { AppBar, Box, Button, CircularProgress, TextField, Toolbar, Typography } from "@mui/material";
+import { Button, CircularProgress, TextField } from "@mui/material";
 import SendIcon from '@mui/icons-material/Send'
 import { FormattedMessage, useIntl } from "react-intl";
 import { v1 } from 'uuid'
 import { isMobilePhone } from "@/common/is-mobile-phone";
 import AddIcon from '@mui/icons-material/Add';
-import MessageUnlimitedList from "./MessageUnlimitedList";
 import { concatMap, from, map, timer, toArray } from "rxjs";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useRef } from "react";
-import MessageMoreActionDialog from "../MessageMoreAction/MessageMoreActionDialog";
-import { useNavigate } from "react-router-dom";
-import LogoutIcon from '@mui/icons-material/Logout';
+import MessageMoreActionDialog from "@/component/MessageMoreAction/MessageMoreActionDialog";
 
 export default observer((props: { username: string, userId: string }) => {
   const state = useMobxState({
@@ -22,31 +18,16 @@ export default observer((props: { username: string, userId: string }) => {
     messageContent: "",
     /* 是否正在发送消息 */
     loadingOfSend: false,
-    loadingOfSignOut: false,
     inputFileId: v1(),
     messageInputId: v1(),
     textareaRef: useRef<HTMLTextAreaElement>(),
     moreActionDialog: {
       open: false,
     },
-    css: stylesheet({
-      messsageListContainer: {
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        paddingLeft: "1em",
-        paddingRight: "1em",
-        flex: "1 1 auto",
-      },
-    }),
   }, {
     ...props,
     intl: useIntl(),
     inputFileRef: useRef<any>(),
-    navigate: useNavigate(),
   })
 
   async function sendMessage() {
@@ -112,45 +93,7 @@ export default observer((props: { username: string, userId: string }) => {
     }
   }
 
-  return <div className={state.css.messsageListContainer}>
-    <Box style={{ marginBottom: "1em", width: "100%" }}>
-      <AppBar position="static">
-        <Toolbar className="flex flex-row justify-end" style={{ paddingLeft: "0px" }}>
-          <div className="flex flex-row items-center">
-            <Typography variant="h6" component="div" sx={{ flexWrap: "nowrap" }}>
-              <div style={{ marginLeft: "1em", ...(isMobilePhone ? { fontSize: "x-small" } : {}) }}>
-                {state.username}
-              </div>
-            </Typography>
-            <Button
-              variant="contained"
-              color="secondary"
-              startIcon={ state.loadingOfSignOut? <CircularProgress style={{ color: "white"  }} size="22px" /> : <LogoutIcon />}
-              onClick={async () => {
-                if (state.loadingOfSignOut) {
-                  return;
-                }
-                try {
-                  state.loadingOfSignOut = true;
-                  await api.Authorization.signOut();
-                  state.navigate("/sign_in");
-                } catch (e) {
-                  MessageService.error(e);
-                  state.loadingOfSignOut = false;
-                }
-              }}
-              style={{
-                marginLeft: "1em",
-                textTransform: "none"
-              }}
-            >
-              <FormattedMessage id="SignOut" defaultMessage="Sign out" />
-            </Button>
-          </div>
-        </Toolbar>
-      </AppBar>
-    </Box>
-    <MessageUnlimitedList userId={state.userId} username={state.username} />
+  return <>
     <div className="flex flex-row justify-center items-center w-full" style={{ paddingBottom: "1em", marginTop: "1em" }}>
       <div className="flex flex-auto">
         <TextField
@@ -281,5 +224,5 @@ export default observer((props: { username: string, userId: string }) => {
       }}
       uploadFile={() => state.inputFileRef.current.click()}
     />}
-  </div>;
+  </>;
 })

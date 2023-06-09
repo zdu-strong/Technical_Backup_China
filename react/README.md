@@ -87,7 +87,7 @@ Define componentized css, & represents the current class name.
 10. date-fns (https://date-fns.org)
 11. UUID (https://www.npmjs.com/package/uuid)<br/>
 12. Recharts (https://recharts.org/en-US)<br/>
-13. tailwindcss(https://tailwindcss.com)<br/>
-14. Animate.css(https://animate.style)<br/>
+13. tailwindcss (https://tailwindcss.com)<br/>
+14. Animate.css (https://animate.style)<br/>
 15. react-git-info (https://www.npmjs.com/package/react-git-info)
 16. mathjs (https://www.npmjs.com/package/mathjs)

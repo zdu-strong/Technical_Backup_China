@@ -13,6 +13,7 @@ import { UserMessageModel } from "@/model/UserMessageModel";
 export default observer((props: {
   userId: string,
   username: string,
+  setReadyForMessageList: (readyForMessageList: boolean) => Promise<void>,
 }) => {
   const state = useMobxState({
     /* 想要跳转到哪一项, 输入框的值 */
@@ -109,6 +110,7 @@ export default observer((props: {
         }
         state.ready = true;
         state.error = null;
+        await state.setReadyForMessageList(true);
       })())),
       tap(() => {
         cleanMessageMap();

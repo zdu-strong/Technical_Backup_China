@@ -7,11 +7,17 @@ import { useMount } from "mobx-react-use-autorun";
 import api from "@/api";
 import LoadingOrErrorComponent from "@/common/MessageService/LoadingOrErrorComponent";
 import { v1 } from "uuid";
+import MessageMenu from "@/component/MessageEntry/MessageMenu";
+import MessageUnlimitedList from "@/component/Message/MessageUnlimitedList";
 
 export default observer(() => {
 
   const state = useMobxState({
     readyForStart: false,
+    readyForMessageList: false,
+    async setReadyForMessageList(readyForMessageList: boolean) {
+      state.readyForMessageList = readyForMessageList;
+    },
     error: null as any,
     css: stylesheet({
       container: {
@@ -22,6 +28,8 @@ export default observer(() => {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
+        paddingLeft: "1em",
+        paddingRight: "1em",
       },
     }),
   }, {
@@ -40,9 +48,12 @@ export default observer(() => {
     }
   })
 
-  return <LoadingOrErrorComponent ready={state.readyForStart} error={state.error} >
-    <div className={state.css.container}>
+  return <>
+    <LoadingOrErrorComponent ready={state.readyForStart && state.readyForMessageList} error={state.error} />
+    {state.readyForStart && <div className={state.css.container} style={state.readyForMessageList ? {} : { visibility: "hidden", flex: "none", height: "0px" }} >
+      <MessageMenu userId={GlobalUserInfo.id} username={GlobalUserInfo.username} />
+      <MessageUnlimitedList userId={GlobalUserInfo.id!} username={GlobalUserInfo.username!} setReadyForMessageList={state.setReadyForMessageList} />
       <MessageChat userId={GlobalUserInfo.id!} username={GlobalUserInfo.username!} />
-    </div>
-  </LoadingOrErrorComponent>
+    </div>}
+  </>
 })
