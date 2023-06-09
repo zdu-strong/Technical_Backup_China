@@ -50,7 +50,7 @@ export default observer(() => {
 
   return <>
     <LoadingOrErrorComponent ready={state.readyForStart && state.readyForMessageList} error={state.error} />
-    {state.readyForStart && <div className={state.css.container} style={state.readyForMessageList ? {} : { visibility: "hidden", flex: "none", height: "0px" }} >
+    {state.readyForStart && <div className={state.css.container} style={state.readyForMessageList ? {} : { position: "absolute", visibility: "hidden" }} >
       <MessageMenu userId={GlobalUserInfo.id} username={GlobalUserInfo.username} />
       <MessageUnlimitedList userId={GlobalUserInfo.id!} username={GlobalUserInfo.username!} setReadyForMessageList={state.setReadyForMessageList} />
       <MessageChat userId={GlobalUserInfo.id!} username={GlobalUserInfo.username!} />
