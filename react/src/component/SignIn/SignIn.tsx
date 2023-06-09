@@ -184,6 +184,9 @@ export default observer(() => {
       <Link to="/sign_up">
         <FormattedMessage id="SignUp" defaultMessage="SignUp" />
       </Link>
+      <Link to="/" style={{ marginLeft: "2em" }}>
+        <FormattedMessage id="ReturnToHomePage" defaultMessage="To home" />
+      </Link>
     </div>
     {state.usernameTooltipDialog.open && <AccountTooltipDialog
       closeDialog={() => state.usernameTooltipDialog.open = false}
