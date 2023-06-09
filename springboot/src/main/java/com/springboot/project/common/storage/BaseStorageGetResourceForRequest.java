@@ -36,7 +36,7 @@ public class BaseStorageGetResourceForRequest extends BaseStorageDeleteResource 
                 var jsonBytes = jsonString.getBytes(StandardCharsets.UTF_8);
                 return new ByteArrayResource(jsonBytes);
             }
-            return new FileSystemResource(file);
+            return new RandomAccessFileSystemResource(file);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
