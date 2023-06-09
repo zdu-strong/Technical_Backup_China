@@ -15,6 +15,7 @@ async function main() {
 
 async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string) {
   if (isRunAndroid) {
+    await execa.command("npx -y -p typescript -p ts-node ts-node --skipProject bin/update_gradle.ts");
     await execa.command(
       [
         "ionic capacitor build android",

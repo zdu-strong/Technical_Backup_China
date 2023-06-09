@@ -21,7 +21,7 @@ async function main() {
   const deviceList = await getDeviceList(isRunAndroid);
   const { childProcessOfReact } = await startReact(avaliablePort, ReactServerAddress);
 
-  const childProcessOfCapacitor = getChildProcessOfCapacitor(isRunAndroid, ReactServerAddress, androidSdkRootPath, deviceList);
+  const [childProcessOfCapacitor] = await createChildProcessOfCapacitor(isRunAndroid, ReactServerAddress, androidSdkRootPath, deviceList);
   await Promise.race([childProcessOfReact, childProcessOfCapacitor]);
   await util.promisify(treeKill)(childProcessOfReact.pid!).catch(async () => null);
   await util.promisify(treeKill)(childProcessOfCapacitor.pid!).catch(async () => null);
@@ -134,9 +134,10 @@ function getAndroidSdkRootPath() {
   return androidSdkRootPath;
 }
 
-function getChildProcessOfCapacitor(isRunAndroid: boolean, ReactServerAddress: string, androidSdkRootPath: string, deviceList: string[]) {
+async function createChildProcessOfCapacitor(isRunAndroid: boolean, ReactServerAddress: string, androidSdkRootPath: string, deviceList: string[]) {
   if (isRunAndroid) {
-    return execa.command(
+    await execa.command("npx -y -p typescript -p ts-node ts-node --skipProject bin/update_gradle.ts");
+    return [execa.command(
       [
         `ionic cap run android`,
         '--watch',
@@ -152,9 +153,9 @@ function getChildProcessOfCapacitor(isRunAndroid: boolean, ReactServerAddress: s
           "ANDROID_SDK_ROOT": `${androidSdkRootPath}`,
         },
       }
-    );
+    )];
   } else {
-    return execa.command(
+    return [execa.command(
       [
         `ionic cap run ios`,
         '--watch',
@@ -166,7 +167,7 @@ function getChildProcessOfCapacitor(isRunAndroid: boolean, ReactServerAddress: s
         cwd: path.join(__dirname, ".."),
         extendEnv: true,
       }
-    );
+    )];
   }
 }
 
@@ -205,6 +206,7 @@ async function getDeviceList(isRunAndroid: boolean) {
       throw new Error("No available Device!")
     }
     deviceList = linq.from(androidDeviceOutputList).skip(startIndex + 1).select(item => linq.from(item.split("|")).select(item => item.trim()).toArray()).select(s => linq.from(s).last()).toArray();
+    deviceList = deviceList.filter(s => s.startsWith("emulator-"));
     if (!deviceList.length) {
       throw new Error("No available Device!")
     }

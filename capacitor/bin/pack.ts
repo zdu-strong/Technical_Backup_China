@@ -18,6 +18,7 @@ async function main() {
 
 async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string, deviceList: string[]) {
   if (isRunAndroid) {
+    await execa.command("npx -y -p typescript -p ts-node ts-node --skipProject bin/update_gradle.ts");
     await execa.command(
       [
         `ionic capacitor run android`,
@@ -119,7 +120,6 @@ async function getIsRunAndroid() {
 
 async function getDeviceList(isRunAndroid: boolean) {
   let deviceList = [] as string[];
-
   if (isRunAndroid) {
     const { stdout: androidDeviceOutput } = await execa.command(
       `ionic cap run ${isRunAndroid ? 'android' : 'ios'} --list`,
@@ -135,6 +135,7 @@ async function getDeviceList(isRunAndroid: boolean) {
       throw new Error("No available Device!")
     }
     deviceList = linq.from(androidDeviceOutputList).skip(startIndex + 1).select(item => linq.from(item.split("|")).select(item => item.trim()).toArray()).select(s => linq.from(s).last()).toArray();
+    deviceList = deviceList.filter(s => s.startsWith("emulator-"));
     if (!deviceList.length) {
       throw new Error("No available Device!")
     }
