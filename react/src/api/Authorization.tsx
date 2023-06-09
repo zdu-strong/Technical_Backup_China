@@ -63,7 +63,11 @@ export async function getUserInfo() {
 
 export async function signOut() {
   if (getAccessToken()) {
-    await axios.post("/sign_out");
+    try {
+      await axios.post("/sign_out");
+    } catch (e) {
+      // do nothing
+    }
   }
   await removeAccessToken();
   await removePrivateKeyOfRSA();
