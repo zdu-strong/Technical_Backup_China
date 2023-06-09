@@ -94,8 +94,8 @@ Define componentized css, & represents the current class name.
 9. typedjson (https://www.npmjs.com/package/typedjson)
 10. linq (https://www.npmjs.com/package/linq)<br/>
 11. UUID (https://www.npmjs.com/package/uuid)<br/>
-12. tailwindcss(https://tailwindcss.com)<br/>
-13. Animate.css(https://animate.style)<br/>
+12. tailwindcss (https://tailwindcss.com)<br/>
+13. Animate.css (https://animate.style)<br/>
 14. react-git-info (https://www.npmjs.com/package/react-git-info)
 15. Game Engine (https://www.babylonjs.com)
 16. mathjs (https://www.npmjs.com/package/mathjs)
