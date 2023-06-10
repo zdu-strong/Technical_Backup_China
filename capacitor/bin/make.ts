@@ -3,6 +3,7 @@ import os from 'os'
 import inquirer from "inquirer"
 import linq from 'linq'
 import execa from "execa"
+import fs from 'fs'
 
 async function main() {
   await checkPlatform();
@@ -11,6 +12,7 @@ async function main() {
   await getDeviceList(isRunAndroid);
   await buildReact();
   await runAndroidOrIOS(isRunAndroid, androidSdkRootPath);
+  await copySignedApk(isRunAndroid);
   process.exit();
 }
 
@@ -22,6 +24,20 @@ async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string
         "ionic capacitor build android",
         "--no-build",
         "--prod",
+        "--no-open",
+      ].join(" "),
+      {
+        stdio: "inherit",
+        cwd: path.join(__dirname, ".."),
+        extendEnv: true,
+        env: {
+          "ANDROID_SDK_ROOT": `${androidSdkRootPath}`
+        },
+      }
+    );
+    await execa.command(
+      [
+        "npx cap build android",
       ].join(" "),
       {
         stdio: "inherit",
@@ -38,6 +54,17 @@ async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string
         "ionic capacitor build ios",
         "--no-build",
         "--prod",
+        "--no-open",
+      ].join(" "),
+      {
+        stdio: "inherit",
+        cwd: path.join(__dirname, ".."),
+        extendEnv: true,
+      }
+    );
+    await execa.command(
+      [
+        "npx cap build ios",
       ].join(" "),
       {
         stdio: "inherit",
@@ -140,6 +167,14 @@ async function getDeviceList(isRunAndroid: boolean) {
     throw new Error("More than one available Device!")
   }
   return deviceList;
+}
+
+async function copySignedApk(isRunAndroid: boolean) {
+  if (isRunAndroid) {
+    const apkPath = path.join(__dirname, "..", "android/app/build/outputs/apk/release", "app-release-signed.apk");
+    const filePathOfNewApk = path.join(__dirname, "..", "app-release-signed.apk");
+    await fs.promises.copyFile(apkPath, filePathOfNewApk);
+  }
 }
 
 export default main()

@@ -31,7 +31,7 @@ It builds and deploys the native app to a target device of your choice.<br/>
 
 ### `npm run make`
 
-Opens the native project workspace in the specified native IDE (Xcode for iOS, Android Studio for Android).<br/>
+This command will build the native project to create a signed AAB, APK or IPA file. Build options can be specified on the command line or in your Capacitor Configuration File.
 
 ## Install new dependencies
 

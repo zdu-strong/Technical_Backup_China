@@ -8,6 +8,7 @@ async function main() {
   await deleteAndroidFolder();
   await deleteIOSFolder();
   await deleteAppDebugApk();
+  await deleteAppSignedApk();
   await installDependencies();
   process.exit();
 }
@@ -48,6 +49,11 @@ async function deleteBuildFolder() {
 async function deleteAppDebugApk() {
   const filePathOfAppDebugApk = path.join(__dirname, "..", "app-debug.apk");
   await fs.promises.rm(filePathOfAppDebugApk, { recursive: true, force: true });
+}
+
+async function deleteAppSignedApk() {
+  const filePathOfSignedApk = path.join(__dirname, "..", "app-release-signed.apk");
+  await fs.promises.rm(filePathOfSignedApk, { recursive: true, force: true });
 }
 
 export default main()
