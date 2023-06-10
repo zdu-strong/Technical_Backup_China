@@ -3,7 +3,7 @@ import path from 'path'
 
 const config: CapacitorConfig =
 {
-  appId: "io.ionic.starter",
+  appId: "com.zdu.capacitor",
   appName: "my-app",
   webDir: "build",
   loggingBehavior: "none",
