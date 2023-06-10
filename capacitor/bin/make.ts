@@ -18,7 +18,8 @@ async function main() {
 
 async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string) {
   if (isRunAndroid) {
-    await execa.command("npx -y -p typescript -p ts-node ts-node --skipProject bin/update_gradle.ts");
+    await updateDownloadAddressOfGradleZipFile();
+    await updateDownloadAddressOfGrableDependencies();
     await execa.command(
       [
         "ionic capacitor build android",
@@ -156,6 +157,21 @@ async function copySignedApk(isRunAndroid: boolean) {
     const filePathOfNewApk = path.join(__dirname, "..", "app-release-signed.apk");
     await fs.promises.copyFile(apkPath, filePathOfNewApk);
   }
+}
+
+async function updateDownloadAddressOfGradleZipFile() {
+  const filePathOfGradlePropertiesFile = path.join(__dirname, "..", "android", "gradle", "wrapper", "gradle-wrapper.properties");
+  const text = await fs.promises.readFile(filePathOfGradlePropertiesFile, "utf8");
+  const replaceText = text.replace("https\\://services.gradle.org/distributions/", "http\\://mirrors.cloud.tencent.com/gradle/");
+  await fs.promises.writeFile(filePathOfGradlePropertiesFile, replaceText);
+}
+
+async function updateDownloadAddressOfGrableDependencies() {
+  const filePathOfGradlePropertiesFile = path.join(__dirname, "..", "android", "build.gradle");
+  const text = await fs.promises.readFile(filePathOfGradlePropertiesFile, "utf8");
+  let replaceText = text.replace(`google()\n        mavenCentral()`, `maven{ url 'https://maven.aliyun.com/repository/google' }\n        maven{ url 'https://maven.aliyun.com/repository/central' }`);
+  replaceText = replaceText.replace(`google()\n        mavenCentral()`, `maven{ url 'https://maven.aliyun.com/repository/google' }\n        maven{ url 'https://maven.aliyun.com/repository/central' }`);
+  await fs.promises.writeFile(filePathOfGradlePropertiesFile, replaceText);
 }
 
 export default main()
