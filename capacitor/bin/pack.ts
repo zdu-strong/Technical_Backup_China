@@ -9,48 +9,30 @@ async function main() {
   await checkPlatform();
   const isRunAndroid = await getIsRunAndroid();
   const androidSdkRootPath = getAndroidSdkRootPath();
+  await addPlatformSupport(isRunAndroid);
   const deviceList = await getDeviceList(isRunAndroid);
   await buildReact();
   await runAndroidOrIOS(isRunAndroid, androidSdkRootPath, deviceList);
-
   process.exit();
 }
 
 async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string, deviceList: string[]) {
+  await execa.command(
+    [
+      `npx cap run ${isRunAndroid ? "android" : "ios"}`,
+      `${deviceList.length === 1 ? `--target=${linq.from(deviceList).single()}` : ''}`,
+    ].join(" "),
+    {
+      stdio: "inherit",
+      cwd: path.join(__dirname, ".."),
+      extendEnv: true,
+      env: (isRunAndroid ? {
+        "ANDROID_SDK_ROOT": `${androidSdkRootPath}`,
+      } : {
+      }) as any,
+    }
+  );
   if (isRunAndroid) {
-    await updateDownloadAddressOfGradleZipFile();
-    await updateDownloadAddressOfGrableDependencies();
-    await execa.command(
-      [
-        `npx cap run android`,
-        '--no-build',
-        "--prod",
-        `${deviceList.length === 1 ? `--target=${linq.from(deviceList).single()}` : ''}`,
-      ].join(" "),
-      {
-        stdio: "inherit",
-        cwd: path.join(__dirname, ".."),
-        extendEnv: true,
-        env: {
-          "ANDROID_SDK_ROOT": `${androidSdkRootPath}`,
-        } as any,
-      }
-    );
-    await fs.promises.copyFile(path.join(__dirname, "..", "android/app/build/outputs/apk/debug/app-debug.apk"), path.join(__dirname, "..", "app-debug.apk"));
-  } else {
-    await execa.command(
-      [
-        `npx cap run ios`,
-        '--no-build',
-        "--prod",
-        `${deviceList.length === 1 ? `--target=${linq.from(deviceList).single()}` : ''}`,
-      ].join(" "),
-      {
-        stdio: "inherit",
-        cwd: path.join(__dirname, ".."),
-        extendEnv: true,
-      }
-    );
     await fs.promises.copyFile(path.join(__dirname, "..", "android/app/build/outputs/apk/debug/app-debug.apk"), path.join(__dirname, "..", "app-debug.apk"));
   }
 }
@@ -84,6 +66,7 @@ function getAndroidSdkRootPath() {
   }
   return androidSdkRootPath;
 }
+
 async function getIsRunAndroid() {
   let isRunAndroid = true;
   if (os.platform() === "darwin") {
@@ -119,8 +102,7 @@ async function getIsRunAndroid() {
   return isRunAndroid;
 }
 
-async function getDeviceList(isRunAndroid: boolean) {
-  let deviceList = [] as string[];
+async function addPlatformSupport(isRunAndroid: boolean) {
   await execa.command(
     `npx cap add ${isRunAndroid ? 'android' : 'ios'}`,
     {
@@ -128,6 +110,14 @@ async function getDeviceList(isRunAndroid: boolean) {
       cwd: path.join(__dirname, ".."),
     }
   );
+  if (isRunAndroid) {
+    await updateDownloadAddressOfGradleZipFile();
+    await updateDownloadAddressOfGrableDependencies();
+  }
+}
+
+async function getDeviceList(isRunAndroid: boolean) {
+  let deviceList = [] as string[];
   if (isRunAndroid) {
     const { stdout: androidDeviceOutput } = await execa.command(
       `npx cap run ${isRunAndroid ? 'android' : 'ios'} --list`,

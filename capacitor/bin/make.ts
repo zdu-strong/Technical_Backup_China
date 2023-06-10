@@ -9,7 +9,7 @@ async function main() {
   await checkPlatform();
   const isRunAndroid = await getIsRunAndroid();
   const androidSdkRootPath = await getAndroidSdkRootPath();
-  await getDeviceList(isRunAndroid);
+  await addPlatformSupport(isRunAndroid);
   await buildReact();
   await runAndroidOrIOS(isRunAndroid, androidSdkRootPath);
   await copySignedApk(isRunAndroid);
@@ -17,63 +17,37 @@ async function main() {
 }
 
 async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string) {
-  if (isRunAndroid) {
-    await updateDownloadAddressOfGradleZipFile();
-    await updateDownloadAddressOfGrableDependencies();
-    await execa.command(
-      [
-        "npx cap build android",
-        "--no-build",
-        "--prod",
-        "--no-open",
-      ].join(" "),
-      {
-        stdio: "inherit",
-        cwd: path.join(__dirname, ".."),
-        extendEnv: true,
-        env: {
-          "ANDROID_SDK_ROOT": `${androidSdkRootPath}`
-        } as any,
-      }
-    );
-    await execa.command(
-      [
-        "npx cap build android",
-      ].join(" "),
-      {
-        stdio: "inherit",
-        cwd: path.join(__dirname, ".."),
-        extendEnv: true,
-        env: {
-          "ANDROID_SDK_ROOT": `${androidSdkRootPath}`
-        } as any,
-      }
-    );
-  } else {
-    await execa.command(
-      [
-        "npx cap build ios",
-        "--no-build",
-        "--prod",
-        "--no-open",
-      ].join(" "),
-      {
-        stdio: "inherit",
-        cwd: path.join(__dirname, ".."),
-        extendEnv: true,
-      }
-    );
-    await execa.command(
-      [
-        "npx cap build ios",
-      ].join(" "),
-      {
-        stdio: "inherit",
-        cwd: path.join(__dirname, ".."),
-        extendEnv: true,
-      }
-    );
-  }
+  await execa.command(
+    [
+      `ionic capacitor build ${isRunAndroid ? "android" : "ios"}`,
+      "--no-build",
+      "--prod",
+      "--no-open",
+    ].join(" "),
+    {
+      stdio: "inherit",
+      cwd: path.join(__dirname, ".."),
+      extendEnv: true,
+      env: (isRunAndroid ? {
+        "ANDROID_SDK_ROOT": `${androidSdkRootPath}`
+      } : {
+      }) as any,
+    }
+  );
+  await execa.command(
+    [
+      `npx cap build ${isRunAndroid ? "android" : "ios"}`,
+    ].join(" "),
+    {
+      stdio: "inherit",
+      cwd: path.join(__dirname, ".."),
+      extendEnv: true,
+      env: (isRunAndroid ? {
+        "ANDROID_SDK_ROOT": `${androidSdkRootPath}`
+      } : {
+      }) as any,
+    }
+  );
 }
 
 async function buildReact() {
@@ -141,7 +115,15 @@ async function getIsRunAndroid() {
   return isRunAndroid;
 }
 
-async function getDeviceList(isRunAndroid: boolean) {
+async function copySignedApk(isRunAndroid: boolean) {
+  if (isRunAndroid) {
+    const apkPath = path.join(__dirname, "..", "android/app/build/outputs/apk/release", "app-release-signed.apk");
+    const filePathOfNewApk = path.join(__dirname, "..", "app-release-signed.apk");
+    await fs.promises.copyFile(apkPath, filePathOfNewApk);
+  }
+}
+
+async function addPlatformSupport(isRunAndroid: boolean) {
   await execa.command(
     `npx cap add ${isRunAndroid ? 'android' : 'ios'}`,
     {
@@ -149,13 +131,9 @@ async function getDeviceList(isRunAndroid: boolean) {
       cwd: path.join(__dirname, ".."),
     }
   );
-}
-
-async function copySignedApk(isRunAndroid: boolean) {
   if (isRunAndroid) {
-    const apkPath = path.join(__dirname, "..", "android/app/build/outputs/apk/release", "app-release-signed.apk");
-    const filePathOfNewApk = path.join(__dirname, "..", "app-release-signed.apk");
-    await fs.promises.copyFile(apkPath, filePathOfNewApk);
+    await updateDownloadAddressOfGradleZipFile();
+    await updateDownloadAddressOfGrableDependencies();
   }
 }
 
