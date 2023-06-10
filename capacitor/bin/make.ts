@@ -22,7 +22,7 @@ async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string
     await updateDownloadAddressOfGrableDependencies();
     await execa.command(
       [
-        "ionic capacitor build android",
+        "npx cap build android",
         "--no-build",
         "--prod",
         "--no-open",
@@ -52,7 +52,7 @@ async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string
   } else {
     await execa.command(
       [
-        "ionic capacitor build ios",
+        "npx cap build ios",
         "--no-build",
         "--prod",
         "--no-open",
@@ -143,9 +143,9 @@ async function getIsRunAndroid() {
 
 async function getDeviceList(isRunAndroid: boolean) {
   await execa.command(
-    `ionic cap run ${isRunAndroid ? 'android' : 'ios'} --list`,
+    `npx cap add ${isRunAndroid ? 'android' : 'ios'}`,
     {
-      stdio: "pipe",
+      stdio: "inherit",
       cwd: path.join(__dirname, ".."),
     }
   );

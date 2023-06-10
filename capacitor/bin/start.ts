@@ -141,7 +141,7 @@ async function createChildProcessOfCapacitor(isRunAndroid: boolean, ReactServerA
     await updateDownloadAddressOfGrableDependencies();
     return [execa.command(
       [
-        `ionic cap run android`,
+        `npx cap run android`,
         '--watch',
         `--livereload-url=${ReactServerAddress}`,
         `${deviceList.length === 1 ? `--target=${linq.from(deviceList).single()}` : ''}`,
@@ -159,7 +159,7 @@ async function createChildProcessOfCapacitor(isRunAndroid: boolean, ReactServerA
   } else {
     return [execa.command(
       [
-        `ionic cap run ios`,
+        `npx cap run ios`,
         '--watch',
         `--livereload-url=${ReactServerAddress}`,
         `${deviceList.length === 1 ? `--target=${linq.from(deviceList).single()}` : ''}`,
@@ -193,9 +193,16 @@ function getNetworkAddress(avaliablePort: number) {
 
 async function getDeviceList(isRunAndroid: boolean) {
   let deviceList = [] as string[];
+  await execa.command(
+    `npx cap add ${isRunAndroid ? 'android' : 'ios'}`,
+    {
+      stdio: "inherit",
+      cwd: path.join(__dirname, ".."),
+    }
+  );
   if (isRunAndroid) {
     const { stdout: androidDeviceOutput } = await execa.command(
-      `ionic cap run ${isRunAndroid ? 'android' : 'ios'} --list`,
+      `npx cap run ${isRunAndroid ? 'android' : 'ios'} --list`,
       {
         stdio: "pipe",
         cwd: path.join(__dirname, ".."),
@@ -207,7 +214,7 @@ async function getDeviceList(isRunAndroid: boolean) {
     if (startIndex < 0) {
       throw new Error("No available Device!")
     }
-    deviceList = linq.from(androidDeviceOutputList).skip(startIndex + 1).select(item => linq.from(item.split("|")).select(item => item.trim()).toArray()).select(s => linq.from(s).last()).toArray();
+    deviceList = linq.from(androidDeviceOutputList).skip(startIndex + 1).select(item => linq.from(item.split(new RegExp("\\s+"))).select(item => item.trim()).toArray()).select(s => linq.from(s).last()).toArray();
     deviceList = deviceList.filter(s => s.startsWith("emulator-"));
     if (!deviceList.length) {
       throw new Error("No available Device!")
