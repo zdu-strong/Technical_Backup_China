@@ -141,32 +141,13 @@ async function getIsRunAndroid() {
 }
 
 async function getDeviceList(isRunAndroid: boolean) {
-  let deviceList = [] as string[];
-  if (isRunAndroid) {
-    const { stdout: androidDeviceOutput } = await execa.command(
-      `ionic cap run ${isRunAndroid ? 'android' : 'ios'} --list`,
-      {
-        stdio: "pipe",
-        cwd: path.join(__dirname, ".."),
-      }
-    );
-
-    const androidDeviceOutputList = linq.from(androidDeviceOutput.split("\r\n")).selectMany(item => item.split("\n")).toArray();
-    const startIndex = androidDeviceOutputList.findIndex((item: string) => item.includes('-----'));
-    if (startIndex < 0) {
-      throw new Error("No available Device!")
+  await execa.command(
+    `ionic cap run ${isRunAndroid ? 'android' : 'ios'} --list`,
+    {
+      stdio: "pipe",
+      cwd: path.join(__dirname, ".."),
     }
-    deviceList = linq.from(androidDeviceOutputList).skip(startIndex + 1).select(item => linq.from(item.split("|")).select(item => item.trim()).toArray()).select(s => linq.from(s).last()).toArray();
-    deviceList = deviceList.filter(s => s.startsWith("emulator-"));
-    if (!deviceList.length) {
-      throw new Error("No available Device!")
-    }
-    if (deviceList.length === 1) {
-      return deviceList;
-    }
-    throw new Error("More than one available Device!")
-  }
-  return deviceList;
+  );
 }
 
 async function copySignedApk(isRunAndroid: boolean) {

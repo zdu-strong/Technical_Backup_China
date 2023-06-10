@@ -13,6 +13,7 @@
     "tailwind.config.js": true,
     "config-overrides.js": true,
     "app-debug.apk": true,
+    "app-release-signed.apk": true,
     "src/reportWebVitals.ts": true,
     "src/react-app-env.d.ts": true,
   },

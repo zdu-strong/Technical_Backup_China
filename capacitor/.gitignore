@@ -31,3 +31,4 @@ yarn-error.log*
 /android
 /ios
 /app-debug.apk
+/app-release-signed.apk
