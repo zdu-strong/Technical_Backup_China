@@ -19,6 +19,7 @@ async function main() {
   const androidSdkRootPath = getAndroidSdkRootPath();
   await addPlatformSupport(isRunAndroid);
   const deviceList = await getDeviceList(isRunAndroid);
+  await buildReact();
   const { childProcessOfReact } = await startReact(avaliablePort, ReactServerAddress);
   const childProcessOfCapacitor = createChildProcessOfCapacitor(isRunAndroid, ReactServerAddress, androidSdkRootPath, deviceList);
   await Promise.race([childProcessOfReact, childProcessOfCapacitor]);
@@ -27,20 +28,13 @@ async function main() {
   process.exit();
 }
 
+async function buildReact() {
+  const folderPathOfBuild = path.join(__dirname, "..", "build");
+  const folderPathOfPublic = path.join(__dirname, "..", "public");
+  await fs.promises.cp(folderPathOfPublic, folderPathOfBuild, { recursive: true, force: true });
+}
+
 async function startReact(avaliablePort: number, ReactServerAddress: string) {
-  await execa.command(
-    [
-      "react-app-rewired build",
-    ].join(" "),
-    {
-      stdio: "inherit",
-      cwd: path.join(__dirname, ".."),
-      extendEnv: true,
-      env: {
-        "GENERATE_SOURCEMAP": "false",
-      } as any,
-    }
-  );
   const childProcessOfReact = execa.command(
     [
       "react-app-rewired start",
@@ -135,7 +129,6 @@ function createChildProcessOfCapacitor(isRunAndroid: boolean, ReactServerAddress
   return execa.command(
     [
       `ionic capacitor run ${isRunAndroid ? 'android' : "ios"}`,
-      '--watch',
       `--livereload-url=${ReactServerAddress}`,
       `${deviceList.length === 1 ? `--target=${linq.from(deviceList).single()}` : ''}`,
     ].join(" "),
