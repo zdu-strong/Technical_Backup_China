@@ -19,7 +19,7 @@ async function main() {
 async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string) {
   await execa.command(
     [
-      `npx cap sync ${isRunAndroid ? "android" : "ios"}`,
+      `cap sync ${isRunAndroid ? "android" : "ios"}`,
       "--deployment",
     ].join(" "),
     {
@@ -34,7 +34,7 @@ async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string
   );
   await execa.command(
     [
-      `npx cap build ${isRunAndroid ? "android" : "ios"}`,
+      `cap build ${isRunAndroid ? "android" : "ios"}`,
     ].join(" "),
     {
       stdio: "inherit",
@@ -123,7 +123,7 @@ async function copySignedApk(isRunAndroid: boolean) {
 
 async function addPlatformSupport(isRunAndroid: boolean) {
   await execa.command(
-    `npx cap add ${isRunAndroid ? 'android' : 'ios'}`,
+    `cap add ${isRunAndroid ? 'android' : 'ios'}`,
     {
       stdio: "inherit",
       cwd: path.join(__dirname, ".."),

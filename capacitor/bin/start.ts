@@ -164,7 +164,7 @@ function getNetworkAddress(avaliablePort: number) {
 
 async function addPlatformSupport(isRunAndroid: boolean) {
   await execa.command(
-    `npx cap add ${isRunAndroid ? 'android' : 'ios'}`,
+    `cap add ${isRunAndroid ? 'android' : 'ios'}`,
     {
       stdio: "inherit",
       cwd: path.join(__dirname, ".."),
@@ -180,7 +180,7 @@ async function getDeviceList(isRunAndroid: boolean) {
   let deviceList = [] as string[];
   if (isRunAndroid) {
     const { stdout: androidDeviceOutput } = await execa.command(
-      `npx cap run ${isRunAndroid ? 'android' : 'ios'} --list`,
+      `cap run ${isRunAndroid ? 'android' : 'ios'} --list`,
       {
         stdio: "pipe",
         cwd: path.join(__dirname, ".."),
