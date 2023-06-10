@@ -19,10 +19,8 @@ async function main() {
 async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string) {
   await execa.command(
     [
-      `ionic capacitor build ${isRunAndroid ? "android" : "ios"}`,
-      "--no-build",
-      "--prod",
-      "--no-open",
+      `npx cap sync ${isRunAndroid ? "android" : "ios"}`,
+      "--deployment",
     ].join(" "),
     {
       stdio: "inherit",
