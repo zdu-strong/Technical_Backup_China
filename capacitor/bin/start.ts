@@ -41,7 +41,7 @@ async function startReact(avaliablePort: number, ReactServerAddress: string) {
       extendEnv: true,
       env: {
         "GENERATE_SOURCEMAP": "false",
-      },
+      } as any,
     }
   );
 
@@ -56,7 +56,7 @@ async function startReact(avaliablePort: number, ReactServerAddress: string) {
       env: {
         "BROWSER": "NONE",
         "PORT": String(avaliablePort),
-      },
+      } as any,
     }
   );
 
@@ -85,7 +85,7 @@ async function runCapacitorForCypress() {
         extendEnv: true,
         env: {
           "BROWSER": "NONE",
-        },
+        } as any,
       }
     );
     process.exit();
@@ -153,7 +153,7 @@ async function createChildProcessOfCapacitor(isRunAndroid: boolean, ReactServerA
         extendEnv: true,
         env: {
           "ANDROID_SDK_ROOT": `${androidSdkRootPath}`,
-        },
+        } as any,
       }
     )];
   } else {

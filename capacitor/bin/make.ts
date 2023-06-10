@@ -33,7 +33,7 @@ async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string
         extendEnv: true,
         env: {
           "ANDROID_SDK_ROOT": `${androidSdkRootPath}`
-        },
+        } as any,
       }
     );
     await execa.command(
@@ -46,7 +46,7 @@ async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string
         extendEnv: true,
         env: {
           "ANDROID_SDK_ROOT": `${androidSdkRootPath}`
-        },
+        } as any,
       }
     );
   } else {
@@ -87,7 +87,7 @@ async function buildReact() {
       extendEnv: true,
       env: {
         "GENERATE_SOURCEMAP": "false",
-      },
+      } as any,
     }
   );
 }

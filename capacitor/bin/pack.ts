@@ -33,7 +33,7 @@ async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string
         extendEnv: true,
         env: {
           "ANDROID_SDK_ROOT": `${androidSdkRootPath}`,
-        },
+        } as any,
       }
     );
     await fs.promises.copyFile(path.join(__dirname, "..", "android/app/build/outputs/apk/debug/app-debug.apk"), path.join(__dirname, "..", "app-debug.apk"));
@@ -66,7 +66,7 @@ async function buildReact() {
       extendEnv: true,
       env: {
         "GENERATE_SOURCEMAP": "false",
-      },
+      } as any,
     }
   );
 }
