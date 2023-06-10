@@ -13,20 +13,17 @@ import fs from 'fs'
 async function main() {
   await runCapacitorForCypress();
   await checkPlatform();
-
   const avaliablePort = await getPort();
   const ReactServerAddress = getNetworkAddress(avaliablePort);
-
   const isRunAndroid = await getIsRunAndroid();
   const androidSdkRootPath = getAndroidSdkRootPath();
+  await addPlatformSupport(isRunAndroid);
   const deviceList = await getDeviceList(isRunAndroid);
   const { childProcessOfReact } = await startReact(avaliablePort, ReactServerAddress);
-
-  const [childProcessOfCapacitor] = await createChildProcessOfCapacitor(isRunAndroid, ReactServerAddress, androidSdkRootPath, deviceList);
+  const childProcessOfCapacitor = createChildProcessOfCapacitor(isRunAndroid, ReactServerAddress, androidSdkRootPath, deviceList);
   await Promise.race([childProcessOfReact, childProcessOfCapacitor]);
   await util.promisify(treeKill)(childProcessOfReact.pid!).catch(async () => null);
   await util.promisify(treeKill)(childProcessOfCapacitor.pid!).catch(async () => null);
-
   process.exit();
 }
 
@@ -44,7 +41,6 @@ async function startReact(avaliablePort: number, ReactServerAddress: string) {
       } as any,
     }
   );
-
   const childProcessOfReact = execa.command(
     [
       "react-app-rewired start",
@@ -135,42 +131,24 @@ function getAndroidSdkRootPath() {
   return androidSdkRootPath;
 }
 
-async function createChildProcessOfCapacitor(isRunAndroid: boolean, ReactServerAddress: string, androidSdkRootPath: string, deviceList: string[]) {
-  if (isRunAndroid) {
-    await updateDownloadAddressOfGradleZipFile();
-    await updateDownloadAddressOfGrableDependencies();
-    return [execa.command(
-      [
-        `npx cap run android`,
-        '--watch',
-        `--livereload-url=${ReactServerAddress}`,
-        `${deviceList.length === 1 ? `--target=${linq.from(deviceList).single()}` : ''}`,
-      ].join(" "),
-
-      {
-        stdio: "inherit",
-        cwd: path.join(__dirname, ".."),
-        extendEnv: true,
-        env: {
-          "ANDROID_SDK_ROOT": `${androidSdkRootPath}`,
-        } as any,
-      }
-    )];
-  } else {
-    return [execa.command(
-      [
-        `npx cap run ios`,
-        '--watch',
-        `--livereload-url=${ReactServerAddress}`,
-        `${deviceList.length === 1 ? `--target=${linq.from(deviceList).single()}` : ''}`,
-      ].join(" "),
-      {
-        stdio: "inherit",
-        cwd: path.join(__dirname, ".."),
-        extendEnv: true,
-      }
-    )];
-  }
+function createChildProcessOfCapacitor(isRunAndroid: boolean, ReactServerAddress: string, androidSdkRootPath: string, deviceList: string[]) {
+  return execa.command(
+    [
+      `ionic capacitor run ${isRunAndroid ? 'android' : "ios"}`,
+      '--watch',
+      `--livereload-url=${ReactServerAddress}`,
+      `${deviceList.length === 1 ? `--target=${linq.from(deviceList).single()}` : ''}`,
+    ].join(" "),
+    {
+      stdio: "inherit",
+      cwd: path.join(__dirname, ".."),
+      extendEnv: true,
+      env: (isRunAndroid ? {
+        "ANDROID_SDK_ROOT": `${androidSdkRootPath}`,
+      } : {
+      }) as any,
+    }
+  );
 }
 
 function getNetworkAddress(avaliablePort: number) {
@@ -191,8 +169,7 @@ function getNetworkAddress(avaliablePort: number) {
   return networkAddress;
 }
 
-async function getDeviceList(isRunAndroid: boolean) {
-  let deviceList = [] as string[];
+async function addPlatformSupport(isRunAndroid: boolean) {
   await execa.command(
     `npx cap add ${isRunAndroid ? 'android' : 'ios'}`,
     {
@@ -200,6 +177,14 @@ async function getDeviceList(isRunAndroid: boolean) {
       cwd: path.join(__dirname, ".."),
     }
   );
+  if (isRunAndroid) {
+    await updateDownloadAddressOfGradleZipFile();
+    await updateDownloadAddressOfGrableDependencies();
+  }
+}
+
+async function getDeviceList(isRunAndroid: boolean) {
+  let deviceList = [] as string[];
   if (isRunAndroid) {
     const { stdout: androidDeviceOutput } = await execa.command(
       `npx cap run ${isRunAndroid ? 'android' : 'ios'} --list`,
