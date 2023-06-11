@@ -190,7 +190,7 @@ async function getDeviceList(isRunAndroid: boolean) {
       throw new Error("No available Device!")
     }
     deviceList = linq.from(androidDeviceOutputList).skip(startIndex + 1).select(item => linq.from(item.split(new RegExp("\\s+"))).select(item => item.trim()).toArray()).select(s => linq.from(s).last()).toArray();
-    deviceList = deviceList.filter(s => s.startsWith("Pixel_6_API_"));
+    deviceList = deviceList.filter(s => s === "Pixel_6_API_33");
     if (!deviceList.length) {
       throw new Error("No available Device!")
     }
