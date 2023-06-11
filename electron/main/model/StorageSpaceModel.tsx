@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable } from "mobx-react-use-autorun";
 import { jsonMember, jsonObject } from "typedjson";
 
 @jsonObject
