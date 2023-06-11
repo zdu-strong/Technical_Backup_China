@@ -229,15 +229,14 @@ async function updateDownloadAddressOfGrableDependencies() {
   {
     const filePathOfGradlePropertiesFile = path.join(__dirname, "..", "android", "build.gradle");
     const text = await fs.promises.readFile(filePathOfGradlePropertiesFile, "utf8");
-    let replaceText = text.replace(`google()\n        mavenCentral()`, `maven{ url 'https://maven.aliyun.com/repository/google' }\n        maven{ url 'https://maven.aliyun.com/repository/central' }`);
-    replaceText = replaceText.replace(`google()\n        mavenCentral()`, `maven{ url 'https://maven.aliyun.com/repository/google' }\n        maven{ url 'https://maven.aliyun.com/repository/central' }`);
+    const replaceText = text.replace(new RegExp("google\\(\\)\\s+mavenCentral\\(\\)", "ig"), `maven{ url 'https://maven.aliyun.com/repository/google' }\n        maven{ url 'https://maven.aliyun.com/repository/central' }`);
     await fs.promises.writeFile(filePathOfGradlePropertiesFile, replaceText);
   }
   {
     const filePathOfGradlePropertiesFile = path.join(__dirname, "..", "android", "capacitor-cordova-android-plugins", "build.gradle");
     const text = await fs.promises.readFile(filePathOfGradlePropertiesFile, "utf8");
-    let replaceText = text.replace(`google()\n        mavenCentral()`, `maven{ url 'https://maven.aliyun.com/repository/google' }\n        maven{ url 'https://maven.aliyun.com/repository/central' }`);
-    replaceText = replaceText.replace(`google()\n        mavenCentral()`, `maven{ url 'https://maven.aliyun.com/repository/google' }\n        maven{ url 'https://maven.aliyun.com/repository/central' }`);
+    let replaceText = text.replace(new RegExp("google\\(\\)\\n        mavenCentral\\(\\)", "ig"), `maven{ url 'https://maven.aliyun.com/repository/google' }\n        maven{ url 'https://maven.aliyun.com/repository/central' }`);
+    replaceText = replaceText.replace(new RegExp("google\\(\\)\\n    mavenCentral\\(\\)", "ig"), `maven{ url 'https://maven.aliyun.com/repository/google' }\n    maven{ url 'https://maven.aliyun.com/repository/central' }`);
     await fs.promises.writeFile(filePathOfGradlePropertiesFile, replaceText);
   }
 }
