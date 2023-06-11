@@ -142,6 +142,22 @@ async function createChildProcessOfCapacitor(isRunAndroid: boolean, ReactServerA
     await updateDownloadAddressOfGradleZipFile();
     await updateDownloadAddressOfGrableDependencies();
   }
+  await execa.command(
+    [
+      `cap run ${isRunAndroid ? "android" : "ios"}`,
+      "--no-sync",
+      `${deviceList.length === 1 ? `--target=${linq.from(deviceList).single()}` : ''}`,
+    ].join(" "),
+    {
+      stdio: "inherit",
+      cwd: path.join(__dirname, ".."),
+      extendEnv: true,
+      env: (isRunAndroid ? {
+        "ANDROID_SDK_ROOT": `${androidSdkRootPath}`,
+      } : {
+      }) as any,
+    }
+  );
   const childProcess = execa.command(
     [
       `ionic capacitor run ${isRunAndroid ? 'android' : "ios"}`,
