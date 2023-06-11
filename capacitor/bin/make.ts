@@ -3,6 +3,8 @@ import os from 'os'
 import inquirer from "inquirer"
 import linq from 'linq'
 import execa from "execa"
+import treeKill from 'tree-kill'
+import util from 'util'
 import fs from 'fs'
 
 async function main() {
@@ -31,7 +33,7 @@ async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string
       }) as any,
     }
   );
-  await execa.command(
+  const childProcess = execa.command(
     [
       `cap build ${isRunAndroid ? "android" : "ios"}`,
     ].join(" "),
@@ -45,6 +47,8 @@ async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string
       }) as any,
     }
   );
+  await childProcess;
+  await util.promisify(treeKill)(childProcess.pid!).catch(async () => null);
 }
 
 async function buildReact() {
