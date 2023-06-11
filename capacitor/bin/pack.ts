@@ -18,6 +18,25 @@ async function main() {
 async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string, deviceList: string[]) {
   await execa.command(
     [
+      `cap sync ${isRunAndroid ? "android" : "ios"}`,
+      "--deployment",
+    ].join(" "),
+    {
+      stdio: "inherit",
+      cwd: path.join(__dirname, ".."),
+      extendEnv: true,
+      env: (isRunAndroid ? {
+        "ANDROID_SDK_ROOT": `${androidSdkRootPath}`
+      } : {
+      }) as any,
+    }
+  );
+  if (isRunAndroid) {
+    await updateDownloadAddressOfGradleZipFile();
+    await updateDownloadAddressOfGrableDependencies();
+  }
+  await execa.command(
+    [
       `cap run ${isRunAndroid ? "android" : "ios"}`,
       `${deviceList.length === 1 ? `--target=${linq.from(deviceList).single()}` : ''}`,
     ].join(" "),
@@ -103,10 +122,6 @@ async function addPlatformSupport(isRunAndroid: boolean) {
       cwd: path.join(__dirname, ".."),
     }
   );
-  if (isRunAndroid) {
-    await updateDownloadAddressOfGradleZipFile();
-    await updateDownloadAddressOfGrableDependencies();
-  }
 }
 
 async function getDeviceList(isRunAndroid: boolean) {

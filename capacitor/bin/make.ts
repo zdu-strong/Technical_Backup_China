@@ -33,6 +33,10 @@ async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string
       }) as any,
     }
   );
+  if (isRunAndroid) {
+    await updateDownloadAddressOfGradleZipFile();
+    await updateDownloadAddressOfGrableDependencies();
+  }
   const childProcess = execa.command(
     [
       `cap build ${isRunAndroid ? "android" : "ios"}`,
@@ -126,10 +130,6 @@ async function addPlatformSupport(isRunAndroid: boolean) {
       cwd: path.join(__dirname, ".."),
     }
   );
-  if (isRunAndroid) {
-    await updateDownloadAddressOfGradleZipFile();
-    await updateDownloadAddressOfGrableDependencies();
-  }
 }
 
 async function updateDownloadAddressOfGradleZipFile() {

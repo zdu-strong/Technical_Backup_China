@@ -23,7 +23,7 @@ async function main() {
   const deviceList = await getDeviceList(isRunAndroid);
   await buildReact();
   const { childProcessOfReact } = await startReact(avaliablePort, ReactServerAddress);
-  const childProcessOfCapacitor = createChildProcessOfCapacitor(isRunAndroid, ReactServerAddress, androidSdkRootPath, deviceList);
+  const [childProcessOfCapacitor] = await createChildProcessOfCapacitor(isRunAndroid, ReactServerAddress, androidSdkRootPath, deviceList);
   await Promise.race([childProcessOfReact, childProcessOfCapacitor]);
   await util.promisify(treeKill)(childProcessOfReact.pid!).catch(async () => null);
   await util.promisify(treeKill)(childProcessOfCapacitor.pid!).catch(async () => null);
@@ -122,8 +122,27 @@ function getAndroidSdkRootPath() {
   return androidSdkRootPath;
 }
 
-function createChildProcessOfCapacitor(isRunAndroid: boolean, ReactServerAddress: string, androidSdkRootPath: string, deviceList: string[]) {
-  return execa.command(
+async function createChildProcessOfCapacitor(isRunAndroid: boolean, ReactServerAddress: string, androidSdkRootPath: string, deviceList: string[]) {
+  await execa.command(
+    [
+      `cap sync ${isRunAndroid ? "android" : "ios"}`,
+      "--deployment",
+    ].join(" "),
+    {
+      stdio: "inherit",
+      cwd: path.join(__dirname, ".."),
+      extendEnv: true,
+      env: (isRunAndroid ? {
+        "ANDROID_SDK_ROOT": `${androidSdkRootPath}`
+      } : {
+      }) as any,
+    }
+  );
+  if (isRunAndroid) {
+    await updateDownloadAddressOfGradleZipFile();
+    await updateDownloadAddressOfGrableDependencies();
+  }
+  const childProcess = execa.command(
     [
       `ionic capacitor run ${isRunAndroid ? 'android' : "ios"}`,
       `--livereload-url=${ReactServerAddress}`,
@@ -139,6 +158,7 @@ function createChildProcessOfCapacitor(isRunAndroid: boolean, ReactServerAddress
       }) as any,
     }
   );
+  return [childProcess];
 }
 
 function getNetworkAddress(avaliablePort: number) {
@@ -167,10 +187,6 @@ async function addPlatformSupport(isRunAndroid: boolean) {
       cwd: path.join(__dirname, ".."),
     }
   );
-  if (isRunAndroid) {
-    await updateDownloadAddressOfGradleZipFile();
-    await updateDownloadAddressOfGrableDependencies();
-  }
 }
 
 async function getDeviceList(isRunAndroid: boolean) {
