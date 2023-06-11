@@ -15,9 +15,16 @@ RUN dnf install -y glibc-common
 ENV LANG en_US.UTF-8
 ENV LC_ALL C.UTF-8
 
+# install Node.js
+RUN dnf module install -y nodejs:18
+
+# Install java
+RUN dnf install -y java-17-openjdk-devel
+ENV JAVA_HOME /usr/lib/jvm/java-17-openjdk
+ENV PATH $PATH:$JAVA_HOME/bin
+
 # run test
 FROM first_docker as second_docker
-RUN dnf module install -y nodejs:18
 RUN dnf install -y git
 RUN dnf install -y procps
 RUN dnf install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
@@ -28,8 +35,10 @@ RUN git reset --hard
 RUN rm -rf ../capacitor/node_modules
 RUN rm -rf ./node_modules
 RUN npm test
-RUN rm -rf ./node_modules
-RUN rm -rf ../capacitor/node_modules
+WORKDIR /all_code/capacitor
+WORKDIR /all_code
+RUN rm -rf ./capacitor-cypress/node_modules
+RUN rm -rf ./capacitor/node_modules
 
 # copy all_code folder
 FROM first_docker

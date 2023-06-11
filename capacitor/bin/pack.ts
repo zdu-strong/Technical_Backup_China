@@ -6,7 +6,6 @@ import fs from 'fs'
 import execa from "execa"
 
 async function main() {
-  await checkPlatform();
   const isRunAndroid = await getIsRunAndroid();
   const androidSdkRootPath = getAndroidSdkRootPath();
   await addPlatformSupport(isRunAndroid);
@@ -53,15 +52,9 @@ async function buildReact() {
   );
 }
 
-async function checkPlatform() {
-  if (os.platform() !== "win32" && os.platform() !== "darwin") {
-    throw new Error("The development of linux has not been considered yet");
-  }
-}
-
 function getAndroidSdkRootPath() {
   let androidSdkRootPath = path.join(os.homedir(), "AppData/Local/Android/sdk").replace(new RegExp("\\\\", "g"), "/");
-  if (os.platform() === "darwin") {
+  if (os.platform() !== "win32") {
     androidSdkRootPath = path.join(os.homedir(), "Android/Sdk").replace(new RegExp("\\\\", "g"), "/");
   }
   return androidSdkRootPath;
@@ -148,7 +141,7 @@ async function getDeviceList(isRunAndroid: boolean) {
 async function updateDownloadAddressOfGradleZipFile() {
   const filePathOfGradlePropertiesFile = path.join(__dirname, "..", "android", "gradle", "wrapper", "gradle-wrapper.properties");
   const text = await fs.promises.readFile(filePathOfGradlePropertiesFile, "utf8");
-  const replaceText = text.replace("https\\://services.gradle.org/distributions/", "http\\://mirrors.cloud.tencent.com/gradle/");
+  const replaceText = text.replace("https\\://services.gradle.org/distributions/", "https\\://mirrors.cloud.tencent.com/gradle/");
   await fs.promises.writeFile(filePathOfGradlePropertiesFile, replaceText);
 }
 

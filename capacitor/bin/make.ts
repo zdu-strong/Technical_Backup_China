@@ -6,7 +6,6 @@ import execa from "execa"
 import fs from 'fs'
 
 async function main() {
-  await checkPlatform();
   const isRunAndroid = await getIsRunAndroid();
   const androidSdkRootPath = await getAndroidSdkRootPath();
   await addPlatformSupport(isRunAndroid);
@@ -62,12 +61,6 @@ async function buildReact() {
       } as any,
     }
   );
-}
-
-async function checkPlatform() {
-  if (os.platform() !== "win32" && os.platform() !== "darwin") {
-    throw new Error("The development of linux has not been considered yet");
-  }
 }
 
 async function getAndroidSdkRootPath() {
@@ -138,7 +131,7 @@ async function addPlatformSupport(isRunAndroid: boolean) {
 async function updateDownloadAddressOfGradleZipFile() {
   const filePathOfGradlePropertiesFile = path.join(__dirname, "..", "android", "gradle", "wrapper", "gradle-wrapper.properties");
   const text = await fs.promises.readFile(filePathOfGradlePropertiesFile, "utf8");
-  const replaceText = text.replace("https\\://services.gradle.org/distributions/", "http\\://mirrors.cloud.tencent.com/gradle/");
+  const replaceText = text.replace("https\\://services.gradle.org/distributions/", "https\\://mirrors.cloud.tencent.com/gradle/");
   await fs.promises.writeFile(filePathOfGradlePropertiesFile, replaceText);
 }
 

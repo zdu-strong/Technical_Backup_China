@@ -11,8 +11,10 @@ import { timer } from 'rxjs'
 import fs from 'fs'
 
 async function main() {
-  await runCapacitorForCypress();
-  await checkPlatform();
+  if (isTestEnvironment()) {
+    await runCapacitorForCypress();
+    process.exit();
+  }
   const avaliablePort = await getPort();
   const ReactServerAddress = getNetworkAddress(avaliablePort);
   const isRunAndroid = await getIsRunAndroid();
@@ -57,29 +59,24 @@ async function startReact(avaliablePort: number, ReactServerAddress: string) {
   return { childProcessOfReact };
 }
 
-async function checkPlatform() {
-  if (os.platform() !== "win32" && os.platform() !== "darwin") {
-    throw new Error("The development of linux has not been considered yet");
-  }
+function isTestEnvironment() {
+  return process.env.CAPACITOR_CYPRESS_IS_TEST === "true";
 }
 
 async function runCapacitorForCypress() {
-  if (process.env.CAPACITOR_CYPRESS_IS_TEST === "true") {
-    await execa.command(
-      [
-        "react-app-rewired start",
-      ].join(" "),
-      {
-        stdio: "inherit",
-        cwd: path.join(__dirname, ".."),
-        extendEnv: true,
-        env: {
-          "BROWSER": "NONE",
-        } as any,
-      }
-    );
-    process.exit();
-  }
+  await execa.command(
+    [
+      "react-app-rewired start",
+    ].join(" "),
+    {
+      stdio: "inherit",
+      cwd: path.join(__dirname, ".."),
+      extendEnv: true,
+      env: {
+        "BROWSER": "NONE",
+      } as any,
+    }
+  );
 }
 
 async function getIsRunAndroid() {
@@ -119,7 +116,7 @@ async function getIsRunAndroid() {
 
 function getAndroidSdkRootPath() {
   let androidSdkRootPath = path.join(os.homedir(), "AppData/Local/Android/sdk").replace(new RegExp("\\\\", "g"), "/");
-  if (os.platform() === "darwin") {
+  if (os.platform() !== "win32") {
     androidSdkRootPath = path.join(os.homedir(), "Android/Sdk").replace(new RegExp("\\\\", "g"), "/");
   }
   return androidSdkRootPath;
@@ -208,7 +205,7 @@ async function getDeviceList(isRunAndroid: boolean) {
 async function updateDownloadAddressOfGradleZipFile() {
   const filePathOfGradlePropertiesFile = path.join(__dirname, "..", "android", "gradle", "wrapper", "gradle-wrapper.properties");
   const text = await fs.promises.readFile(filePathOfGradlePropertiesFile, "utf8");
-  const replaceText = text.replace("https\\://services.gradle.org/distributions/", "http\\://mirrors.cloud.tencent.com/gradle/");
+  const replaceText = text.replace("https\\://services.gradle.org/distributions/", "https\\://mirrors.cloud.tencent.com/gradle/");
   await fs.promises.writeFile(filePathOfGradlePropertiesFile, replaceText);
 }
 
