@@ -38,6 +38,7 @@ async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string
   await execa.command(
     [
       `cap run ${isRunAndroid ? "android" : "ios"}`,
+      "--no-sync",
       `${deviceList.length === 1 ? `--target=${linq.from(deviceList).single()}` : ''}`,
     ].join(" "),
     {
