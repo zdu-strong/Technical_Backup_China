@@ -14,7 +14,7 @@ async function main() {
   const deviceList = await getDeviceList(isRunAndroid);
   await buildReact();
   await runAndroidOrIOS(isRunAndroid, androidSdkRootPath, deviceList);
-  await copySignedApk(isRunAndroid);
+  // await copySignedApk(isRunAndroid);
   process.exit();
 }
 
@@ -56,7 +56,8 @@ async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string
   );
   const childProcess = execa.command(
     [
-      `cap build ${isRunAndroid ? "android" : "ios"}`,
+      // `cap build ${isRunAndroid ? "android" : "ios"}`,
+      `cap open ${isRunAndroid ? "android" : "ios"}`,
     ].join(" "),
     {
       stdio: "inherit",
