@@ -8,8 +8,8 @@ import * as IsLoadedUtil from '@/../main/util/IsLoadedUtil'
 import * as IsNotShowForTestUtil from '@/../main/util/IsNotShowForTestUtil'
 import * as IsPackagedUtil from '@/../main/util/IsPackagedUtil';
 import * as LoadWindowFromRelativeUrlUtil from '@/../main/util/LoadWindowFromRelativeUrlUtil'
-import * as ElectronStorage from '@/../main/util/StorageUtil'
-import * as ElectronDatabase from '@/../main/util/ElectronDatabaseInstanceUtil'
+import * as StorageUtil from '@/../main/util/StorageUtil'
+import * as ElectronDatabaseInstanceUtil from '@/../main/util/ElectronDatabaseInstanceUtil'
 
 const remote = window.require("@electron/remote") as typeof Remote;
 
@@ -24,6 +24,6 @@ export default {
   ...(remote.require("./util/IsNotShowForTestUtil") as typeof IsNotShowForTestUtil),
   ...(remote.require("./util/IsPackagedUtil") as typeof IsPackagedUtil),
   ...(remote.require("./util/LoadWindowFromRelativeUrlUtil") as typeof LoadWindowFromRelativeUrlUtil),
-  ElectronStorage: remote.require("./util/StorageUtil") as typeof ElectronStorage,
-  ElectronDatabase: remote.require("./util/ElectronDatabaseInstanceUtil") as typeof ElectronDatabase,
+  ElectronStorage: remote.require("./util/StorageUtil") as typeof StorageUtil,
+  ElectronDatabase: remote.require("./util/ElectronDatabaseInstanceUtil") as typeof ElectronDatabaseInstanceUtil,
 }
