@@ -11,13 +11,14 @@ async function main() {
   const isRunAndroid = await getIsRunAndroid();
   const androidSdkRootPath = await getAndroidSdkRootPath();
   await addPlatformSupport(isRunAndroid);
+  const deviceList = await getDeviceList(isRunAndroid);
   await buildReact();
-  await runAndroidOrIOS(isRunAndroid, androidSdkRootPath);
+  await runAndroidOrIOS(isRunAndroid, androidSdkRootPath, deviceList);
   await copySignedApk(isRunAndroid);
   process.exit();
 }
 
-async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string) {
+async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string, deviceList: string[]) {
   await execa.command(
     [
       `cap sync ${isRunAndroid ? "android" : "ios"}`,
@@ -37,6 +38,22 @@ async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string
     await updateDownloadAddressOfGradleZipFile();
     await updateDownloadAddressOfGrableDependencies();
   }
+  await execa.command(
+    [
+      `cap run ${isRunAndroid ? "android" : "ios"}`,
+      "--no-sync",
+      `${deviceList.length === 1 ? `--target=${linq.from(deviceList).single()}` : ''}`,
+    ].join(" "),
+    {
+      stdio: "inherit",
+      cwd: path.join(__dirname, ".."),
+      extendEnv: true,
+      env: (isRunAndroid ? {
+        "ANDROID_SDK_ROOT": `${androidSdkRootPath}`,
+      } : {
+      }) as any,
+    }
+  );
   const childProcess = execa.command(
     [
       `cap build ${isRunAndroid ? "android" : "ios"}`,
@@ -130,6 +147,35 @@ async function addPlatformSupport(isRunAndroid: boolean) {
       cwd: path.join(__dirname, ".."),
     }
   );
+}
+
+async function getDeviceList(isRunAndroid: boolean) {
+  let deviceList = [] as string[];
+  if (isRunAndroid) {
+    const { stdout: androidDeviceOutput } = await execa.command(
+      `cap run ${isRunAndroid ? 'android' : 'ios'} --list`,
+      {
+        stdio: "pipe",
+        cwd: path.join(__dirname, ".."),
+      }
+    );
+
+    const androidDeviceOutputList = linq.from(androidDeviceOutput.split("\r\n")).selectMany(item => item.split("\n")).toArray();
+    const startIndex = androidDeviceOutputList.findIndex((item: string) => item.includes('-----'));
+    if (startIndex < 0) {
+      throw new Error("No available Device!")
+    }
+    deviceList = linq.from(androidDeviceOutputList).skip(startIndex + 1).select(item => linq.from(item.split(new RegExp("\\s+"))).select(item => item.trim()).toArray()).select(s => linq.from(s).last()).toArray();
+    deviceList = deviceList.filter(s => s === "Pixel_6_API_33");
+    if (!deviceList.length) {
+      throw new Error("No available Device!")
+    }
+    if (deviceList.length === 1) {
+      return deviceList;
+    }
+    throw new Error("More than one available Device!")
+  }
+  return deviceList;
 }
 
 async function updateDownloadAddressOfGradleZipFile() {
