@@ -1,28 +1,13 @@
 import { UserModel } from '@/model';
-import { Preferences } from '@capacitor/preferences'
-import { TypedJSON } from 'typedjson'
+import Dexie, { Table } from 'dexie'
 
-export async function getDatabase() {
-  return {
-    UserList: await getUserList(),
-  };
-}
+export class Database extends Dexie {
+  public UserList!: Table<UserModel, string>; // id is number in this case
 
-export async function setDatabase(key: "UserList", value: any) {
-  await Preferences.set({
-    key,
-    value: JSON.stringify(value),
-  });
-}
-
-export async function removeDatabase(key: "UserList") {
-  await Preferences.remove({
-    key: key
-  })
-}
-
-async function getUserList() {
-  const defaultValue = [] as UserModel[];
-  const userList = new TypedJSON(UserModel).parseAsArray((await Preferences.get({ key: "UserList" })).value);
-  return userList || defaultValue;
+  public constructor() {
+    super("4cb7be90-0909-11ee-a038-d9f47a1d108f");
+    this.version(1).stores({
+      UserList: "id, username"
+    });
+  }
 }
