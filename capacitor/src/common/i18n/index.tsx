@@ -1,27 +1,32 @@
 import WindowsLocale from 'windows-locale';
-import zh_CN_JSON from '@/i18n/zh-CN.json';
-import en_US_JSON from '@/i18n/en-US.json';
 import { observable } from 'mobx-react-use-autorun';
+import { enUS, zhCN } from 'date-fns/locale'
+import en_US_JSON from '@/i18n/en-US.json'
+import zh_CN_JSON from '@/i18n/zh-CN.json';
 
 export const I18nEnum: Record<string, {
   id: string,
   json: any,
   language: string,
+  DateLocale: Locale
 }> = {
-  "zh-CN": {
-    id: "zh-CN",
-    json: zh_CN_JSON,
-    language: WindowsLocale["zh-cn"].language,
-  },
   "en-US": {
     id: "en-US",
     json: en_US_JSON,
     language: WindowsLocale["en-us"].language,
+    DateLocale: enUS,
+  },
+  "zh-CN": {
+    id: "zh-CN",
+    json: zh_CN_JSON,
+    language: WindowsLocale["zh-cn"].language,
+    DateLocale: zhCN
   },
   "zh-SG": {
     id: "zh-SG",
     json: zh_CN_JSON,
     language: WindowsLocale["zh-sg"].language,
+    DateLocale: zhCN
   }
 }
 
@@ -46,5 +51,3 @@ export const setI18nLocale = (locale: string) => {
     state.I18nLocale = locale;
   }
 };
-
-
