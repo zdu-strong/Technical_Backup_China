@@ -1,3 +1,5 @@
-import { UserModel } from "@/model/User";
+import { UserModel } from "@/model/UserModel";
+import { PaginationModel } from '@/model/PaginationMode'
+import { StorageSpaceModel } from '@/model/StorageSpaceModel'
 
-export { UserModel }
+export { UserModel, PaginationModel, StorageSpaceModel }
