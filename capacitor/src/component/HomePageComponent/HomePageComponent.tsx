@@ -107,9 +107,16 @@ export default observer(() => {
                 <FormattedMessage id="EnterTheGameRightNowWithoutDoingTheExitButton" defaultMessage="Enter the game, right now, without doing the exit button" />
               </Button>
             </LinkAlias>
-            <Button variant="contained" style={{ textTransform: "none", marginTop: "1em" }} onClick={async () => {
-              await App.exitApp()
-            }}>
+            <Button
+              variant="contained"
+              style={{
+                textTransform: "none",
+                marginTop: "1em"
+              }}
+              onClick={async () => {
+                await App.exitApp()
+              }}
+            >
               <FormattedMessage id="ExitTheApp" defaultMessage="Exit the app" />
             </Button>
           </div>
