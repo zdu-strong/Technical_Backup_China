@@ -112,8 +112,8 @@ export default observer(() => {
       {!state.ready && <div
         className='flex flex-col flex-auto'
         style={{
-          paddingLeft: `${state.leftOrRight}px`,
-          paddingRight: `${state.leftOrRight}px`
+          paddingLeft: `10px`,
+          paddingRight: `10px`
         }}
       >
         <LoadingOrErrorComponent ready={state.ready} error={state.error} />

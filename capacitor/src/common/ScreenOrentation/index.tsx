@@ -8,7 +8,7 @@ export async function LANDSCAPE() {
     return;
   }
 
-  ScreenOrientation.lock(ScreenOrientation.ORIENTATIONS.LANDSCAPE);
+  await ScreenOrientation.lock(ScreenOrientation.ORIENTATIONS.LANDSCAPE);
 
   if (Capacitor.getPlatform() === "android") {
     await AndroidFullScreen.immersiveMode()
@@ -23,7 +23,7 @@ export async function PORTRAIT_PRIMARY() {
     return;
   }
 
-  ScreenOrientation.lock(ScreenOrientation.ORIENTATIONS.PORTRAIT_PRIMARY);
+  await ScreenOrientation.lock(ScreenOrientation.ORIENTATIONS.PORTRAIT_PRIMARY);
   await StatusBar.setOverlaysWebView({ overlay: false });
 
   if (Capacitor.getPlatform() === "android") {
