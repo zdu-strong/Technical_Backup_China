@@ -34,10 +34,9 @@ async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string
       }) as any,
     }
   );
-  if (isRunAndroid) {
-    await updateDownloadAddressOfGradleZipFile();
-    await updateDownloadAddressOfGrableDependencies();
-  }
+  await updateDownloadAddressOfGradleZipFile(isRunAndroid);
+  await updateDownloadAddressOfGrableDependencies(isRunAndroid);
+  await addAndroidPermissions(isRunAndroid);
   await execa.command(
     [
       `cap run ${isRunAndroid ? "android" : "ios"}`,
@@ -179,14 +178,20 @@ async function getDeviceList(isRunAndroid: boolean) {
   return deviceList;
 }
 
-async function updateDownloadAddressOfGradleZipFile() {
+async function updateDownloadAddressOfGradleZipFile(isRunAndroid: boolean) {
+  if (!isRunAndroid) {
+    return;
+  }
   const filePathOfGradlePropertiesFile = path.join(__dirname, "..", "android", "gradle", "wrapper", "gradle-wrapper.properties");
   const text = await fs.promises.readFile(filePathOfGradlePropertiesFile, "utf8");
   const replaceText = text.replace("https\\://services.gradle.org/distributions/", "https\\://mirrors.cloud.tencent.com/gradle/");
   await fs.promises.writeFile(filePathOfGradlePropertiesFile, replaceText);
 }
 
-async function updateDownloadAddressOfGrableDependencies() {
+async function updateDownloadAddressOfGrableDependencies(isRunAndroid: boolean) {
+  if (!isRunAndroid) {
+    return;
+  }
   {
     const filePathOfGradlePropertiesFile = path.join(__dirname, "..", "android", "build.gradle");
     const text = await fs.promises.readFile(filePathOfGradlePropertiesFile, "utf8");
@@ -200,6 +205,25 @@ async function updateDownloadAddressOfGrableDependencies() {
     replaceText = replaceText.replace(new RegExp("google\\(\\)\\n    mavenCentral\\(\\)", "ig"), `maven{ url 'https://maven.aliyun.com/repository/google' }\n    maven{ url 'https://maven.aliyun.com/repository/central' }`);
     await fs.promises.writeFile(filePathOfGradlePropertiesFile, replaceText);
   }
+}
+
+async function addAndroidPermissions(isRunAndroid: boolean) {
+  if (!isRunAndroid) {
+    return;
+  }
+  const androidManifestFilePath = path.join(__dirname, "..", "android/app/src/main", "AndroidManifest.xml");
+  const content = await fs.promises.readFile(androidManifestFilePath, { encoding: "utf-8" });
+  const textList = linq.from(content.split("\r\n")).selectMany(s => s.split("\n")).toArray();
+  const permissionList = [
+    `    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />`,
+    `    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />`,
+  ];
+  const index = textList.findIndex(s => s.includes("</manifest>"));
+  if (index < 0) {
+    throw new Error("no manifest tag found")
+  }
+  textList.splice(index, 0, ...permissionList);
+  await fs.promises.writeFile(androidManifestFilePath, textList.join("\n"), "utf8");
 }
 
 export default main()
