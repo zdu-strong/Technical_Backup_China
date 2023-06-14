@@ -43,7 +43,6 @@ public class StorageSpaceService extends BaseService {
         calendar.add(Calendar.MILLISECOND, Long.valueOf(0 - this.tempFileSurvivalDuration.toMillis()).intValue());
         Date expireDate = calendar.getTime();
         var isUsed = !this.StorageSpaceEntity().where(s -> s.getFolderName().equals(folderName))
-                .where(s -> s.getUpdateDate().before(expireDate))
                 .where((s, t) -> !t.stream(StorageSpaceEntity.class).where(m -> m.getFolderName().equals(folderName))
                         .where(m -> expireDate.before(m.getUpdateDate())).exists())
                 .exists();
