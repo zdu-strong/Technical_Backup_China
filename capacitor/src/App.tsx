@@ -12,6 +12,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import '@/common/ScreenOrentation';
 import { observer, useMobxState } from 'mobx-react-use-autorun';
 import { useI18nLocale, I18nEnum } from './common/i18n';
+import '@/common/StorageManage/StorageManageRun';
 
 export default observer(() => {
 

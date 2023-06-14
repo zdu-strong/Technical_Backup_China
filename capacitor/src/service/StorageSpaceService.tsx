@@ -34,16 +34,14 @@ export async function isUsed(folderName: string) {
   const tempFileValidTime = 24 * 60 * 60 * 1000;
   const expiredDate = subMilliseconds(new Date(), 0 - tempFileValidTime);
 
-  const isUsed = linq
+  const list = linq
     .from(await db.StorageSpaceList.toArray())
-    .where((s) => s.folderName === folderNameOfRelative)
-    .groupBy(s => s.folderName)
-    .where(s =>
-      s.where(m => m.updateDate.getTime() < expiredDate.getTime())
-        .where(() => s.all(m => m.updateDate.getTime() < expiredDate.getTime()))
-        .any()
-    )
-    .any();
+    .where((s) => s.folderName === folderNameOfRelative).toArray();
+  if (!list.length) {
+    return true;
+  }
+
+  const isUsed = !linq.from(list).all(s => s.updateDate.getTime() < expiredDate.getTime());
   return isUsed;
 }
 
@@ -61,9 +59,10 @@ export async function deleteFolder(folderName: string): Promise<void> {
   }
 
   /* Delete from disk */
-  await Filesystem.deleteFile({
+  await Filesystem.rmdir({
     path: folderNameOfRelative,
     directory: Directory.External,
+    recursive: true,
   });
 
   /* Delete from database */
@@ -98,8 +97,9 @@ async function getFolderNameBaseOnBaseFolderPath(relativePathOfFile: string) {
       path: relativePathOfFile,
       directory: Directory.External,
     })).uri;
+  } else {
+    throw new Error("Unsupported path");
   }
-  absolutePath = path.normalize(absolutePath);
   const rootPath = (await Filesystem.getUri({
     path: "",
     directory: Directory.External,
