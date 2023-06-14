@@ -1,7 +1,7 @@
 import { PaginationModel } from "@/model";
 import linq from "linq";
 import { v1 } from "uuid";
-import { subMilliseconds } from "date-fns";
+import { addMilliseconds } from "date-fns";
 import { Database } from "@/common/database";
 import remote from "@/remote";
 
@@ -31,7 +31,7 @@ export async function isUsed(folderName: string) {
 
   /* Check if it is used */
   const tempFileValidTime = 24 * 60 * 60 * 1000;
-  const expiredDate = subMilliseconds(new Date(), 0 - tempFileValidTime);
+  const expiredDate = addMilliseconds(new Date(), 0 - tempFileValidTime);
 
   const isUsed = !linq.from(await db.StorageSpaceList.toArray())
     .where(s => s.folderName === folderNameOfRelative)

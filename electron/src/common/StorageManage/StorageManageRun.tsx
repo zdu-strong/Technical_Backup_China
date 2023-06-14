@@ -37,9 +37,9 @@ async function main() {
         return from(runManageStorageSpace());
       }),
       repeat({ delay: 10 * 60 * 1000 }),
-      retry(),
+      retry({ delay: 10 * 60 * 1000 }),
     )
   );
 }
 
-export default main
+export default main()
