@@ -1,3 +1,3 @@
-import * as UserService from '@/service/UserService'
+import * as StorageSpaceService from '@/service/StorageSpaceService'
 
-export { UserService }
+export { StorageSpaceService }
