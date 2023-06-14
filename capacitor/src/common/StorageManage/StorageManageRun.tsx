@@ -1,5 +1,5 @@
 import { StorageSpaceService } from "@/service";
-import { concatMap, lastValueFrom, retry, repeat, timer } from "rxjs";
+import { concatMap, lastValueFrom, retry, repeat, timer, of } from "rxjs";
 import { from } from "linq";
 import { Directory, Filesystem } from '@capacitor/filesystem'
 
@@ -34,8 +34,9 @@ async function runManageStorageSpace() {
 }
 
 async function main() {
+  await lastValueFrom(timer(60 * 1000));
   await lastValueFrom(
-    timer(10 * 1000).pipe(
+    of(null).pipe(
       concatMap(() => {
         return from(runManageStorageSpace());
       }),
