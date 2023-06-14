@@ -33,16 +33,10 @@ export async function isUsed(folderName: string) {
   const tempFileValidTime = 24 * 60 * 60 * 1000;
   const expiredDate = subMilliseconds(new Date(), 0 - tempFileValidTime);
 
-  const list = linq
-    .from(await db.StorageSpaceList.toArray())
-    .where((s) => s.folderName === folderNameOfRelative)
-    .toArray();
-
-  if (!list.length) {
-    return true;
-  }
-
-  const isUsed = !linq.from(list).all(s => s.updateDate.getTime() < expiredDate.getTime());
+  const isUsed = !linq.from(await db.StorageSpaceList.toArray())
+    .where(s => s.folderName === folderNameOfRelative)
+    .groupBy(s => s.folderName)
+    .any(s => !s.any(m => expiredDate.getTime() < m.updateDate.getTime()));
   return isUsed;
 }
 
