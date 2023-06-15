@@ -1,7 +1,7 @@
 import { Alert, Dialog, DialogContent, DialogTitle, Divider, Fab } from "@mui/material"
-import { GlobalMessageList, MessageService, MESSAGE_TYPE_ENUM } from "."
+import { GlobalMessageList, MessageService, MESSAGE_TYPE_ENUM, getI18nMessageReactNode } from "."
 import linq from "linq";
-import { observer, useMobxState } from 'mobx-react-use-autorun';
+import { useMobxState, observer } from 'mobx-react-use-autorun';
 import CloseIcon from '@mui/icons-material/Close';
 import HelpIcon from '@mui/icons-material/Help';
 import Tooltip from '@mui/material/Tooltip';
@@ -115,7 +115,7 @@ export default observer(() => {
       <DialogContent style={{ padding: "1em" }}>
         {GlobalMessageList.map(messsageObject =>
           <Alert severity={messsageObject.type as any} className={state.css.alertMessageContent} key={messsageObject.id} style={{ marginTop: "1em", color: getMessageContentTextColor() }}>
-            {messsageObject.message}
+            {getI18nMessageReactNode(messsageObject.message)}
           </Alert>
         )}
       </DialogContent>

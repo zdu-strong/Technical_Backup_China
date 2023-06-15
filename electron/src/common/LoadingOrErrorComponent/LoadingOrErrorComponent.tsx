@@ -1,23 +1,18 @@
 import { Alert, Skeleton } from "@mui/material"
 import React from "react";
-import { MESSAGE_TYPE_ENUM, getMessage } from ".";
-import { observer, useMobxEffect, useMobxState } from 'mobx-react-use-autorun';
+import { getI18nMessageReactNode } from "../MessageService";
+import { observer, useMobxState } from 'mobx-react-use-autorun';
 
 export default observer((props: { ready: boolean, error: any, children?: React.ReactNode }) => {
 
   const state = useMobxState({
-    errorMessage: "",
   }, {
-    ...props
+    ...props,
   });
-
-  useMobxEffect(() => {
-    state.errorMessage = getMessage(MESSAGE_TYPE_ENUM.error, state.error).message;
-  }, [state.error])
 
   return <>
     {state.error && <Alert severity="error" style={{ margin: "1em" }}>
-      {state.errorMessage}
+      {getI18nMessageReactNode(state.error)}
     </Alert>}
     {!state.error && !state.ready && <div className="flex flex-auto flex-col" style={{ minHeight: "10em", minWidth: "100%", padding: "1em" }}>
       <Skeleton variant="text" />
