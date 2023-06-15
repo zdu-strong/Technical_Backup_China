@@ -88,5 +88,6 @@
   "EMailFormatIsIncorrect": "邮箱格式不正确",
   "PleaseFillInNickname": "请填写昵称",
   "ThereShouldBeNoSpacesAtTheBeginningOfTheNickname": "呢称的开头不能有空格",
-  "TheNicknameCannotHaveASpaceAtTheEnd": "呢称的结尾不能有空格"
+  "TheNicknameCannotHaveASpaceAtTheEnd": "呢称的结尾不能有空格",
+  "NetworkError": "无网络连接"
 }

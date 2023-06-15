@@ -88,5 +88,6 @@
   "EMailFormatIsIncorrect": "E-mail format is incorrect",
   "PleaseFillInNickname": "Please fill in nickname",
   "ThereShouldBeNoSpacesAtTheBeginningOfTheNickname": "There should be no spaces at the beginning of the nickname",
-  "TheNicknameCannotHaveASpaceAtTheEnd": "The nickname cannot have a space at the end"
+  "TheNicknameCannotHaveASpaceAtTheEnd": "The nickname cannot have a space at the end",
+  "NetworkError": "Network Error"
 }
