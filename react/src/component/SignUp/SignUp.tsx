@@ -1,6 +1,6 @@
 import { Button, CircularProgress, Divider, Fab, IconButton, TextField } from "@mui/material";
 import { observer, useMobxState } from "mobx-react-use-autorun";
-import { FormattedMessage, useIntl } from "react-intl";
+import { FormattedMessage } from "react-intl";
 import { stylesheet } from "typestyle";
 import { v1 } from "uuid";
 import AddIcon from '@mui/icons-material/Add';
@@ -17,7 +17,8 @@ import { UserEmailModel } from "@/model/UserEmailModel";
 import SendIcon from '@mui/icons-material/Send';
 import { Link, useNavigate } from "react-router-dom";
 import { encryptByPublicKeyOfRSA } from "@/common/RSAUtils";
-import LoadingOrErrorComponent from "@/common/MessageService/LoadingOrErrorComponent";
+import LoadingOrErrorComponent from "@/common/LoadingOrErrorComponent/LoadingOrErrorComponent";
+import { ReactNode } from "react";
 
 export default observer(() => {
 
@@ -26,7 +27,7 @@ export default observer(() => {
     userId: v1(),
     password: '',
     emailList: [] as UserEmailModel[],
-    steps: [] as string[],
+    steps: [] as { id: string; text: ReactNode }[],
     activeStep: 0,
     publicKeyOfRSA: '',
     submitted: false,
@@ -40,34 +41,34 @@ export default observer(() => {
       nickname() {
         if (state.nickname) {
           if (state.nickname.replaceAll(new RegExp('^\\s+', 'g'), '').length !== state.nickname.length) {
-            return state.intl.formatMessage({ id: "ThereShouldBeNoSpacesAtTheBeginningOfTheNickname", defaultMessage: "There should be no spaces at the beginning of the nickname" })
+            return <FormattedMessage id="ThereShouldBeNoSpacesAtTheBeginningOfTheNickname" defaultMessage="There should be no spaces at the beginning of the nickname" />
           }
           if (state.nickname.replaceAll(new RegExp('\\s+$', 'g'), '').length !== state.nickname.length) {
-            return state.intl.formatMessage({ id: "TheNicknameCannotHaveASpaceAtTheEnd", defaultMessage: "The nickname cannot have a space at the end" })
+            return <FormattedMessage id="TheNicknameCannotHaveASpaceAtTheEnd" defaultMessage="The nickname cannot have a space at the end" />
           }
         }
         if (!state.submitted) {
           return false;
         }
         if (!state.nickname) {
-          return state.intl.formatMessage({ id: "PleaseFillInNickname", defaultMessage: "Please fill in nickname" })
+          return <FormattedMessage id="PleaseFillInNickname" defaultMessage="Please fill in nickname" />
         }
         return false;
       },
       password() {
         if (state.password) {
           if (state.password.replaceAll(new RegExp('^\\s+', 'g'), '').length !== state.password.length) {
-            return state.intl.formatMessage({ id: "PasswordMustNotHaveSpacesAtTheBeginning", defaultMessage: "Password must not have spaces at the beginning" })
+            return <FormattedMessage id="PasswordMustNotHaveSpacesAtTheBeginning" defaultMessage="Password must not have spaces at the beginning" />
           }
           if (state.password.replaceAll(new RegExp('\\s+$', 'g'), '').length !== state.password.length) {
-            return state.intl.formatMessage({ id: "PasswordCannotHaveASpaceAtTheEnd", defaultMessage: "Password cannot have a space at the end" })
+            return <FormattedMessage id="PasswordCannotHaveASpaceAtTheEnd" defaultMessage="Password cannot have a space at the end" />
           }
         }
         if (!state.submitted) {
           return false;
         }
         if (!state.password) {
-          return state.intl.formatMessage({ id: "PleaseFillInThePassword", defaultMessage: "Please fill in the password" })
+          return <FormattedMessage id="PleaseFillInThePassword" defaultMessage="Please fill in the password" />
         }
         return false;
       },
@@ -76,10 +77,10 @@ export default observer(() => {
           return false;
         }
         if (!emailInfo.email) {
-          return state.intl.formatMessage({ id: "PleaseEnterYourEmail", defaultMessage: "Please enter your email" })
+          return <FormattedMessage id="PleaseEnterYourEmail" defaultMessage="Please enter your email" />
         }
         if (!new RegExp('^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$').test(emailInfo.email)) {
-          return state.intl.formatMessage({ id: "EMailFormatIsIncorrect", defaultMessage: "E-mail format is incorrect" })
+          return <FormattedMessage id="EMailFormatIsIncorrect" defaultMessage="E-mail format is incorrect" />
         }
         return false;
       },
@@ -88,7 +89,7 @@ export default observer(() => {
           return false;
         }
         if (!emailInfo.verificationCode) {
-          return state.intl.formatMessage({ id: "PleaseFillInTheVerificationCode", defaultMessage: "Please fill in the verification code" })
+          return <FormattedMessage id="PleaseFillInTheVerificationCode" defaultMessage="Please fill in the verification code" />
         }
         return false;
       }
@@ -105,7 +106,6 @@ export default observer(() => {
       }
     }),
   }, {
-    intl: useIntl(),
     navigate: useNavigate(),
   })
 
@@ -121,10 +121,22 @@ export default observer(() => {
 
   async function initSteps() {
     state.steps.splice(0, state.steps.length);
-    state.steps.push(state.intl.formatMessage({ id: "SetNickname", defaultMessage: "Set nickname" }));
-    state.steps.push(state.intl.formatMessage({ id: "SetPassword", defaultMessage: "Set password" }));
-    state.steps.push(state.intl.formatMessage({ id: "BindEmailOrMobilePhoneNumber", defaultMessage: "Bind email or mobile phone number" }));
-    state.steps.push(state.intl.formatMessage({ id: "Complete", defaultMessage: "Complete" }));
+    state.steps.push({
+      id: v1(),
+      text: <FormattedMessage id="SetNickname" defaultMessage="Set nickname" />,
+    });
+    state.steps.push({
+      id: v1(),
+      text: <FormattedMessage id="SetPassword" defaultMessage="Set password" />,
+    });
+    state.steps.push({
+      id: v1(),
+      text: <FormattedMessage id="BindEmailOrMobilePhoneNumber" defaultMessage="Bind email or mobile phone number" />,
+    });
+    state.steps.push({
+      id: v1(),
+      text: <FormattedMessage id="Complete" defaultMessage="Complete" />,
+    });
   }
 
   async function createNewAccountOfSignUp() {
@@ -199,10 +211,7 @@ export default observer(() => {
               <FormattedMessage id="NicknameYouCanModifyYourNicknameAtAnyTime" defaultMessage="Nickname, you can modify your nickname at any time" />
             </div>
             <TextField
-              label={state.intl.formatMessage({
-                id: "Nickname",
-                defaultMessage: "nickname"
-              })}
+              label={<FormattedMessage id="Nickname" defaultMessage="nickname" />}
               variant="outlined"
               onChange={(e) => {
                 state.nickname = e.target.value;
@@ -252,10 +261,7 @@ export default observer(() => {
               <FormattedMessage id="OnlyYouWhocanKnowThePassword" defaultMessage="We can't know your chat content and file content. Only you who can know the password." />
             </div>
             <TextField
-              label={state.intl.formatMessage({
-                id: "Password",
-                defaultMessage: "Password"
-              })}
+              label={<FormattedMessage id="Password" defaultMessage="Password" />}
               className="flex flex-auto"
               variant="outlined"
               onChange={(e) => {
@@ -291,12 +297,9 @@ export default observer(() => {
             <div>
               <FormattedMessage id="BindedEmailOrMobilePhoneNumber" defaultMessage="Binded email or mobile phone number" />
             </div>
-            {state.emailList.map((s, index) => <div className="flex flex-row items-center" key={s.id} style={{ marginTop: '1em' }}>
+            {state.emailList.map((s) => <div className="flex flex-row items-center" key={s.id} style={{ marginTop: '1em' }}>
               <TextField
-                label={state.intl.formatMessage({
-                  id: "Email",
-                  defaultMessage: "Email"
-                })}
+                label={<FormattedMessage id="Email" defaultMessage="Email" />}
                 variant="outlined"
                 onChange={(e) => {
                   s.email = e.target.value;
@@ -390,9 +393,9 @@ export default observer(() => {
         <div style={{ marginTop: "1em" }} className="flex flex-col">
           <Box sx={{ width: '100%' }}>
             <Stepper activeStep={state.activeStep} alternativeLabel>
-              {state.steps.map((label) => (
-                <Step key={label}>
-                  <StepLabel>{label}</StepLabel>
+              {state.steps.map((step) => (
+                <Step key={step.id}>
+                  <StepLabel>{step.text}</StepLabel>
                 </Step>
               ))}
             </Stepper>

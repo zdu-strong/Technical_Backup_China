@@ -3,7 +3,7 @@ import { MessageService } from "@/common/MessageService";
 import api from '@/api'
 import { Button, CircularProgress, TextField } from "@mui/material";
 import SendIcon from '@mui/icons-material/Send'
-import { FormattedMessage, useIntl } from "react-intl";
+import { FormattedMessage } from "react-intl";
 import { v1 } from 'uuid'
 import { isMobilePhone } from "@/common/is-mobile-phone";
 import AddIcon from '@mui/icons-material/Add';
@@ -26,16 +26,12 @@ export default observer((props: { username: string, userId: string }) => {
     },
   }, {
     ...props,
-    intl: useIntl(),
     inputFileRef: useRef<any>(),
   })
 
   async function sendMessage() {
     if (!state.messageContent) {
-      return MessageService.error(state.intl.formatMessage({
-        id: "PleaseFillInTheMessageContent",
-        defaultMessage: "Please fill in the message content"
-      }));
+      return MessageService.error("Please fill in the message content");
     }
     if (state.loadingOfSend) {
       return;
@@ -47,10 +43,7 @@ export default observer((props: { username: string, userId: string }) => {
       });
       state.messageContent = "";
     } catch (error) {
-      MessageService.error(state.intl.formatMessage({
-        id: "FailedToSend",
-        defaultMessage: "Failed to send"
-      }))
+      MessageService.error("Failed to send")
     } finally {
       state.loadingOfSend = false;
     }
@@ -83,10 +76,7 @@ export default observer((props: { username: string, userId: string }) => {
           });
         }
       } catch (error) {
-        MessageService.error(state.intl.formatMessage({
-          id: "FailedToSend",
-          defaultMessage: "Failed to send"
-        }))
+        MessageService.error("Failed to send")
       } finally {
         state.loadingOfSend = false;
       }
@@ -101,10 +91,7 @@ export default observer((props: { username: string, userId: string }) => {
             const files = e.clipboardData.files;
             sendMessageForFileList(files);
           }}
-          label={state.intl.formatMessage({
-            id: "MessageContent",
-            defaultMessage: "Message content"
-          })}
+          label={<FormattedMessage id="MessageContent" defaultMessage="Message content" />}
           className="flex flex-auto"
           variant="outlined"
           onChange={(e) => {

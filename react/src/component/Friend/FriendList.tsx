@@ -3,7 +3,7 @@ import { observer, useMobxState } from "mobx-react-use-autorun";
 import { useMount } from "mobx-react-use-autorun";
 import FriendChildComponent from "./FriendChildComponent";
 import api from '@/api'
-import LoadingOrErrorComponent from "@/common/MessageService/LoadingOrErrorComponent";
+import LoadingOrErrorComponent from "@/common/LoadingOrErrorComponent/LoadingOrErrorComponent";
 import { FormattedMessage } from "react-intl";
 
 export default observer(() => {

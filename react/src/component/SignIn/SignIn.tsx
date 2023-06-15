@@ -1,6 +1,6 @@
 import { Button, CircularProgress, TextField } from "@mui/material";
 import { observer, useMobxState } from "mobx-react-use-autorun";
-import { FormattedMessage, useIntl } from "react-intl";
+import { FormattedMessage } from "react-intl";
 import { stylesheet } from "typestyle";
 import HelpIcon from '@mui/icons-material/Help';
 import LoginIcon from '@mui/icons-material/Login';
@@ -30,34 +30,34 @@ export default observer(() => {
       username() {
         if (state.username) {
           if (state.username.replaceAll(new RegExp('^\\s+', 'g'), '').length !== state.username.length) {
-            return state.intl.formatMessage({ id: "ThereShouldBeNoSpacesAtTheBeginningOfTheAccountId", defaultMessage: "There should be no spaces at the beginning of the account ID" });
+            return <FormattedMessage id="ThereShouldBeNoSpacesAtTheBeginningOfTheAccountId" defaultMessage="There should be no spaces at the beginning of the account ID" />
           }
           if (state.username.replaceAll(new RegExp('\\s+$', 'g'), '').length !== state.username.length) {
-            return state.intl.formatMessage({ id: "TheAccountIDCannotHaveASpaceAtTheEnd", defaultMessage: "The account ID cannot have a space at the end" })
+            return <FormattedMessage id="TheAccountIDCannotHaveASpaceAtTheEnd" defaultMessage="The account ID cannot have a space at the end" />
           }
         }
         if (!state.submitted) {
           return false;
         }
         if (!state.username) {
-          return state.intl.formatMessage({ id: "PleaseFillInTheAccountID", defaultMessage: "Please fill in the account ID" })
+          return <FormattedMessage id="PleaseFillInTheAccountID" defaultMessage="Please fill in the account ID" />
         }
         return false;
       },
       password() {
         if (state.password) {
           if (state.password.replaceAll(new RegExp('^\\s+', 'g'), '').length !== state.password.length) {
-            return state.intl.formatMessage({ id: "PasswordMustNotHaveSpacesAtTheBeginning", defaultMessage: "Password must not have spaces at the beginning" })
+            return <FormattedMessage id="PasswordMustNotHaveSpacesAtTheBeginning" defaultMessage="Password must not have spaces at the beginning" />
           }
           if (state.password.replaceAll(new RegExp('\\s+$', 'g'), '').length !== state.password.length) {
-            return state.intl.formatMessage({ id: "PasswordCannotHaveASpaceAtTheEnd", defaultMessage: "Password cannot have a space at the end" })
+            return <FormattedMessage id="PasswordCannotHaveASpaceAtTheEnd" defaultMessage="Password cannot have a space at the end" />
           }
         }
         if (!state.submitted) {
           return false;
         }
         if (!state.password) {
-          return state.intl.formatMessage({ id: "PleaseFillInThePassword", defaultMessage: "Please fill in the password" })
+          return <FormattedMessage id="PleaseFillInThePassword" defaultMessage="Please fill in the password" />
         }
         return false;
       },
@@ -76,7 +76,6 @@ export default observer(() => {
       }
     }),
   }, {
-    intl: useIntl(),
     navigate: useNavigate(),
   })
 
@@ -109,10 +108,7 @@ export default observer(() => {
     </div>
     <div style={{ marginTop: "1em" }} className="flex flex-col w-full">
       <TextField
-        label={state.intl.formatMessage({
-          id: "AccountID",
-          defaultMessage: "Account ID"
-        })}
+        label={<FormattedMessage id="AccountID" defaultMessage="Account ID" />}
         variant="outlined"
         onChange={(e) => {
           state.username = e.target.value;
@@ -129,10 +125,7 @@ export default observer(() => {
     </div>
     <div style={{ marginTop: "1em" }} className="flex flex-col w-full">
       {state.showPasswordInput && <TextField
-        label={state.intl.formatMessage({
-          id: "Password",
-          defaultMessage: "Password"
-        })}
+        label={<FormattedMessage id="Password" defaultMessage="Password" />}
         className="flex flex-auto"
         variant="outlined"
         onChange={(e) => {

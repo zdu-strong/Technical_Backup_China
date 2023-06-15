@@ -4,7 +4,7 @@ import { Button, Chip, CircularProgress, Divider, Link } from "@mui/material";
 import api from '@/api'
 import { MessageService } from "@/common/MessageService";
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import { FormattedMessage, useIntl } from "react-intl";
+import { FormattedMessage } from "react-intl";
 import { UserMessageModel } from "@/model/UserMessageModel";
 import path from 'path'
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
@@ -25,7 +25,6 @@ export default observer((props: {
     loadingOfRecall: false,
   }, {
     ...props,
-    intl: useIntl(),
   })
 
   async function recall() {
@@ -34,10 +33,7 @@ export default observer((props: {
       await api.UserMessage.recallMessage(state.message?.id!);
     } catch (error) {
       state.loadingOfRecall = false
-      MessageService.error(state.intl.formatMessage({
-        id: "FailedToWithdraw",
-        defaultMessage: "Failed to withdraw"
-      }));
+      MessageService.error("Failed to withdraw");
     }
   }
 
@@ -53,24 +49,24 @@ export default observer((props: {
     <div className="flex flex-col flex-auto w-full">
       <div className="flex flex-row flex-wrap w-full justify-between" style={{ whiteSpace: "pre-wrap", wordBreak: "break-word", wordWrap: "break-word" }}>
         <div className="flex">
-          {state.loading && state.intl.formatMessage({
-            id: "LineFirstLoading",
-            defaultMessage: "Line {lineNumber}, Loading..."
-          }, {
-            lineNumber: state.pageNum
-          })}
-          {state.ready && state.message.user.id !== state.userId && <>
-            <FormattedMessage id="LineFirstUserSpeaking" defaultMessage="Line {lineNumber}, {username}: " values={{
+          {state.loading && <FormattedMessage
+            id="LineFirstLoading"
+            defaultMessage="Line {lineNumber}, Loading..."
+            values={{ lineNumber: state.pageNum }}
+          />}
+          {state.ready && state.message.user.id !== state.userId && <FormattedMessage
+            id="LineFirstUserSpeaking"
+            defaultMessage="Line {lineNumber}, {username}: "
+            values={{
               lineNumber: state.pageNum,
               username: state.message.user.username
-            }} />
-          </>}
-          {state.ready && state.message.user.id === state.userId && state.intl.formatMessage({
-            id: "LineFirstMeSpeaking",
-            defaultMessage: "Line {lineNumber}, Me:"
-          }, {
-            lineNumber: state.pageNum
-          })}
+            }}
+          />}
+          {state.ready && state.message.user.id === state.userId && <FormattedMessage
+            id="LineFirstMeSpeaking"
+            defaultMessage="Line {lineNumber}, Me:"
+            values={{ lineNumber: state.pageNum }}
+          />}
         </div>
         {state.ready && !state.message?.isRecall && state.message?.user.id === state.userId && <div>
           <Button
@@ -86,10 +82,7 @@ export default observer((props: {
       </div>
       <div className="flex">
         {state.ready && state.message?.isRecall && <Chip
-          label={state.intl.formatMessage({
-            id: "RetractedAMessage",
-            defaultMessage: "retracted a message"
-          })}
+          label={<FormattedMessage id="RetractedAMessage" defaultMessage="retracted a message" />}
           variant="outlined"
           style={{ marginBottom: "0.5em", marginTop: "0.5em" }}
           size="small"

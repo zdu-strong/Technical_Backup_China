@@ -5,7 +5,7 @@ import MessageChat from "@/component/Message/MessageChat";
 import { GlobalUserInfo } from "@/common/axios-config/AxiosConfig";
 import { useMount } from "mobx-react-use-autorun";
 import api from "@/api";
-import LoadingOrErrorComponent from "@/common/MessageService/LoadingOrErrorComponent";
+import LoadingOrErrorComponent from "@/common/LoadingOrErrorComponent/LoadingOrErrorComponent";
 import { v1 } from "uuid";
 import MessageMenu from "@/component/MessageEntry/MessageMenu";
 import MessageUnlimitedList from "@/component/Message/MessageUnlimitedList";

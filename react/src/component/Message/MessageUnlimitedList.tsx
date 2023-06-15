@@ -7,7 +7,7 @@ import { useRef } from "react";
 import MessageUnlimitedListChild from "./MessageUnlimitedListChild";
 import MessageUnlimitedVariableSizeListComponent from "./MessageUnlimitedVariableSizeListComponent";
 import { Alert, CircularProgress } from "@mui/material";
-import { FormattedMessage, useIntl } from "react-intl";
+import { FormattedMessage } from "react-intl";
 import { UserMessageModel } from "@/model/UserMessageModel";
 
 export default observer((props: {
@@ -51,7 +51,6 @@ export default observer((props: {
       scrollToItemByPageNum: (pageNum: number) => Promise<void>,
       isNeedScrollToEnd: () => boolean,
     }>(),
-    intl: useIntl(),
   })
 
   function child(props: { pageNum: number }) {
