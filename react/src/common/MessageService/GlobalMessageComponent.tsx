@@ -114,7 +114,7 @@ export default observer(() => {
       <Divider />
       <DialogContent style={{ padding: "1em" }}>
         {GlobalMessageList.map(messsageObject =>
-          <Alert severity={messsageObject.type as any} className={state.css.alertMessageContent} key={messsageObject.id} style={{ marginTop: "1em", color: getMessageContentTextColor() }}>
+          <Alert severity={messsageObject.type as any} className={state.css.alertMessageContent} key={messsageObject.id} style={{ marginTop: "1em", color: getMessageContentTextColor(), whiteSpace: "pre-wrap", wordBreak: "break-word", wordWrap: "break-word" }}>
             {messsageObject.message}
           </Alert>
         )}

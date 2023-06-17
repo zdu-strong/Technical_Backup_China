@@ -13,11 +13,11 @@ export default observer((props: { ready: boolean, error: Error | Error[] | any, 
   return <>
     {state.error && state.error instanceof Array && state.error.map(error => {
       const errorObject = getMessageObject(MESSAGE_TYPE_ENUM.error, error);
-      return <Alert severity="error" style={{ margin: "1em" }} key={errorObject.id}>
+      return <Alert severity="error" style={{ margin: "1em", whiteSpace: "pre-wrap", wordBreak: "break-word", wordWrap: "break-word" }} key={errorObject.id}>
         {errorObject.message}
       </Alert>
     })}
-    {state.error && !(state.error instanceof Array) && <Alert severity="error" style={{ margin: "1em" }}>
+    {state.error && !(state.error instanceof Array) && <Alert severity="error" style={{ margin: "1em", whiteSpace: "pre-wrap", wordBreak: "break-word", wordWrap: "break-word" }}>
       {getMessageObject(MESSAGE_TYPE_ENUM.error, state.error).message}
     </Alert>}
     {(!state.error || (state.error instanceof Array && state.error.length === 0)) && !state.ready && <div className="flex flex-auto flex-col" style={{ minHeight: "10em", minWidth: "100%", padding: "1em" }}>
