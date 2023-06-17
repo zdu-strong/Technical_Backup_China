@@ -3,6 +3,7 @@ import { observable } from 'mobx-react-use-autorun'
 import { FormattedMessage } from 'react-intl';
 import { GlobalExactMessageMatch } from '@/common/MessageMatch/GlobalExactMessageMatch'
 import { ReactNode } from 'react';
+import { getFuzzyMessageMatch } from '@/common/MessageMatch/GlobalFuzzyMessageMatch';
 
 export const MessageService = {
   error: (message: string | string[] | Error | Error[] | any) => {
@@ -42,8 +43,9 @@ function getI18nMessageReactNode(message: string) {
   let messageOfI18n = getMessageString(message);
   if (GlobalExactMessageMatch[message]) {
     return <FormattedMessage id={GlobalExactMessageMatch[message]} defaultMessage={message} />
+  } else {
+    return getFuzzyMessageMatch(messageOfI18n);
   }
-  return messageOfI18n;
 }
 
 function handleMessage(type: "error" | "warning" | "info" | "success", message: string | string[] | Error | Error[] | any) {
