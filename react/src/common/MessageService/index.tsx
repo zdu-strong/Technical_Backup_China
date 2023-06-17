@@ -1,7 +1,7 @@
 import { v1 } from 'uuid';
 import { observable } from 'mobx-react-use-autorun'
 import { FormattedMessage } from 'react-intl';
-import { GlobalExactMessageMatch } from '@/common/MessageService/GlobalExactMessageMatch';
+import { GlobalExactMessageMatch } from '@/common/MessageMatch/GlobalExactMessageMatch'
 import { ReactNode } from 'react';
 
 export const MessageService = {
