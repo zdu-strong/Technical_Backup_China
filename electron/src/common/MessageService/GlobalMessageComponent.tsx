@@ -1,5 +1,5 @@
 import { Alert, Dialog, DialogContent, DialogTitle, Divider, Fab } from "@mui/material"
-import { GlobalMessageList, MessageService, MESSAGE_TYPE_ENUM, getI18nMessageReactNode } from "."
+import { GlobalMessageList, MessageService, MESSAGE_TYPE_ENUM } from "@/common/MessageService"
 import linq from "linq";
 import { useMobxState, observer } from 'mobx-react-use-autorun';
 import CloseIcon from '@mui/icons-material/Close';
@@ -33,14 +33,14 @@ export default observer(() => {
     if (GlobalMessageList.length > 0) {
       const type = linq.from(GlobalMessageList).select(s => s.type).first();
       if (type === MESSAGE_TYPE_ENUM.warning) {
-        return 'warning';
+        return MESSAGE_TYPE_ENUM.warning;
       } else if (type === MESSAGE_TYPE_ENUM.info) {
-        return 'info';
+        return MESSAGE_TYPE_ENUM.info;
       } else if (type === MESSAGE_TYPE_ENUM.success) {
-        return 'success';
+        return MESSAGE_TYPE_ENUM.success;
       }
     }
-    return "error";
+    return MESSAGE_TYPE_ENUM.error;
   }
 
   function getMessageContentTextColor() {
@@ -114,8 +114,8 @@ export default observer(() => {
       <Divider />
       <DialogContent style={{ padding: "1em" }}>
         {GlobalMessageList.map(messsageObject =>
-          <Alert severity={messsageObject.type as any} className={state.css.alertMessageContent} key={messsageObject.id} style={{ marginTop: "1em", color: getMessageContentTextColor() }}>
-            {getI18nMessageReactNode(messsageObject.message)}
+          <Alert severity={messsageObject.type as any} className={state.css.alertMessageContent} key={messsageObject.id} style={{ marginTop: "1em", color: getMessageContentTextColor(), whiteSpace: "pre-wrap", wordBreak: "break-word", wordWrap: "break-word" }}>
+            {messsageObject.message}
           </Alert>
         )}
       </DialogContent>

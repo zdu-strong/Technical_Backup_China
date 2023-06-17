@@ -1,56 +1,61 @@
 import { v1 } from 'uuid';
 import { observable } from 'mobx-react-use-autorun'
 import { FormattedMessage } from 'react-intl';
-import { GlobalExactMessageMatch } from '@/common/MessageService/GlobalExactMessageMatch';
+import { GlobalExactMessageMatch } from '@/common/MessageMatch/GlobalExactMessageMatch'
+import { ReactNode } from 'react';
+import { getFuzzyMessageMatch } from '@/common/MessageMatch/GlobalFuzzyMessageMatch';
 
 export const MessageService = {
-  error: (message: string | string[] & any) => {
+  error: (message: string | string[] | Error | Error[] | any) => {
     handleMessage(MESSAGE_TYPE_ENUM.error, message)
   },
   warning: (message: string | string[] | any) => {
     handleMessage(MESSAGE_TYPE_ENUM.warning, message)
   },
-  info: (message: string | string[] & any) => {
+  info: (message: string | string[] | any) => {
     handleMessage(MESSAGE_TYPE_ENUM.info, message)
   },
-  success: (message: string | string[] & any) => {
+  success: (message: string | string[] | any) => {
     handleMessage(MESSAGE_TYPE_ENUM.success, message)
   }
 }
 
-export const GlobalMessageList = observable([]) as { id: string, message: string, type: string }[];
+export const GlobalMessageList = observable([]) as { id: string, message: ReactNode, type: string }[];
 
-export function getI18nMessageReactNode(message: string) {
+export const MESSAGE_TYPE_ENUM = {
+  error: "error" as "error",
+  warning: "warning" as "warning",
+  info: "info" as "info",
+  success: "success" as "success",
+}
+
+export function getMessageObject(type: "error" | "warning" | "info" | "success", message: any) {
+  const messageString = getMessageString(message);
+  const messageOfI18n = getI18nMessageReactNode(messageString);
+  return {
+    id: v1(),
+    message: messageOfI18n,
+    type: type
+  }
+}
+
+function getI18nMessageReactNode(message: string) {
   let messageOfI18n = getMessageString(message);
   if (GlobalExactMessageMatch[message]) {
     return <FormattedMessage id={GlobalExactMessageMatch[message]} defaultMessage={message} />
+  } else {
+    return getFuzzyMessageMatch(messageOfI18n);
   }
-  return messageOfI18n;
 }
 
-export const MESSAGE_TYPE_ENUM = {
-  error: "error",
-  warning: "warning",
-  info: "info",
-  success: "success"
-}
-
-function handleMessage(type: string, message: string | string[]) {
+function handleMessage(type: "error" | "warning" | "info" | "success", message: string | string[] | Error | Error[] | any) {
   GlobalMessageList.splice(0, GlobalMessageList.length);
   if (message instanceof Array) {
     for (const messageItem of message) {
-      GlobalMessageList.push(getMessageObject(type, messageItem))
+      handleMessage(type, messageItem)
     }
   } else {
     GlobalMessageList.push(getMessageObject(type, message))
-  }
-}
-
-function getMessageObject(type: string, message: any) {
-  return {
-    id: v1(),
-    message: getMessageString(message),
-    type: type
   }
 }
 
