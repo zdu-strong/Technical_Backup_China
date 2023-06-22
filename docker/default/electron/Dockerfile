@@ -29,7 +29,7 @@ RUN git add ..
 RUN git reset --hard
 RUN rm -rf ../electron/node_modules
 RUN rm -rf ./node_modules
-RUN xvfb-run -s "-ac -screen 0 1280x1024x24" npm test
+RUN xvfb-run npm test
 RUN rm -rf ./node_modules
 RUN rm -rf ../electron/node_modules
 

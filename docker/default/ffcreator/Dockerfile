@@ -26,7 +26,7 @@ WORKDIR /all_code/ffcreator
 RUN rm -rf ./node_modules
 RUN git add ..
 RUN git reset --hard
-RUN xvfb-run -s "-ac -screen 0 1280x1024x24" npm test
+RUN xvfb-run npm test
 RUN rm -rf ./node_modules
 
 # copy all_code folder
