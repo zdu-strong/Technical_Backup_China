@@ -45,9 +45,9 @@ async function generateVideo(config: {
     });
   }
   {
-    // Scene 1, white background
+    // Scene 1, black background
     const ffscene = new FFScene();
-    ffscene.setBgColor('#FFFFFF');
+    ffscene.setBgColor('#000000');
     ffscene.setDuration(3);
     ffscene.setTransition('Colorful', 3);
     ffcreator.addChild(ffscene);
@@ -55,7 +55,7 @@ async function generateVideo(config: {
   {
     // Scene 2, the first picture
     const ffscene = new FFScene();
-    ffscene.setBgColor('#30336b');
+    ffscene.setBgColor('#000000');
     ffscene.setDuration(5);
     ffscene.setTransition('MoveLeft', 1);
     ffscene.addChild(
@@ -71,7 +71,7 @@ async function generateVideo(config: {
     // Scene 3, the second picture
     const ffscene = new FFScene();
 
-    ffscene.setBgColor('#FFFFFF');
+    ffscene.setBgColor('#000000');
     ffscene.setDuration(5);
     ffscene.setTransition('InvertedPageCurl', 1);
     const ffimage = await imageOnCenter({
@@ -112,7 +112,7 @@ async function generateVideo(config: {
     // Scene 4, the third picture
     const ffscene = new FFScene();
 
-    ffscene.setBgColor('#30336b');
+    ffscene.setBgColor('#000000');
     ffscene.setDuration(5);
     ffscene.setTransition('Radial', 1);
     ffscene.addChild(
@@ -127,7 +127,7 @@ async function generateVideo(config: {
   {
     // Scene 5, the fourth picture
     const ffscene = new FFScene();
-    ffscene.setBgColor('#30336b');
+    ffscene.setBgColor('#000000');
     ffscene.setDuration(2);
     ffscene.addChild(
       await imageOnCenter({
