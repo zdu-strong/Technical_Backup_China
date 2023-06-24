@@ -62,8 +62,8 @@ typescript <br/>
 # Demonstration of the animation effect of the video
 
 Transition:
-1. 12 animations [https://tnfe.github.io/FFCreator/#/guide/animate](https://tnfe.github.io/FFCreator/#/guide/animate)
-2. 67 animations [https://gl-transitions.com/gallery](https://gl-transitions.com/gallery)
+1. 12 transitions [https://tnfe.github.io/FFCreator/#/guide/animate](https://tnfe.github.io/FFCreator/#/guide/animate)
+2. 67 transitions [https://gl-transitions.com/gallery](https://gl-transitions.com/gallery)
 
 Animate:
 1. https://createjs.com/demos/tweenjs/tween_sparktable
