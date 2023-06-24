@@ -29,9 +29,10 @@ RUN git reset --hard
 RUN xvfb-run npm test
 RUN rm -rf ./node_modules
 
-# copy all_code folder
+# copy ffcreator folder
 FROM first_docker
-COPY --from=second_docker /all_code /all_code
+COPY --from=second_docker /all_code/ffcreator /ffcreator
+WORKDIR /ffcreator
 
 # start server
 ENTRYPOINT ["/bin/bash"]
