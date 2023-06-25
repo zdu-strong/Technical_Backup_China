@@ -1,4 +1,4 @@
-FROM rockylinux:8.8.20230518 as first_docker
+FROM rockylinux:9.2.20230513 as first_docker
 
 LABEL maintainer="zdu.strong@gmail.com"
 
@@ -6,7 +6,7 @@ LABEL maintainer="zdu.strong@gmail.com"
 RUN sed -e 's|^mirrorlist=|#mirrorlist=|g' \
     -e 's|^#baseurl=http://dl.rockylinux.org/$contentdir|baseurl=https://mirrors.aliyun.com/rockylinux|g' \
     -i.bak \
-    /etc/yum.repos.d/Rocky-*.repo
+    /etc/yum.repos.d/rocky-*.repo
 RUN dnf makecache
 
 
@@ -15,6 +15,10 @@ RUN dnf install -y langpacks-en
 RUN dnf install -y glibc-common
 ENV LANG en_US.UTF-8
 ENV LC_ALL C.UTF-8
+
+# install epel-release
+RUN dnf install -y epel-release
+RUN dnf upgrade -y
 
 # Install java
 RUN dnf install -y java-17-openjdk-devel
