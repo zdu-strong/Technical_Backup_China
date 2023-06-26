@@ -18,6 +18,7 @@ async function generateVideo(config: {
   const paddyTwo = path.join(__dirname, 'image', 'paddyTwo.jpg');
   const paddyThree = path.join(__dirname, 'image', 'paddyThree.png');
   const paddyFour = path.join(__dirname, 'image', 'paddyFour.png');
+  const girlImage = path.join(__dirname, "image", "girl.jpg");
   const width = 800;
   const height = 550;
   // Basic configuration of video
@@ -26,13 +27,18 @@ async function generateVideo(config: {
     output: config.outputVideoFilePath,
     width: width,
     height: height,
+    cover: girlImage,
     audioLoop: false,
     fps: 120,
     debug: false,
     defaultOutputOptions: {
-      options: ['-c:v libvpx-vp9', '-c:a libopus', '-pix_fmt yuv420p'],
+      merge: true,
+      options: ['-pix_fmt yuv420p'],
     },
     log: true,
+    antialias: true,
+    clarity: "high",
+    preset: "veryslow",
   });
   {
     // Background music
@@ -72,8 +78,8 @@ async function generateVideo(config: {
     const ffscene = new FFScene();
 
     ffscene.setBgColor('#000000');
-    ffscene.setDuration(8);
-    ffscene.setTransition('InvertedPageCurl', 4);
+    ffscene.setDuration(6);
+    ffscene.setTransition('InvertedPageCurl', 3);
     const ffimage = await imageOnCenter({
       width,
       height,
