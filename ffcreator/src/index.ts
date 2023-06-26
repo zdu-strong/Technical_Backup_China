@@ -72,8 +72,8 @@ async function generateVideo(config: {
     const ffscene = new FFScene();
 
     ffscene.setBgColor('#000000');
-    ffscene.setDuration(5);
-    ffscene.setTransition('InvertedPageCurl', 1);
+    ffscene.setDuration(8);
+    ffscene.setTransition('InvertedPageCurl', 4);
     const ffimage = await imageOnCenter({
       width,
       height,
