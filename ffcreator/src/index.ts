@@ -15,7 +15,7 @@ async function generateVideo(config: {
     'Are You OK.mp3',
   );
   const paddyOne = path.join(__dirname, 'image', 'paddyOne.png');
-  const paddyTwo = path.join(__dirname, 'image', 'paddyTwo.png');
+  const paddyTwo = path.join(__dirname, 'image', 'paddyTwo.jpg');
   const paddyThree = path.join(__dirname, 'image', 'paddyThree.png');
   const paddyFour = path.join(__dirname, 'image', 'paddyFour.png');
   const width = 800;
