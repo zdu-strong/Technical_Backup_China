@@ -16,10 +16,6 @@ RUN dnf install -y glibc-common
 ENV LANG en_US.UTF-8
 ENV LC_ALL C.UTF-8
 
-# install epel-release
-RUN dnf install -y epel-release
-RUN dnf upgrade -y
-
 # Install java
 RUN dnf install -y java-17-openjdk-devel
 ENV JAVA_HOME /usr/lib/jvm/java-17-openjdk

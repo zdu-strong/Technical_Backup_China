@@ -15,10 +15,6 @@ RUN dnf install -y glibc-common
 ENV LANG en_US.UTF-8
 ENV LC_ALL C.UTF-8
 
-# install epel-release
-RUN dnf install -y epel-release
-RUN dnf upgrade -y
-
 # run test
 FROM first_docker as second_docker
 RUN dnf module install -y nodejs:18

@@ -15,10 +15,6 @@ RUN dnf install -y glibc-common
 ENV LANG en_US.UTF-8
 ENV LC_ALL C.UTF-8
 
-# install epel-release
-RUN dnf install -y epel-release
-RUN dnf upgrade -y
-
 # install nodejs
 RUN dnf module install -y nodejs:18
 RUN npm config set registry https://registry.yarnpkg.com
@@ -48,15 +44,11 @@ RUN chmod +x mvn
 RUN ./mvn clean package --define database.mysql.jdbc.url=host.docker.internal:3306
 RUN mv target/*.jar target/server.jar
 
-# copy jar
-FROM first_docker as cloud_docker
-COPY --from=second_docker /all_code/springboot/target/server.jar /server.jar
-
 # compile client code
-FROM cloud_docker as three_docker
+FROM first_docker as three_docker
 RUN dnf install -y git
 RUN dnf install -y procps
-RUN dnf install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel GConf2 nss libXScrnSaver alsa-lib
+RUN dnf install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel nss libXScrnSaver alsa-lib
 COPY ./ /all_code
 WORKDIR /all_code/springboot
 RUN git add ..
@@ -69,8 +61,10 @@ RUN npm test
 WORKDIR /all_code/react
 RUN npm run build
 
+FROM first_docker
+# copy jar
+COPY --from=second_docker /all_code/springboot/target/server.jar /server.jar
 # copy build folder
-FROM cloud_docker
 COPY --from=three_docker /all_code/react/build /build
 
 # set env
