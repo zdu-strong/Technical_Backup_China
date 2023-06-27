@@ -56,6 +56,13 @@ async function generateVideo(config: {
     ffscene.setBgColor('#000000');
     ffscene.setDuration(3);
     ffscene.setTransition('Colorful', 3);
+    ffscene.addChild(
+      await imageOnCenter({
+        width,
+        height,
+        imagePath: girlImage,
+      }),
+    );
     ffcreator.addChild(ffscene);
   }
   {
