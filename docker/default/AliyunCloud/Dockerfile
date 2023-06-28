@@ -26,7 +26,7 @@ RUN npm install --location=global serve@14.2.0
 RUN npm install --location=global wait-on@7.0.1
 
 # install concurrently
-RUN npm install --location=global concurrently@8.1.0
+RUN npm install --location=global concurrently@8.2.0
 
 # Install java
 RUN dnf install -y java-17-openjdk-devel
