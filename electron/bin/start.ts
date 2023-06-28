@@ -5,6 +5,7 @@ import util from 'util'
 import path from 'path'
 import waitOn from 'wait-on'
 import { timer } from 'rxjs'
+import os from "os";
 
 async function main() {
   const { avaliableClientPort, childProcessOfReact } = await startReact();
@@ -27,7 +28,8 @@ async function main() {
 async function startElectron(avaliableClientPort: number) {
   const childProcessOfElectron = execa.command(
     [
-      "electron .",
+      "electron . ",
+      ...(os.platform() === "linux" ? ["--no-sandbox"] : []),
     ].join(" "),
     {
       stdio: "inherit",
