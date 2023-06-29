@@ -6,6 +6,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+import com.google.common.collect.Lists;
 import com.springboot.project.test.BaseTest;
 
 public class LongTermTaskControllerGetLongTermTaskThrowErrorTest extends BaseTest {
@@ -20,9 +21,16 @@ public class LongTermTaskControllerGetLongTermTaskThrowErrorTest extends BaseTes
     }
 
     @BeforeEach
-    public void beforeEach() {
+    public void beforeEach() throws URISyntaxException {
         this.relativeUrl = this.longTermTaskUtil.run(() -> {
             throw new RuntimeException("Failed due to insufficient funds");
         }).getBody();
+        while (true) {
+            var url = new URIBuilder(relativeUrl).build();
+            var result = this.testRestTemplate.getForEntity(url, Object.class);
+            if (!Lists.newArrayList(HttpStatus.OK, HttpStatus.ACCEPTED).contains(result.getStatusCode())) {
+                break;
+            }
+        }
     }
 }
