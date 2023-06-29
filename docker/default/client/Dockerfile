@@ -17,7 +17,7 @@ ENV LC_ALL C.UTF-8
 
 # install nodejs
 RUN dnf module install -y nodejs:18
-RUN npm config set registry https://mirrors.cloud.tencent.com/npm/
+RUN npm config set registry https://mirrors.cloud.tencent.com/npm
 
 # install serve
 RUN npm install --location=global serve@14.2.0
