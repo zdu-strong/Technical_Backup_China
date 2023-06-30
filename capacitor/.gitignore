@@ -24,7 +24,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # Optional eslint cache
-.eslintcache\
+.eslintcache
 
 # Capacitor
 /package-lock.json
