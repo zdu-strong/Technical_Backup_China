@@ -55,7 +55,7 @@ public class LongTermTaskControllerGetLongTermTaskReturnArrayTest extends BaseTe
         while (true) {
             var url = new URIBuilder(relativeUrl).build();
             var result = this.testRestTemplate.getForEntity(url, Object.class);
-            if (!Lists.newArrayList(HttpStatus.ACCEPTED).contains(result.getStatusCode())) {
+            if (!HttpStatus.ACCEPTED.equals(result.getStatusCode())) {
                 break;
             }
             Thread.sleep(1000);

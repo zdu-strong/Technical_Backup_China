@@ -12,8 +12,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import com.google.common.collect.Lists;
 import com.springboot.project.model.LongTermTaskModel;
 import com.springboot.project.test.BaseTest;
 
@@ -46,7 +44,7 @@ public class LongTermTaskControllerGetLongTermTaskTest extends BaseTest {
         while (true) {
             var url = new URIBuilder(relativeUrl).build();
             var result = this.testRestTemplate.getForEntity(url, Object.class);
-            if (!Lists.newArrayList(HttpStatus.ACCEPTED).contains(result.getStatusCode())) {
+            if (!HttpStatus.ACCEPTED.equals(result.getStatusCode())) {
                 break;
             }
             Thread.sleep(1000);
