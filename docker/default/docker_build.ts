@@ -17,7 +17,7 @@ async function runElectronTest() {
       "docker build",
       "-t electron",
       "-f ./Dockerfile",
-      "../../../",
+      "../../..",
     ].join(" "),
     {
       stdio: "inherit",
@@ -32,7 +32,7 @@ async function runCapacitorTest() {
       "docker build",
       "-t capacitor",
       "-f ./Dockerfile",
-      "../../../",
+      "../../..",
     ].join(" "),
     {
       stdio: "inherit",
@@ -47,7 +47,7 @@ async function buildReact() {
       "docker build",
       "-t react",
       "-f ./Dockerfile",
-      "../../../",
+      "../../..",
     ].join(" "),
     {
       stdio: "inherit",
@@ -62,7 +62,7 @@ async function buildSpringboot() {
       "docker build",
       "-t springboot",
       "-f ./Dockerfile",
-      "../../../",
+      "../../..",
     ].join(" "),
     {
       stdio: "inherit",
@@ -77,7 +77,7 @@ async function buildFFCreator() {
       "docker build",
       "-t ffcreator",
       "-f ./Dockerfile",
-      "../../../",
+      "../../..",
     ].join(" "),
     {
       stdio: "inherit",
@@ -92,7 +92,7 @@ async function buildMysqlDiff() {
       "docker build",
       "-t mysqldiff",
       "-f ./Dockerfile",
-      "../../../",
+      "../../..",
     ].join(" "),
     {
       stdio: "inherit",
@@ -107,7 +107,7 @@ async function buildCloud() {
       "docker build",
       "-t cloud",
       "-f ./Dockerfile",
-      "../../../",
+      "../../..",
     ].join(" "),
     {
       stdio: "inherit",

@@ -56,7 +56,7 @@ public class BaseStorage {
         if (StringUtils.isBlank(storageRootPath)) {
             synchronized (getClass()) {
                 if (StringUtils.isBlank(storageRootPath)) {
-                    File currentFolderPath = Paths.get(new File("./").getAbsolutePath()).normalize().toFile();
+                    File currentFolderPath = Paths.get(new File(".").getAbsolutePath()).normalize().toFile();
                     String rootPath = "";
                     if (this.storageRootPathProperties.getStorageRootPath().equals("default")) {
                         if (new File(currentFolderPath, ".mvn").isDirectory()) {
