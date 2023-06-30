@@ -34,7 +34,7 @@ public class LongTermTaskControllerGetLongTermTaskTest extends BaseTest {
     }
 
     @BeforeEach
-    public void beforeEach() throws URISyntaxException {
+    public void beforeEach() throws URISyntaxException, InterruptedException {
         this.relativeUrl = this.longTermTaskUtil.run(() -> {
             try {
                 Thread.sleep(1000);
@@ -46,9 +46,10 @@ public class LongTermTaskControllerGetLongTermTaskTest extends BaseTest {
         while (true) {
             var url = new URIBuilder(relativeUrl).build();
             var result = this.testRestTemplate.getForEntity(url, Object.class);
-            if (!Lists.newArrayList(HttpStatus.ACCEPTED.value()).contains(result.getStatusCode().value())) {
+            if (!Lists.newArrayList(HttpStatus.ACCEPTED).contains(result.getStatusCode())) {
                 break;
             }
+            Thread.sleep(1000);
         }
     }
 }

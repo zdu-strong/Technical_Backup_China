@@ -21,16 +21,17 @@ public class LongTermTaskControllerGetLongTermTaskThrowErrorTest extends BaseTes
     }
 
     @BeforeEach
-    public void beforeEach() throws URISyntaxException {
+    public void beforeEach() throws URISyntaxException, InterruptedException {
         this.relativeUrl = this.longTermTaskUtil.run(() -> {
             throw new RuntimeException("Failed due to insufficient funds");
         }).getBody();
         while (true) {
             var url = new URIBuilder(relativeUrl).build();
             var result = this.testRestTemplate.getForEntity(url, Object.class);
-            if (!Lists.newArrayList(HttpStatus.OK.value(), HttpStatus.ACCEPTED.value()).contains(result.getStatusCode().value())) {
+            if (!Lists.newArrayList(HttpStatus.OK, HttpStatus.ACCEPTED).contains(result.getStatusCode())) {
                 break;
             }
+            Thread.sleep(1000);
         }
     }
 }
