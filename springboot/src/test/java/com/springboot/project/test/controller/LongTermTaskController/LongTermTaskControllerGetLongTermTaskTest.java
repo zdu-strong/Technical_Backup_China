@@ -12,6 +12,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import com.google.common.collect.Lists;
 import com.springboot.project.model.LongTermTaskModel;
 import com.springboot.project.test.BaseTest;
 
@@ -32,7 +34,7 @@ public class LongTermTaskControllerGetLongTermTaskTest extends BaseTest {
     }
 
     @BeforeEach
-    public void beforeEach() {
+    public void beforeEach() throws URISyntaxException {
         this.relativeUrl = this.longTermTaskUtil.run(() -> {
             try {
                 Thread.sleep(1000);
@@ -41,5 +43,12 @@ public class LongTermTaskControllerGetLongTermTaskTest extends BaseTest {
             }
             return ResponseEntity.ok("Hello, World!");
         }).getBody();
+        while (true) {
+            var url = new URIBuilder(relativeUrl).build();
+            var result = this.testRestTemplate.getForEntity(url, Object.class);
+            if (!Lists.newArrayList(HttpStatus.ACCEPTED).contains(result.getStatusCode())) {
+                break;
+            }
+        }
     }
 }
