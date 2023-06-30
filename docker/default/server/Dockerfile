@@ -24,7 +24,7 @@ ENV PATH $PATH:$JAVA_HOME/bin
 # compile code
 FROM first_docker as second_docker
 RUN dnf install -y git
-COPY ./ /all_code
+COPY . /all_code
 WORKDIR /all_code/springboot
 RUN git add ..
 RUN git reset --hard

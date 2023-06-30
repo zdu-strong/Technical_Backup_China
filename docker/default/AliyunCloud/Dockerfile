@@ -36,7 +36,7 @@ ENV PATH $PATH:$JAVA_HOME/bin
 # compile server code
 FROM first_docker as second_docker
 RUN dnf install -y git
-COPY ./ /all_code
+COPY . /all_code
 WORKDIR /all_code/springboot
 RUN git add ..
 RUN git reset --hard
@@ -49,7 +49,7 @@ FROM first_docker as three_docker
 RUN dnf install -y git
 RUN dnf install -y procps
 RUN dnf install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel nss libXScrnSaver alsa-lib
-COPY ./ /all_code
+COPY . /all_code
 WORKDIR /all_code/springboot
 RUN git add ..
 RUN git reset --hard

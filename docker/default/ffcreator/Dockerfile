@@ -21,7 +21,7 @@ RUN dnf module install -y nodejs:18
 RUN dnf install -y git
 RUN dnf install -y gcc-c++ cairo-devel pango-devel libjpeg-turbo-devel giflib
 RUN dnf install -y mesa-dri-drivers Xvfb libXi-devel libXinerama-devel libX11-devel
-COPY ./ /all_code
+COPY . /all_code
 WORKDIR /all_code/ffcreator
 RUN rm -rf ./node_modules
 RUN git add ..

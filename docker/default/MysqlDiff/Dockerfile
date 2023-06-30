@@ -20,7 +20,7 @@ FROM first_docker as second_docker
 RUN dnf module install -y nodejs:18
 RUN dnf install -y git
 RUN dnf install -y procps
-COPY ./ /all_code
+COPY . /all_code
 WORKDIR /all_code
 RUN git add .
 RUN git reset --hard

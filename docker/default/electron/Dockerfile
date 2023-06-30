@@ -23,7 +23,7 @@ RUN dnf install -y procps
 RUN dnf install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel nss libXScrnSaver alsa-lib
 RUN dnf install -y gcc-c++ cairo-devel pango-devel libjpeg-turbo-devel giflib
 RUN dnf install -y mesa-dri-drivers Xvfb libXi-devel libXinerama-devel libX11-devel
-COPY ./ /all_code
+COPY . /all_code
 WORKDIR /all_code/electron-playwright
 RUN git add ..
 RUN git reset --hard
