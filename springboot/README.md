@@ -260,9 +260,12 @@ java:
         command.add("/bin/bash");
         command.add("-c");
     }
-    command.add("cross-env npm --version");
-    var exitValue = new ProcessBuilder(command)
-            .directory(this.storage.createTempFolder()).start()
+    command.add("npm --version");
+    var processBuilder = new ProcessBuilder(command)
+                .inheritIO()
+                .directory(this.storage.createTempFolder());
+    processBuilder.environment().put("CUSTOM_ENV", "custom value");
+    var exitValue = processBuilder.start()
             .waitFor();
     if (exitValue != 0) {
         throw new RuntimeException("Failed!");
