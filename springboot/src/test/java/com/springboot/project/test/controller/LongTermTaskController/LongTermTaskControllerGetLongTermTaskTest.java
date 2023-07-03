@@ -43,8 +43,11 @@ public class LongTermTaskControllerGetLongTermTaskTest extends BaseTest {
         }).getBody();
         while (true) {
             var url = new URIBuilder(relativeUrl).build();
-            var result = this.testRestTemplate.getForEntity(url, Object.class);
-            if (!HttpStatus.ACCEPTED.equals(result.getStatusCode())) {
+            var result = this.testRestTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(null),
+                    new ParameterizedTypeReference<LongTermTaskModel<Object>>() {
+                    });
+            assertEquals(HttpStatus.OK, result.getStatusCode());
+            if (result.getBody().getIsDone()) {
                 break;
             }
             Thread.sleep(1000);

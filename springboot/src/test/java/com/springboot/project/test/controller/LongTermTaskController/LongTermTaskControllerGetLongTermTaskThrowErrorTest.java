@@ -27,7 +27,7 @@ public class LongTermTaskControllerGetLongTermTaskThrowErrorTest extends BaseTes
         while (true) {
             var url = new URIBuilder(relativeUrl).build();
             var result = this.testRestTemplate.getForEntity(url, Object.class);
-            if (!HttpStatus.ACCEPTED.equals(result.getStatusCode()) && !HttpStatus.OK.equals(result.getStatusCode())) {
+            if (!HttpStatus.OK.equals(result.getStatusCode())) {
                 break;
             }
             Thread.sleep(1000);

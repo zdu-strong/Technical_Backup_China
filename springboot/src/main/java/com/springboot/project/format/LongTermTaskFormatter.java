@@ -63,7 +63,7 @@ public class LongTermTaskFormatter extends BaseService {
                     return response;
                 }
             } else {
-                return ResponseEntity.accepted().body(longTermTaskModel);
+                return ResponseEntity.ok().body(longTermTaskModel);
             }
         } catch (JsonMappingException e) {
             throw new RuntimeException(e.getMessage(), e);

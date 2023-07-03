@@ -21,7 +21,7 @@ public class LongTermTaskServiceGetLongTermTaskTest extends BaseTest {
         var result = (ResponseEntity<LongTermTaskModel<?>>) this.longTermTaskService
                 .getLongTermTask(this.longTermtaskId);
         assertNotNull(result);
-        assertEquals(HttpStatus.ACCEPTED, result.getStatusCode());
+        assertEquals(HttpStatus.OK, result.getStatusCode());
         assertNotNull(result.getBody().getId());
         assertFalse(result.getBody().getIsDone());
     }
