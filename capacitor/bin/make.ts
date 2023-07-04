@@ -57,13 +57,13 @@ async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string
   const childProcess = execa.command(
     [
       // `cap build`,
-      `cap open`,
       // ...(isRunAndroid ? [`--keystorepath ${path.relative(path.join(__dirname, "..", "android"), CapacitorConfig.android!.buildOptions!.keystorePath!)}`] : []),
       // ...(isRunAndroid ? [`--keystorepass ${CapacitorConfig.android?.buildOptions?.keystorePassword}`] : []),
       // ...(isRunAndroid ? [`--keystorealias ${CapacitorConfig.android?.buildOptions?.keystoreAlias}`] : []),
       // ...(isRunAndroid ? [`--keystorealiaspass ${CapacitorConfig.android?.buildOptions?.keystoreAliasPassword}`] : []),
       // ...(isRunAndroid ? [`--signing-type ${CapacitorConfig.android?.buildOptions?.signingType}`] : []),
       // ...(isRunAndroid ? [`--androidreleasetype ${CapacitorConfig.android?.buildOptions?.releaseType}`] : []),
+      `cap open`,
       `${isRunAndroid ? "android" : "ios"}`,
     ].join(" "),
     {
