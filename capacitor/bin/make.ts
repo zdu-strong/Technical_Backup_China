@@ -6,6 +6,7 @@ import execa from "execa"
 import treeKill from 'tree-kill'
 import util from 'util'
 import fs from 'fs'
+// import CapacitorConfig from '../capacitor.config'
 
 async function main() {
   const isRunAndroid = await getIsRunAndroid();
@@ -55,8 +56,15 @@ async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string
   );
   const childProcess = execa.command(
     [
-      // `cap build ${isRunAndroid ? "android" : "ios"}`,
-      `cap open ${isRunAndroid ? "android" : "ios"}`,
+      // `cap build`,
+      `cap open`,
+      // ...(isRunAndroid ? [`--keystorepath ${path.relative(path.join(__dirname, "..", "android"), CapacitorConfig.android!.buildOptions!.keystorePath!)}`] : []),
+      // ...(isRunAndroid ? [`--keystorepass ${CapacitorConfig.android?.buildOptions?.keystorePassword}`] : []),
+      // ...(isRunAndroid ? [`--keystorealias ${CapacitorConfig.android?.buildOptions?.keystoreAlias}`] : []),
+      // ...(isRunAndroid ? [`--keystorealiaspass ${CapacitorConfig.android?.buildOptions?.keystoreAliasPassword}`] : []),
+      // ...(isRunAndroid ? [`--signing-type ${CapacitorConfig.android?.buildOptions?.signingType}`] : []),
+      // ...(isRunAndroid ? [`--androidreleasetype ${CapacitorConfig.android?.buildOptions?.releaseType}`] : []),
+      `${isRunAndroid ? "android" : "ios"}`,
     ].join(" "),
     {
       stdio: "inherit",
