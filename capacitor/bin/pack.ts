@@ -127,6 +127,13 @@ async function addPlatformSupport(isRunAndroid: boolean) {
 async function getDeviceList(isRunAndroid: boolean) {
   let deviceList = [] as string[];
   if (isRunAndroid) {
+    await execa.command(
+      `cap run ${isRunAndroid ? 'android' : 'ios'} --list`,
+      {
+        stdio: "inherit",
+        cwd: path.join(__dirname, ".."),
+      }
+    );
     const { stdout: androidDeviceOutput } = await execa.command(
       `cap run ${isRunAndroid ? 'android' : 'ios'} --list`,
       {
@@ -140,8 +147,23 @@ async function getDeviceList(isRunAndroid: boolean) {
     if (startIndex < 0) {
       throw new Error("No available Device!")
     }
-    deviceList = linq.from(androidDeviceOutputList).skip(startIndex + 1).select(item => linq.from(item.split(new RegExp("\\s+"))).select(item => item.trim()).toArray()).select(s => linq.from(s).last()).toArray();
-    deviceList = deviceList.filter(s => s === "Pixel_6_API_33");
+    deviceList = linq.from(androidDeviceOutputList)
+      .skip(startIndex + 1)
+      .select(item => linq.from(item.split(new RegExp("\\s\\s+")))
+        .select(item => item.trim()).toArray()
+      )
+      .where(s => s.some(m => m.trim() === "API 33"))
+      .groupBy(() => "")
+      .selectMany(s => {
+        if (s.count() > 1) {
+          return s.where(m => m.some(n => n.includes("Pixel 6"))).toArray();
+        }
+        return s.toArray();
+      })
+      .select(s => linq.from(s)
+        .last()
+      )
+      .toArray();
     if (!deviceList.length) {
       throw new Error("No available Device!")
     }

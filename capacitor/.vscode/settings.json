@@ -21,4 +21,5 @@
   "editor.tabSize": 2,
   "editor.detectIndentation": false,
   "extensions.ignoreRecommendations": true,
+  "java.configuration.updateBuildConfiguration": "disabled",
 }
