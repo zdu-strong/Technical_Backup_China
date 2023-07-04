@@ -33,7 +33,7 @@ public class LongTermTaskUtil {
     public ResponseEntity<String> run(Supplier<ResponseEntity<?>> supplier) {
         String idOfLongTermTask = this.longTermTaskService.createLongTermTask();
         CompletableFuture.runAsync(() -> {
-            var subscription = Observable.just("").delay(1, TimeUnit.SECONDS).concatMap((a) -> {
+            var subscription = Observable.timer(1, TimeUnit.SECONDS).concatMap((a) -> {
                 CompletableFuture.runAsync(() -> {
                     this.longTermTaskService.updateLongTermTaskToRefreshUpdateDate(idOfLongTermTask);
                 }).get();
@@ -42,10 +42,12 @@ public class LongTermTaskUtil {
             try {
                 var result = CompletableFuture.supplyAsync(() -> supplier.get()).get();
                 CompletableFuture.runAsync(() -> {
+                    subscription.dispose();
                     this.longTermTaskService.updateLongTermTaskByResult(idOfLongTermTask, result);
                 }).get();
             } catch (Throwable e) {
                 CompletableFuture.runAsync(() -> {
+                    subscription.dispose();
                     if (e instanceof ExecutionException && e.getCause() != null) {
                         this.longTermTaskService.updateLongTermTaskByErrorMessage(idOfLongTermTask,
                                 ((ExecutionException) e).getCause());
@@ -53,8 +55,6 @@ public class LongTermTaskUtil {
                         this.longTermTaskService.updateLongTermTaskByErrorMessage(idOfLongTermTask, e);
                     }
                 });
-            } finally {
-                subscription.dispose();
             }
         });
         try {
