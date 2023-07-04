@@ -14,6 +14,7 @@ const config: CapacitorConfig =
       keystorePassword: "123456",
       keystoreAlias: "android",
       keystoreAliasPassword: "123456",
+      signingType: "apksigner",
     }
   },
 };
