@@ -49,7 +49,6 @@
     "@capacitor/dialog": "4.1.0",
     "@capacitor/filesystem": "4.1.4",
     "@capacitor/geolocation": "4.1.0",
-    "@capacitor/google-maps": "4.5.0",
     "@capacitor/haptics": "4.1.0",
     "@capacitor/ios": "4.7.3",
     "@capacitor/keyboard": "4.1.1",
