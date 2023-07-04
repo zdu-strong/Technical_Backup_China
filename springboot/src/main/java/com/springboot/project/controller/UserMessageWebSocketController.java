@@ -41,12 +41,12 @@ public class UserMessageWebSocketController {
     /**
      * Autowired
      */
-    private static UserMessageService staticUserMessageService;
+    private static UserMessageService _userMessageService;
 
     /**
      * Autowired
      */
-    private static PermissionUtil staticPermissionUtil;
+    private static PermissionUtil _permissionUtil;
 
     /**
      * Public accessible properties
@@ -65,13 +65,13 @@ public class UserMessageWebSocketController {
     private boolean ready = false;
 
     @Autowired
-    public void setUserMessageService(UserMessageService _userMessageService) {
-        staticUserMessageService = _userMessageService;
+    public void setUserMessageService(UserMessageService userMessageService) {
+        _userMessageService = userMessageService;
     }
 
     @Autowired
-    public void setPermissionUtil(PermissionUtil _permissionUtil) {
-        staticPermissionUtil = _permissionUtil;
+    public void setPermissionUtil(PermissionUtil permissionUtil) {
+        _permissionUtil = permissionUtil;
     }
 
     /**
@@ -86,8 +86,8 @@ public class UserMessageWebSocketController {
          */
         var accessToken = JinqStream.from(new URIBuilder(session.getRequestURI()).getQueryParams())
                 .where(s -> s.getName().equals("accessToken")).select(s -> s.getValue()).getOnlyValue();
-        staticPermissionUtil.checkIsSignIn(accessToken);
-        var userId = staticPermissionUtil.getUserId(accessToken);
+        _permissionUtil.checkIsSignIn(accessToken);
+        var userId = _permissionUtil.getUserId(accessToken);
         /**
          * Save properties to member variables
          */
@@ -126,7 +126,7 @@ public class UserMessageWebSocketController {
 
     public void sendMessage() {
         try {
-            var messageList = staticUserMessageService.getMessageListByLastTwentyMessages(userId);
+            var messageList = _userMessageService.getMessageListByLastTwentyMessages(userId);
             {
                 var newMessageList = messageList.stream().filter(
                         s -> !this.lastMessage.stream().anyMatch(t -> {
@@ -164,7 +164,7 @@ public class UserMessageWebSocketController {
                     if (!this.onlineMessageMap.containsKey(pageNum)) {
                         continue;
                     }
-                    var userMessageList = staticUserMessageService.getMessageListOnlyContainsOneByPageNum(pageNum,
+                    var userMessageList = _userMessageService.getMessageListOnlyContainsOneByPageNum(pageNum,
                             this.userId);
                     if (userMessageList.isEmpty()) {
                         continue;
