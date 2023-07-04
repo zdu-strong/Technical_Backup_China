@@ -31,10 +31,6 @@ async function generateVideo(config: {
     audioLoop: false,
     fps: 120,
     debug: false,
-    defaultOutputOptions: {
-      merge: true,
-      options: ['-pix_fmt yuv420p'],
-    },
     log: true,
     antialias: true,
     clarity: "high",
