@@ -32,7 +32,6 @@ async function generateVideo(config: {
     fps: 120,
     debug: false,
     log: true,
-    antialias: true,
     clarity: "high",
     preset: "veryslow",
   });
