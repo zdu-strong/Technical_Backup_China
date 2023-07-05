@@ -42,7 +42,8 @@ RUN rm -rf ./capacitor/node_modules
 
 # copy all_code folder
 FROM first_docker
-COPY --from=second_docker /all_code /all_code
+COPY --from=second_docker /all_code/capacitor /capacitor
+WORKDIR /capacitor
 
 # start server
 ENTRYPOINT ["/bin/bash"]

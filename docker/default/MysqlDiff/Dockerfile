@@ -31,7 +31,8 @@ RUN rm -rf ./node_modules
 
 # copy all_code folder
 FROM first_docker
-COPY --from=second_docker /all_code /all_code
+COPY --from=second_docker /all_code/springboot/.mvn/diff /diff
+WORKDIR /diff
 
 # start server
 ENTRYPOINT ["/bin/bash"]
