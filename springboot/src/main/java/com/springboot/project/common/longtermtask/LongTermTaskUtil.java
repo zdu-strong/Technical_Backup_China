@@ -12,8 +12,10 @@ import org.springframework.stereotype.Component;
 import com.springboot.project.service.EncryptDecryptService;
 import com.springboot.project.service.LongTermTaskService;
 import io.reactivex.rxjava3.core.Observable;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
+@Slf4j
 public class LongTermTaskUtil {
     @Autowired
     private LongTermTaskService longTermTaskService;
@@ -34,27 +36,37 @@ public class LongTermTaskUtil {
         String idOfLongTermTask = this.longTermTaskService.createLongTermTask();
         CompletableFuture.runAsync(() -> {
             var subscription = Observable.timer(1, TimeUnit.SECONDS).concatMap((a) -> {
-                CompletableFuture.runAsync(() -> {
-                    this.longTermTaskService.updateLongTermTaskToRefreshUpdateDate(idOfLongTermTask);
-                }).get();
+                synchronized (idOfLongTermTask) {
+                    CompletableFuture.runAsync(() -> {
+                        this.longTermTaskService.updateLongTermTaskToRefreshUpdateDate(idOfLongTermTask);
+                    }).get();
+                }
                 return Observable.empty();
             }).repeat().retry().subscribe();
             try {
                 var result = CompletableFuture.supplyAsync(() -> supplier.get()).get();
-                CompletableFuture.runAsync(() -> {
-                    subscription.dispose();
-                    this.longTermTaskService.updateLongTermTaskByResult(idOfLongTermTask, result);
-                }).get();
+                subscription.dispose();
+                synchronized (idOfLongTermTask) {
+                    CompletableFuture.runAsync(() -> {
+                        this.longTermTaskService.updateLongTermTaskByResult(idOfLongTermTask, result);
+                    }).get();
+                }
             } catch (Throwable e) {
-                CompletableFuture.runAsync(() -> {
-                    subscription.dispose();
-                    if (e instanceof ExecutionException && e.getCause() != null) {
-                        this.longTermTaskService.updateLongTermTaskByErrorMessage(idOfLongTermTask,
-                                ((ExecutionException) e).getCause());
-                    } else {
-                        this.longTermTaskService.updateLongTermTaskByErrorMessage(idOfLongTermTask, e);
+                subscription.dispose();
+                synchronized (idOfLongTermTask) {
+                    try {
+                        CompletableFuture.runAsync(() -> {
+                            if (e instanceof ExecutionException && e.getCause() != null) {
+                                this.longTermTaskService.updateLongTermTaskByErrorMessage(idOfLongTermTask,
+                                        ((ExecutionException) e).getCause());
+                            } else {
+                                this.longTermTaskService.updateLongTermTaskByErrorMessage(idOfLongTermTask, e);
+                            }
+                        }).get();
+                    } catch (InterruptedException | ExecutionException e4) {
+                        log.error("Failed to saving exception message for long term task \"" + idOfLongTermTask + "\"", e4);
                     }
-                });
+                }
             }
         });
         try {

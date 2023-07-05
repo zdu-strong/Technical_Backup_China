@@ -29,6 +29,9 @@ public class LongTermTaskService extends BaseService {
     public void updateLongTermTaskToRefreshUpdateDate(String id) {
         LongTermTaskEntity longTermTaskEntity = this.LongTermTaskEntity().where(s -> s.getId().equals(id))
                 .getOnlyValue();
+        if (longTermTaskEntity.getIsDone()) {
+            return;
+        }
         longTermTaskEntity.setUpdateDate(new Date());
         this.entityManager.merge(longTermTaskEntity);
     }
