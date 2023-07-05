@@ -9,7 +9,6 @@ RUN sed -e 's|^mirrorlist=|#mirrorlist=|g' \
     /etc/yum.repos.d/rocky-*.repo
 RUN dnf makecache
 
-
 # support utf-8
 RUN dnf install -y langpacks-en
 RUN dnf install -y glibc-common
