@@ -3,7 +3,7 @@
   "compilerOptions": {
     "outDir": "../dist",
     "noEmit": false,
-    "module": "commonjs",
+    "module": "CommonJS",
     "pretty": true,
     "paths": {
       "@/*": [
