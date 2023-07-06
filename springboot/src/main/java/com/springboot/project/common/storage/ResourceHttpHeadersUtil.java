@@ -47,15 +47,11 @@ public class ResourceHttpHeadersUtil {
     }
 
     public void setETag(HttpHeaders httpHeaders, HttpServletRequest request) {
-        try {
-            httpHeaders
-                    .setETag("\""
-                            + Base64.getEncoder().encodeToString(
-                                    new URIBuilder(request.getRequestURI()).getPath().getBytes(StandardCharsets.UTF_8))
-                            + "\"");
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        httpHeaders
+                .setETag("W/\""
+                        + Base64.getEncoder().encodeToString(
+                                this.storage.getRelativePathFromRequest(request).getBytes(StandardCharsets.UTF_8))
+                        + "\"");
     }
 
     public void setCacheControl(HttpHeaders httpHeaders, HttpServletRequest request) {
