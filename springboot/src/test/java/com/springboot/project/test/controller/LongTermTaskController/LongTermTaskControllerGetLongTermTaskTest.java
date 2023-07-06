@@ -33,24 +33,13 @@ public class LongTermTaskControllerGetLongTermTaskTest extends BaseTest {
 
     @BeforeEach
     public void beforeEach() throws URISyntaxException, InterruptedException {
-        this.relativeUrl = this.longTermTaskUtil.run(() -> {
+        this.relativeUrl = this.fromLongTermTask(() -> this.longTermTaskUtil.run(() -> {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e.getMessage(), e);
             }
             return ResponseEntity.ok("Hello, World!");
-        }).getBody();
-        while (true) {
-            var url = new URIBuilder(relativeUrl).build();
-            var result = this.testRestTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(null),
-                    new ParameterizedTypeReference<LongTermTaskModel<Object>>() {
-                    });
-            assertEquals(HttpStatus.OK, result.getStatusCode());
-            if (result.getBody().getIsDone()) {
-                break;
-            }
-            Thread.sleep(1000);
-        }
+        }).getBody());
     }
 }

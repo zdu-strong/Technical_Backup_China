@@ -3,7 +3,7 @@ import registerWebworker from 'webworker-promise/lib/register'
 import axios from "axios";
 import { catchError, concatMap, from, map, of, range, toArray } from "rxjs";
 import * as mathjs from 'mathjs'
-import { getLongTermTask } from '@/api/LongTermTask';
+import { ErrorMessageOfTheTaskFailedBecauseItStopped, getLongTermTask } from '@/api/LongTermTask';
 import { addMilliseconds } from 'date-fns'
 import linq from 'linq'
 
@@ -78,7 +78,7 @@ registerWebworker(async ({
       concatMap(() => from(axios.post<string>(`${ServerAddress}/upload/merge`, urlList))),
       concatMap(response => from(getLongTermTask(`${ServerAddress}${response.data}`, String))),
       catchError((error, caught) => {
-        if (typeof error!.message === 'string' && error.message.includes("The task failed because it stopped")) {
+        if (typeof error!.message === 'string' && error.message.includes(ErrorMessageOfTheTaskFailedBecauseItStopped)) {
           return caught;
         } else {
           throw error;

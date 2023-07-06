@@ -40,7 +40,7 @@ public class LongTermTaskControllerGetLongTermTaskReturnArrayTest extends BaseTe
 
     @BeforeEach
     public void beforeEach() throws URISyntaxException, InterruptedException {
-        this.relativeUrl = this.longTermTaskUtil.run(() -> {
+        this.relativeUrl = this.fromLongTermTask(() -> this.longTermTaskUtil.run(() -> {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -51,17 +51,6 @@ public class LongTermTaskControllerGetLongTermTaskReturnArrayTest extends BaseTe
             httpHeaders.addAll("MyCustomHeader", Lists.newArrayList("Hello, World!"));
             httpHeaders.set("MySecondCustomHeader", "Hello, World!");
             return ResponseEntity.ok().headers(httpHeaders).body(new String[] { "Hello, World!", "I love girl" });
-        }).getBody();
-        while (true) {
-            var url = new URIBuilder(relativeUrl).build();
-            var result = this.testRestTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(null),
-                    new ParameterizedTypeReference<LongTermTaskModel<Object>>() {
-                    });
-            assertEquals(HttpStatus.OK, result.getStatusCode());
-            if (result.getBody().getIsDone()) {
-                break;
-            }
-            Thread.sleep(1000);
-        }
+        }).getBody());
     }
 }

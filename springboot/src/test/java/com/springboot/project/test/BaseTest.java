@@ -12,11 +12,14 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
+import java.util.function.Supplier;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.tika.Tika;
+import org.jinq.orm.stream.JinqStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -27,12 +30,15 @@ import org.springframework.boot.info.GitProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import com.beust.jcommander.internal.Lists;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -44,6 +50,7 @@ import com.springboot.project.common.permission.PermissionUtil;
 import com.springboot.project.common.permission.TokenUtil;
 import com.springboot.project.common.storage.ResourceHttpHeadersUtil;
 import com.springboot.project.common.storage.Storage;
+import com.springboot.project.model.LongTermTaskModel;
 import com.springboot.project.model.TokenModel;
 import com.springboot.project.model.UserEmailModel;
 import com.springboot.project.model.UserModel;
@@ -60,9 +67,11 @@ import com.springboot.project.service.TokenService;
 import com.springboot.project.service.UserEmailService;
 import com.springboot.project.service.UserMessageService;
 import com.springboot.project.service.UserService;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
 import cn.hutool.crypto.symmetric.AES;
+import io.reactivex.rxjava3.core.Observable;
 
 /**
  * 
@@ -289,6 +298,32 @@ public class BaseTest {
             tokenModel.setRSA(new RSA(rsa.getPrivateKey(), publicKeyOfRSA));
             return tokenModel;
         }
+    }
+
+    protected String fromLongTermTask(Supplier<String> supplier) {
+        var relativeUrlList = new ArrayList<String>();
+        Observable.fromSupplier(() -> supplier.get()).concatMap((relativeUrl) -> {
+            relativeUrlList.add(relativeUrl);
+            while (true) {
+                var url = new URIBuilder(this.testRestTemplate.getRootUri() + relativeUrl).build();
+                var result = new RestTemplate().exchange(url, HttpMethod.GET, new HttpEntity<>(null),
+                        new ParameterizedTypeReference<LongTermTaskModel<Object>>() {
+                        });
+                if (result.getBody().getIsDone()) {
+                    break;
+                }
+                Thread.sleep(1000);
+            }
+            return Observable.empty();
+        }).retry(s -> {
+            if (s.getMessage().contains("The task failed because it stopped")) {
+                return true;
+            } else {
+                return false;
+            }
+        }).onErrorComplete().blockingSubscribe();
+        var relativeUrl = JinqStream.from(CollectionUtil.reverseNew(relativeUrlList)).findFirst().get();
+        return relativeUrl;
     }
 
 }

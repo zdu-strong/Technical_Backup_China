@@ -18,3 +18,5 @@ export async function getLongTermTask<T>(url: string, rootConstructor?: Serializ
     take(1),
   ).toPromise()!;
 }
+
+export const ErrorMessageOfTheTaskFailedBecauseItStopped = "The task failed because it stopped";
