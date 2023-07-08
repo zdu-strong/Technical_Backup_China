@@ -4,8 +4,9 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Date;
-import com.beust.jcommander.internal.Lists;
 import com.fasterxml.uuid.Generators;
+import com.google.common.collect.Lists;
+
 import org.jinq.orm.stream.JinqStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

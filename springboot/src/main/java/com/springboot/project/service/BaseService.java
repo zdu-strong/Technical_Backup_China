@@ -10,13 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.springboot.project.common.database.JPQLFunction;
 import com.springboot.project.common.storage.Storage;
-import com.springboot.project.entity.EncryptDecryptEntity;
-import com.springboot.project.entity.LongTermTaskEntity;
-import com.springboot.project.entity.OrganizeEntity;
-import com.springboot.project.entity.StorageSpaceEntity;
-import com.springboot.project.entity.UserEmailEntity;
-import com.springboot.project.entity.UserEntity;
-import com.springboot.project.entity.UserMessageEntity;
 import com.springboot.project.entity.*;
 import com.springboot.project.format.FriendshipFormatter;
 import com.springboot.project.format.LoggerFormatter;
@@ -101,6 +94,10 @@ public abstract class BaseService {
 
     protected JPAJinqStream<LoggerEntity> LoggerEntity() {
         return this.streamAll(LoggerEntity.class);
+    }
+
+    protected JPAJinqStream<OrganizeRelationshipEntity> OrganizeRelationshipEntity() {
+        return this.streamAll(OrganizeRelationshipEntity.class);
     }
 
     private <U> JPAJinqStream<U> streamAll(Class<U> entity) {

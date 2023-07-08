@@ -7,7 +7,6 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,20 +33,10 @@ public class OrganizeEntity {
     @Column(nullable = false)
     private String deleteKey;
 
-    @OneToMany(mappedBy = "parentOrganize", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<OrganizeEntity> childOrganizeList;
+    @OneToMany(mappedBy = "descendant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OrganizeRelationshipEntity> ancestorList;
 
-    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, optional = true)
-    private OrganizeEntity parentOrganize;
+    @OneToMany(mappedBy = "ancestor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OrganizeRelationshipEntity> descendantList;
 
-    public OrganizeEntity setParentOrganize(OrganizeEntity parentOrganize) {
-        if (this.parentOrganize != null) {
-            this.parentOrganize.getChildOrganizeList().remove(this);
-        }
-        this.parentOrganize = parentOrganize;
-        if (this.parentOrganize != null) {
-            this.parentOrganize.getChildOrganizeList().add(this);
-        }
-        return this;
-    }
 }

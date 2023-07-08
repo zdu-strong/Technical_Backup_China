@@ -133,29 +133,6 @@ public class JPQLFunction {
     }
 
     /**
-     * Determine whether two departments have descendant relationship.
-     * The department is descended from itself.
-     *
-     * @param childOrganizeId
-     * @param parentOrganizeId
-     * @return
-     */
-    public static Boolean isChildOrganize(String childOrganizeId, String parentOrganizeId) {
-        throw new RuntimeException();
-    }
-
-    /**
-     * Whether neither the department nor its ancestors have been deleted
-     *
-     * @param childOrganizeId
-     * @param parentOrganizeId
-     * @return
-     */
-    public static Boolean isNotDeleteOfOrganizeAndAncestors(String oganizeId) {
-        throw new RuntimeException();
-    }
-
-    /**
      * Whether textOne is sorted before textTwo
      * 
      * @param textOne
@@ -241,10 +218,6 @@ public class JPQLFunction {
             jinqJPAStreamProvider.registerCustomSqlFunction(method, "FOUND_ROWS");
         }
         for (var method : Arrays.asList(JPQLFunction.class.getMethods()).stream()
-                .filter(s -> s.getName().equals("isChildOrganize")).toList()) {
-            jinqJPAStreamProvider.registerCustomSqlFunction(method, "IS_CHILD_ORGANIZE");
-        }
-        for (var method : Arrays.asList(JPQLFunction.class.getMethods()).stream()
                 .filter(s -> s.getName().equals("isSortAtBefore")).toList()) {
             jinqJPAStreamProvider.registerCustomSqlFunction(method, "IS_SORT_AT_BEFORE");
         }
@@ -301,12 +274,6 @@ public class JPQLFunction {
                 .toList()) {
             jinqJPAStreamProvider.registerCustomSqlFunction(method,
                     "CONVERT_TO_STRING");
-        }
-        for (var method : Arrays.asList(JPQLFunction.class.getMethods()).stream()
-                .filter(s -> s.getName().equals("isNotDeleteOfOrganizeAndAncestors"))
-                .toList()) {
-            jinqJPAStreamProvider.registerCustomSqlFunction(method,
-                    "IS_NOT_DELETE_OF_ORGANIZE_AND_ANCESTORS");
         }
     }
 

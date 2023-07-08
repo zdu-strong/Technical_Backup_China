@@ -69,18 +69,6 @@ Some experience in use, if you already know it, you can skip it.
 3. Jinq does not support union and union all. It doesn't matter, we can add database association table for query.
 4. Jinq doest not support right join. This does not matter, we can use left join.
 5. Jinq doest not support outer join. It doesn't matter, we can add database association table for query.
-6. If the data of other tables is called through a foreign key, "inner join" is used by default. If "inner join" is not expected, please use "left join", and then use it in "on" or allow empty lines.<br/>
-
-Example:<br/>
-
-    this.UserEmailEntity().leftOuterJoin(
-        (s, t) -> JinqStream.of(s.getUser()),
-        (s, t) -> s.getUser().getUsername().equals("nobody")
-    );
-
-    this.UserEmailEntity()
-        .leftOuterJoin((s) -> JinqStream.of(s.getUser()))
-        .where(s -> s.getTwo() == null || s.getTwo().getUsername().equals("nobody"));
 
 ## Notes - jinq - getOnlyValue
 
@@ -119,15 +107,15 @@ get model array
 
 ## Notes - jinq - and
 
-    this.UserEmailEntity().where(s -> s.getEmail().contains("jerry") && s.getUser().getUsername().contains("tom"));
+    this.UserEntity().where(s -> s.getUsername().contains("jerry") && s.getUsername().contains("tom"));
 
-    this.UserEmailEntity().where(s -> s.getEmail().contains("jerry")).where(s -> s.getUser().getUsername().contains("tom"));
+    this.UserEntity().where(s -> s.getUsername().contains("jerry")).where(s -> s.getUsername().contains("tom"));
 
 ## Notes - jinq - or
 
     this.UserEntity().where(s -> s.getUsername().contains("tom") || s.getUsername().contains("jerry"));
 
-## Notes - jinq - or condition of array
+## Notes - jinq - or of array
 
     public long getUsers(List<String> names) {
         JPAJinqStream<UserEntity> stream = this.UserEntity();
@@ -141,9 +129,11 @@ get model array
 
 ## Notes - jinq - inner join
 
-    this.UserEmailEntity().join(s -> JinqStream.of(s.getUser()));
+    this.UserEmailEntity().where(s -> s.getUser().getUsername().equals("tom"));
 
     this.UserEntity().joinList(t -> t.getUserEmailList());
+
+    this.UserEmailEntity().join(s -> JinqStream.of(s.getUser()));
 
     this.UserEntity().join((s, t) -> t.stream(UserEmailEntity.class))
         .where(s -> s.getOne().getId().equals(s.getTwo().getId()));
@@ -178,19 +168,24 @@ Sort by username first, then by id
 
 ## Notes - jinq - order by with complex statistical conditions
 
-    this.OrganizeEntity().select(
-            (s, t) -> new Pair<>(s,
-                    t.stream(OrganizeEntity.class)
-                            .where(m -> JPQLFunction.isChildOrganize(m.getId(), s.getId()))
-                            .count()))
-            .sortedBy(s -> s.getOne().getId())
-            .sortedBy(s -> s.getTwo())
-            .toList();
+    this.OrganizeEntity().select((s, t) ->
+        new Pair<>(
+            s,
+            t.stream(OrganizeEntity.class).where(m -> m.getName().contains(s -> s.getName())).count()
+        )
+    )
+    .sortedBy(s -> s.getOne().getId())
+    .sortedBy(s -> s.getTwo())
+    .toList();
 
 ## Notes - jinq - Use subqueries in where
 
     this.UserEntity().where((s, t) ->
         t.stream(UserEmailEntity.class).where(m -> m.getUser().getId().equals(s.getId())).exists()
+    );
+
+    this.UserEntity().where( s ->
+        JinqStream.from(s.getUserEmailList()).where(m -> m.getEmail().equals("tom@gmail.com")).exists()
     );
 
 ## Notes - jinq - Format entity to model
