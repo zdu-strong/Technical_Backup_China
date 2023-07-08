@@ -2,8 +2,7 @@ import { Fab } from "@mui/material";
 import { observer, useMobxState } from "mobx-react-use-autorun";
 import { stylesheet } from "typestyle";
 import ExitDialog from "@/component/Game/ExitDialog";
-import { useMount, useUnmount } from "mobx-react-use-autorun";
-import { Subscription } from "rxjs";
+import { useMount } from "mobx-react-use-autorun";
 import SettingsIcon from '@mui/icons-material/Settings';
 
 export default observer((props: {
@@ -17,7 +16,6 @@ export default observer((props: {
     ready: false,
     isLeftAndNotIsRight: false,
     leftOrRight: 10,
-    subscription: new Subscription(),
     css: stylesheet({
       container: {
         width: "100%",
@@ -33,12 +31,8 @@ export default observer((props: {
     ...props,
   });
 
-  useMount(async () => {
+  useMount(() => {
     state.ready = true;
-  })
-
-  useUnmount(() => {
-    state.subscription.unsubscribe();
   })
 
   return <>

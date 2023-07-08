@@ -1,9 +1,10 @@
 import { observer, useMobxState } from 'mobx-react-use-autorun';
 import { Dialog } from '@mui/material';
 import Game from './Game';
-import { useMount, useUnmount } from "mobx-react-use-autorun";
+import { useMount } from "mobx-react-use-autorun";
 import { LANDSCAPE, PORTRAIT_PRIMARY } from '@/common/ScreenOrentation';
 import ExitButton from '@/component/Game/ExitButton';
+import { Subscription } from 'rxjs';
 
 export default observer((props: {
   closeDialog: () => void
@@ -14,13 +15,13 @@ export default observer((props: {
     ...props,
   })
 
-  useMount(async () => {
+  useMount(async (subscription) => {
     await LANDSCAPE();
     state.ready = true;
-  })
 
-  useUnmount(async () => {
-    await PORTRAIT_PRIMARY()
+    subscription.add(new Subscription(() => {
+      PORTRAIT_PRIMARY()
+    }));
   })
 
   return <>

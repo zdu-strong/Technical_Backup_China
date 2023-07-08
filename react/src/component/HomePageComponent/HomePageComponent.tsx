@@ -3,13 +3,12 @@ import { FormattedMessage } from "react-intl";
 import { Link } from "react-router-dom";
 import { Button, Link as LinkAlias, CircularProgress } from "@mui/material";
 import { keyframes, stylesheet } from 'typestyle';
-import { useMobxState, observer, useUnmount, useMount } from 'mobx-react-use-autorun';
-import { concatMap, from, of, repeat, Subscription, timer } from 'rxjs';
+import { useMobxState, observer, useMount } from 'mobx-react-use-autorun';
+import { concatMap, from, of, repeat, timer } from 'rxjs';
 
 export default observer(() => {
 
   const state = useMobxState({
-    subscription: new Subscription(),
     randomNumber: null as number | null,
     people: {
       name: "",
@@ -51,9 +50,9 @@ export default observer(() => {
     }),
   });
 
-  useMount(() => {
+  useMount((subscription) => {
     /* 产生随机数 */
-    state.subscription.add(of(null).pipe(
+    subscription.add(of(null).pipe(
       concatMap(() => from((async () => {
         while (true) {
           const numberOne = Math.floor(Math.random() * 100 + 1);
@@ -66,10 +65,6 @@ export default observer(() => {
       })())),
       repeat({ delay: 1000 }),
     ).subscribe());
-  })
-
-  useUnmount(() => {
-    state.subscription.unsubscribe();
   })
 
   return (

@@ -1,7 +1,7 @@
 import { stylesheet } from 'typestyle';
 import { observer, useMobxState } from 'mobx-react-use-autorun';
 import { useRef } from 'react';
-import { useMount, useUnmount } from "mobx-react-use-autorun"
+import { useMount } from "mobx-react-use-autorun"
 import { concat, concatMap, delay, EMPTY, fromEvent, interval, of, retry, Subscription, take, tap, timer } from 'rxjs';
 import { initGameEngine } from '@/component/Game/js/initGameEngine';
 import { exhaustMapWithTrailing } from 'rxjs-exhaustmap-with-trailing'
@@ -14,7 +14,6 @@ export default observer(() => {
 
   const state = useMobxState({
     engine: null as BABYLON.Engine | null,
-    subscription: new Subscription(),
     ready: false,
     error: null as any,
     leftOrRight: 10,
@@ -59,8 +58,8 @@ export default observer(() => {
     }
   }
 
-  function resizeGameCanvas() {
-    state.subscription.add(concat(of(null), fromEvent(window, "resize")).pipe(
+  function resizeGameCanvas(subscription: Subscription) {
+    subscription.add(concat(of(null), fromEvent(window, "resize")).pipe(
       exhaustMapWithTrailing(() => concat(of(null), interval(1).pipe(
         concatMap(() => {
           if (state.error) {
@@ -81,17 +80,17 @@ export default observer(() => {
     ).subscribe())
   }
 
-  useMount(async () => {
+  useMount(async (subscription) => {
     try {
       for (let i = 100; i > 0; i--) {
         await timer(1).toPromise();
       }
       await loadSafeAreaInsets();
       state.engine = await initGameEngine(state.canvasRef);
-      state.subscription.add(new Subscription(() => {
+      subscription.add(new Subscription(() => {
         state.engine?.dispose();
       }));
-      resizeGameCanvas();
+      resizeGameCanvas(subscription);
       for (let i = 10; i > 0; i--) {
         await timer(16).toPromise();
       }
@@ -100,10 +99,6 @@ export default observer(() => {
     } catch (error) {
       state.error = error
     }
-  })
-
-  useUnmount(() => {
-    state.subscription.unsubscribe()
   })
 
   return <>

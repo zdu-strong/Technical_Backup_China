@@ -1,7 +1,7 @@
 import { observer, useMobxState } from "mobx-react-use-autorun";
 import { stylesheet } from "typestyle";
 import { ReactNode, useRef } from "react";
-import { useMount, useUnmount, } from "mobx-react-use-autorun";
+import { useMount } from "mobx-react-use-autorun";
 import { Subscription, tap, timer } from 'rxjs'
 import { DefaultVariableSizeListChildRowHeight } from "./js/DefaultVariableSizeListChildRowHeight";
 
@@ -14,7 +14,6 @@ export default observer((props: {
   pageNum: number,
 }) => {
   const state = useMobxState({
-    subscription: new Subscription(),
     css: stylesheet({
       container: {
         width: "100%",
@@ -29,16 +28,16 @@ export default observer((props: {
     containerRef: useRef<any>(),
   })
 
-  function autoChangeSize() {
+  function autoChangeSize(subscription: Subscription) {
     const resizeObserver = new ResizeObserver((entries) => {
-      state.subscription.add(timer(1).pipe(
+      subscription.add(timer(1).pipe(
         tap(() => {
           const topOffset = state.style.top;
           state.setRowHeight(entries[0].contentRect.height, topOffset);
         })
       ).subscribe());
     });
-    state.subscription.add(new Subscription(() => {
+    subscription.add(new Subscription(() => {
       resizeObserver.disconnect();
     }));
     resizeObserver.observe(state.containerRef.current);
@@ -52,13 +51,9 @@ export default observer((props: {
     }
   }
 
-  useMount(() => {
-    autoChangeSize();
+  useMount((subscription) => {
+    autoChangeSize(subscription);
     initSetRowHeight();
-  })
-
-  useUnmount(() => {
-    state.subscription.unsubscribe()
   })
 
   return <div style={state.style} className={`${state.idPrefix}-${state.pageNum}`}>

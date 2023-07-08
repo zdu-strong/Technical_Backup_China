@@ -2,7 +2,7 @@ import { Fab } from "@mui/material";
 import { observer, useMobxState } from "mobx-react-use-autorun";
 import { stylesheet } from "typestyle";
 import ExitDialog from "@/component/Game/ExitDialog";
-import { useMount, useUnmount } from "mobx-react-use-autorun";
+import { useMount } from "mobx-react-use-autorun";
 import { AndroidNotch } from '@awesome-cordova-plugins/android-notch'
 import { Capacitor } from '@capacitor/core'
 import { delay, distinctUntilChanged, from, of, repeat, Subscription, tap } from "rxjs";
@@ -17,7 +17,6 @@ export default observer((props: { exit: () => void }) => {
     ready: false,
     isLeftAndNotIsRight: false,
     leftOrRight: 10,
-    subscription: new Subscription(),
     css: stylesheet({
       container: {
         width: "100%",
@@ -33,9 +32,9 @@ export default observer((props: { exit: () => void }) => {
     ...props,
   });
 
-  useMount(async () => {
+  useMount(async (subscription) => {
     await loadSafeAreaInsets();
-    await refreshSafeAreaInsets();
+    await refreshSafeAreaInsets(subscription);
     state.ready = true;
   })
 
@@ -53,12 +52,12 @@ export default observer((props: { exit: () => void }) => {
     }
   }
 
-  async function refreshSafeAreaInsets() {
+  async function refreshSafeAreaInsets(subscription: Subscription) {
     if (Capacitor.getPlatform() === "web") {
       return;
     }
 
-    state.subscription.add(of(null).pipe(
+    subscription.add(of(null).pipe(
       exhaustMapWithTrailing(() => from((async () => {
         if (Capacitor.getPlatform() === "android") {
           const insetLeftPromise = AndroidNotch.getInsetLeft();
@@ -78,10 +77,6 @@ export default observer((props: { exit: () => void }) => {
       repeat(),
     ).subscribe());
   }
-
-  useUnmount(() => {
-    state.subscription.unsubscribe();
-  })
 
   return <>
     <div className={state.css.container}>

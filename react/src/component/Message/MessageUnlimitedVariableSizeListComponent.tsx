@@ -6,7 +6,7 @@ import MessageUnlimitedVariableSizeListChildComponent from "./MessageUnlimitedVa
 import { v1 } from "uuid";
 import AutoSizer, { Size } from 'react-virtualized-auto-sizer'
 import { concatMap, delay, EMPTY, fromEvent, interval, ReplaySubject, Subscription, switchMap, take, tap, timer } from "rxjs";
-import { useMount, useUnmount } from "mobx-react-use-autorun";
+import { useMount } from "mobx-react-use-autorun";
 import { DefaultVariableSizeListChildRowHeight } from "./js/DefaultVariableSizeListChildRowHeight";
 import { DefaultVariableSizeListAdjustDuration } from "./js/DefaultVariableSizeListAdjustDuration";
 import * as mathjs from 'mathjs'
@@ -39,8 +39,6 @@ export default observer(forwardRef((props: {
     extraScrollItem: 0,
 
     extraScrollItemSubject: new ReplaySubject<number>(1),
-
-    subscription: new Subscription(),
 
     getRowHeightByIndex: (index: number) => {
       return getRowHeightByPageNum(state.baseTotalPage + index + 1);
@@ -78,17 +76,13 @@ export default observer(forwardRef((props: {
     innerRef: useRef<HTMLDivElement>(),
   })
 
-  useMount(async () => {
-    subscribeToExtraScrollItemSubject();
-    subscribeToScrollToTheEndWhenResize();
+  useMount((subscription) => {
+    subscribeToExtraScrollItemSubject(subscription);
+    subscribeToScrollToTheEndWhenResize(subscription);
   })
 
-  useUnmount(() => {
-    state.subscription.unsubscribe();
-  })
-
-  function subscribeToScrollToTheEndWhenResize() {
-    state.subscription.add(fromEvent(window, "resize").pipe(
+  function subscribeToScrollToTheEndWhenResize(subscription: Subscription) {
+    subscription.add(fromEvent(window, "resize").pipe(
       tap(() => {
         if (isNeedScrollToEnd()) {
           scrollToItemByPageNum(state.totalPage);
@@ -199,8 +193,8 @@ export default observer(forwardRef((props: {
     return false;
   }
 
-  function subscribeToExtraScrollItemSubject() {
-    state.subscription.add(state.extraScrollItemSubject.pipe(
+  function subscribeToExtraScrollItemSubject(subscription: Subscription) {
+    subscription.add(state.extraScrollItemSubject.pipe(
       switchMap((pageNum) => {
         return interval(1).pipe(
           take(200),

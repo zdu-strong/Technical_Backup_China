@@ -1,5 +1,5 @@
 import { observer, useMobxState } from "mobx-react-use-autorun";
-import { useMount, useUnmount } from "mobx-react-use-autorun";
+import { useMount } from "mobx-react-use-autorun";
 import { Button, Chip, CircularProgress, Divider, Link } from "@mui/material";
 import api from '@/api'
 import { MessageService } from "@/common/MessageService";
@@ -8,6 +8,7 @@ import { FormattedMessage } from "react-intl";
 import { UserMessageModel } from "@/model/UserMessageModel";
 import path from 'path'
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
+import { Subscription } from "rxjs";
 
 export default observer((props: {
   loadMessage: () => void,
@@ -37,12 +38,11 @@ export default observer((props: {
     }
   }
 
-  useMount(async () => {
+  useMount((subscription) => {
     state.loadMessage();
-  })
-
-  useUnmount(() => {
-    state.unloadMessage();
+    subscription.add(new Subscription(() => {
+      state.unloadMessage();
+    }))
   })
 
   return <div className="flex flex-col flex-auto w-full justify-between">

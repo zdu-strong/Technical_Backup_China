@@ -1,15 +1,14 @@
 import { useMobxState } from "mobx-react-use-autorun";
-import { useMount, useUnmount } from "mobx-react-use-autorun"
+import { useMount } from "mobx-react-use-autorun"
 import { concatMap, EMPTY, interval, of, repeat, Subscription, take, tap } from "rxjs";
 
 export function useRandomNumber() {
   const state = useMobxState({
     randomNumber: 16,
-    subscription: new Subscription(),
   })
 
-  function loadRandomNumber() {
-    state.subscription.add(of(null).pipe(
+  function loadRandomNumber(subscription: Subscription) {
+    subscription.add(of(null).pipe(
       concatMap(() => interval(1).pipe(
         concatMap(() => {
           const randomNumber = Math.floor(Math.random() * 100 + 1);
@@ -28,12 +27,8 @@ export function useRandomNumber() {
     ).subscribe());
   }
 
-  useMount(() => {
-    loadRandomNumber()
-  })
-
-  useUnmount(() => {
-    state.subscription.unsubscribe();
+  useMount((subscription) => {
+    loadRandomNumber(subscription)
   })
 
   return state.randomNumber;

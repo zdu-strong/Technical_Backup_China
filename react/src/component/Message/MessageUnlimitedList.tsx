@@ -1,8 +1,8 @@
 import { observer, useMobxState } from "mobx-react-use-autorun";
 import { stylesheet } from "typestyle";
 import api from '@/api'
-import { useMount, useUnmount } from "mobx-react-use-autorun";
-import { Subscription, concatMap, from, catchError, Observable, switchMap, timer, repeat, ReplaySubject, tap } from 'rxjs'
+import { useMount } from "mobx-react-use-autorun";
+import { concatMap, from, catchError, Observable, switchMap, timer, repeat, ReplaySubject, tap, Subscription } from 'rxjs'
 import { useRef } from "react";
 import MessageUnlimitedListChild from "./MessageUnlimitedListChild";
 import MessageUnlimitedVariableSizeListComponent from "./MessageUnlimitedVariableSizeListComponent";
@@ -25,8 +25,6 @@ export default observer((props: {
       pageNum: number,
       isCancel: boolean,
     }>(1000),
-    /* 订阅 */
-    subscription: new Subscription(),
     /* 是否准备好了 */
     ready: false,
     /* 是否有错误 */
@@ -78,16 +76,12 @@ export default observer((props: {
     />
   }
 
-  useMount(() => {
-    loadAllMessage();
+  useMount((subscription) => {
+    loadAllMessage(subscription);
   })
 
-  useUnmount(() => {
-    state.subscription.unsubscribe();
-  })
-
-  async function loadAllMessage() {
-    state.subscription.add(new Observable<null>((subscriber) => {
+  function loadAllMessage(subscription: Subscription) {
+    subscription.add(new Observable<null>((subscriber) => {
       subscriber.next();
       subscriber.complete();
     }).pipe(
