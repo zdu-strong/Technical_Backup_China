@@ -43,7 +43,7 @@ public class LongTermTaskEntity {
     /**
      * Stored is the json string
      */
-    @Column(nullable = true, length = 1024 * 1024 * 1024)
+    @Column(nullable = true, length = 1024 * 1024)
     private String result;
 
 }

@@ -1,0 +1,139 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="John (generated)" id="1688917246536-22">
+        <createTable tableName="organize_shadow_entity">
+            <column name="id" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="create_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="MEDIUMTEXT"/>
+            <column name="update_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-23">
+        <addColumn tableName="organize_entity">
+            <column name="path" type="MEDIUMTEXT(16777215)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-24">
+        <addColumn tableName="organize_entity">
+            <column name="organize_shadow_id" type="VARCHAR(255 BYTE)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-25">
+        <addColumn tableName="organize_entity">
+            <column name="parent_organize_id" type="VARCHAR(255 BYTE)"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-26">
+        <createIndex indexName="FK315864ihko4e3679vb3e1jmos" tableName="organize_entity">
+            <column name="parent_organize_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-27">
+        <createIndex indexName="FKgacw5qpr2xa2hdenbtqo6tcb0" tableName="organize_entity">
+            <column name="organize_shadow_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-28">
+        <addForeignKeyConstraint baseColumnNames="parent_organize_id" baseTableName="organize_entity" constraintName="FK315864ihko4e3679vb3e1jmos" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="organize_entity" validate="true"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-29">
+        <addForeignKeyConstraint baseColumnNames="organize_shadow_id" baseTableName="organize_entity" constraintName="FKgacw5qpr2xa2hdenbtqo6tcb0" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="organize_shadow_entity" validate="true"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-30">
+        <dropForeignKeyConstraint baseTableName="organize_relationship_entity" constraintName="FK2m4ybkv6u5qb22qpunpv4vnue"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-31">
+        <dropForeignKeyConstraint baseTableName="organize_relationship_entity" constraintName="FKhfkmr7ekoassymsv82cdo85hj"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-32">
+        <dropUniqueConstraint constraintName="UK3p1gui2lihpiaob8vx1y00hum" tableName="user_email_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-33">
+        <dropUniqueConstraint constraintName="UKep8rhcm9mh80240f1xqfvm08p" tableName="organize_relationship_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-34">
+        <dropTable tableName="organize_relationship_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-35">
+        <dropColumn columnName="create_date" tableName="organize_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-36">
+        <dropColumn columnName="name" tableName="organize_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-37">
+        <dropColumn columnName="update_date" tableName="organize_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-1">
+        <modifyDataType columnName="caller_class_name" newDataType="clob" tableName="logger_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-2">
+        <modifyDataType columnName="caller_method_name" newDataType="clob" tableName="logger_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-3">
+        <modifyDataType columnName="content" newDataType="clob" tableName="user_message_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-4">
+        <modifyDataType columnName="email" newDataType="clob" tableName="user_email_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-5">
+        <dropNotNullConstraint columnDataType="clob" columnName="email" tableName="user_email_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-6">
+        <modifyDataType columnName="exception_class_name" newDataType="clob" tableName="logger_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-7">
+        <modifyDataType columnName="exception_message" newDataType="clob" tableName="logger_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-8">
+        <modifyDataType columnName="exception_stack_trace" newDataType="clob" tableName="logger_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-9">
+        <modifyDataType columnName="file_name" newDataType="clob" tableName="user_message_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-10">
+        <modifyDataType columnName="logger_name" newDataType="clob" tableName="logger_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-11">
+        <modifyDataType columnName="message" newDataType="clob" tableName="logger_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-12">
+        <modifyDataType columnName="private_key_ofrsa" newDataType="clob" tableName="encrypt_decrypt_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-13">
+        <modifyDataType columnName="private_key_ofrsa" newDataType="clob" tableName="token_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-14">
+        <modifyDataType columnName="private_key_ofrsa" newDataType="clob" tableName="user_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-15">
+        <modifyDataType columnName="public_key_ofrsa" newDataType="clob" tableName="encrypt_decrypt_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-16">
+        <modifyDataType columnName="public_key_ofrsa" newDataType="clob" tableName="user_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-17">
+        <modifyDataType columnName="result" newDataType="clob" tableName="long_term_task_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-18">
+        <modifyDataType columnName="secret_key_ofaes" newDataType="clob" tableName="encrypt_decrypt_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-19">
+        <modifyDataType columnName="secret_key_ofaes" newDataType="clob" tableName="friendship_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-20">
+        <modifyDataType columnName="username" newDataType="clob" tableName="user_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1688917246536-21">
+        <dropNotNullConstraint columnDataType="clob" columnName="username" tableName="user_entity"/>
+    </changeSet>
+</databaseChangeLog>

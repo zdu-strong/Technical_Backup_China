@@ -20,7 +20,7 @@ public class UserEntity {
     @Id
     private String id;
 
-    @Column(nullable = false)
+    @Column(nullable = true, length = 1024 * 1024)
     private String username;
 
     @Column(nullable = false)
@@ -32,10 +32,10 @@ public class UserEntity {
     @Column(nullable = false)
     private String deleteKey;
 
-    @Column(nullable = true, length = 1024 * 1024 * 1024)
+    @Column(nullable = true, length = 1024 * 1024)
     private String publicKeyOfRSA;
 
-    @Column(nullable = true, length = 1024 * 1024 * 1024)
+    @Column(nullable = true, length = 1024 * 1024)
     private String privateKeyOfRSA;
 
     @Column(nullable = false)

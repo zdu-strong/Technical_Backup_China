@@ -16,7 +16,7 @@ public class LoggerEntity {
     @Id
     private String id;
 
-    @Column(nullable = false, length = 1024 * 1024 * 1024)
+    @Column(nullable = false, length = 1024 * 1024)
     private String message;
 
     @Column(nullable = false)
@@ -25,19 +25,19 @@ public class LoggerEntity {
     @Column(nullable = false)
     private String level;
 
-    @Column(nullable = false, length = 1024 * 1024 * 1024)
+    @Column(nullable = false, length = 1024 * 1024)
     private String loggerName;
 
     @Column(nullable = false)
     private Boolean hasException;
 
-    @Column(nullable = false, length = 1024 * 1024 * 1024)
+    @Column(nullable = false, length = 1024 * 1024)
     private String exceptionClassName;
 
-    @Column(nullable = false, length = 1024 * 1024 * 1024)
+    @Column(nullable = false, length = 1024 * 1024)
     private String exceptionMessage;
 
-    @Column(nullable = false, length = 1024 * 1024 * 1024)
+    @Column(nullable = false, length = 1024 * 1024)
     private String exceptionStackTrace;
 
     @Column(nullable = false)
@@ -46,10 +46,10 @@ public class LoggerEntity {
     @Column(nullable = false)
     private Date gitCommitDate;
 
-    @Column(nullable = false, length = 1024 * 1024 * 1024)
+    @Column(nullable = false, length = 1024 * 1024)
     private String callerClassName;
 
-    @Column(nullable = false, length = 1024 * 1024 * 1024)
+    @Column(nullable = false, length = 1024 * 1024)
     private String callerMethodName;
 
     @Column(nullable = false)

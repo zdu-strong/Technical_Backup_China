@@ -25,7 +25,7 @@ public class UserMessageEntity {
     @Column(nullable = false)
     private Date updateDate;
 
-    @Column(nullable = false, length = 1024 * 1024 * 1024)
+    @Column(nullable = false, length = 1024 * 1024)
     private String content;
 
     @Column(nullable = false)
@@ -37,7 +37,7 @@ public class UserMessageEntity {
     @Column(nullable = true)
     private Long folderSize;
 
-    @Column(nullable = true)
+    @Column(nullable = true, length = 1024 * 1024)
     private String fileName;
 
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, optional = false)

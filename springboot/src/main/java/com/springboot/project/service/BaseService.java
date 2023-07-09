@@ -96,10 +96,6 @@ public abstract class BaseService {
         return this.streamAll(LoggerEntity.class);
     }
 
-    protected JPAJinqStream<OrganizeRelationshipEntity> OrganizeRelationshipEntity() {
-        return this.streamAll(OrganizeRelationshipEntity.class);
-    }
-
     private <U> JPAJinqStream<U> streamAll(Class<U> entity) {
         if (this.jinqJPAStreamProvider == null) {
             synchronized (getClass()) {
@@ -112,6 +108,14 @@ public abstract class BaseService {
             }
         }
         return this.jinqJPAStreamProvider.streamAll(entityManager, entity);
+    }
+
+    protected String getOrganizePath(OrganizeEntity organizeEntity) {
+        if (organizeEntity.getParentOrganize() != null) {
+            return organizeEntity.getParentOrganize().getPath() + organizeEntity.getId() + ";";
+        } else {
+            return organizeEntity.getId() + ";";
+        }
     }
 
 }

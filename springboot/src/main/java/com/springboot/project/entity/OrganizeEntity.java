@@ -1,12 +1,12 @@
 package com.springboot.project.entity;
 
-import java.util.Date;
 import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,21 +22,43 @@ public class OrganizeEntity {
     private String id;
 
     @Column(nullable = false)
-    private String name;
-
-    @Column(nullable = false)
-    private Date createDate;
-
-    @Column(nullable = false)
-    private Date updateDate;
-
-    @Column(nullable = false)
     private String deleteKey;
 
-    @OneToMany(mappedBy = "descendant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<OrganizeRelationshipEntity> ancestorList;
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, optional = false)
+    private OrganizeShadowEntity organizeShadow;
 
-    @OneToMany(mappedBy = "ancestor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<OrganizeRelationshipEntity> descendantList;
+    /**
+     * split with ;
+     */
+    @Column(nullable = false, length = 1024 * 1024)
+    private String path;
+
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, optional = true)
+    private OrganizeEntity parentOrganize;
+
+    @OneToMany(mappedBy = "parentOrganize", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OrganizeEntity> childOrganizeList;
+
+    public OrganizeEntity setParentOrganize(OrganizeEntity parentOrganize) {
+        if (this.parentOrganize != null) {
+            this.parentOrganize.getChildOrganizeList().remove(this);
+        }
+        this.parentOrganize = parentOrganize;
+        if (this.parentOrganize != null) {
+            this.parentOrganize.getChildOrganizeList().add(this);
+        }
+        return this;
+    }
+
+    public OrganizeEntity setOrganizeShadow(OrganizeShadowEntity organizeShadow) {
+        if (this.organizeShadow != null) {
+            this.organizeShadow.getOrganizeList().remove(this);
+        }
+        this.organizeShadow = organizeShadow;
+        if (this.organizeShadow != null) {
+            this.organizeShadow.getOrganizeList().add(this);
+        }
+        return this;
+    }
 
 }

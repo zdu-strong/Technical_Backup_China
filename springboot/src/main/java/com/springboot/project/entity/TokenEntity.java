@@ -22,7 +22,7 @@ public class TokenEntity {
     @Column(unique = true)
     private String jwtId;
 
-    @Column(nullable = false, length = 1024 * 1024 * 1024)
+    @Column(nullable = false, length = 1024 * 1024)
     private String privateKeyOfRSA;
 
     @Column(nullable = false)
