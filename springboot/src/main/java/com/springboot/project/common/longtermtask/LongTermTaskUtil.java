@@ -36,36 +36,38 @@ public class LongTermTaskUtil {
         String idOfLongTermTask = this.longTermTaskService.createLongTermTask();
         CompletableFuture.runAsync(() -> {
             var subscription = Observable.timer(1, TimeUnit.SECONDS).concatMap((a) -> {
-                synchronized (idOfLongTermTask) {
-                    CompletableFuture.runAsync(() -> {
+                CompletableFuture.runAsync(() -> {
+                    synchronized (idOfLongTermTask) {
                         this.longTermTaskService.updateLongTermTaskToRefreshUpdateDate(idOfLongTermTask);
-                    }).get();
-                }
+                    }
+                }).get();
+
                 return Observable.empty();
             }).repeat().retry().subscribe();
             try {
                 var result = CompletableFuture.supplyAsync(() -> supplier.get()).get();
                 subscription.dispose();
-                synchronized (idOfLongTermTask) {
-                    CompletableFuture.runAsync(() -> {
+                CompletableFuture.runAsync(() -> {
+                    synchronized (idOfLongTermTask) {
                         this.longTermTaskService.updateLongTermTaskByResult(idOfLongTermTask, result);
-                    }).get();
-                }
+                    }
+                }).get();
             } catch (Throwable e) {
                 subscription.dispose();
-                synchronized (idOfLongTermTask) {
-                    try {
-                        CompletableFuture.runAsync(() -> {
+                try {
+                    CompletableFuture.runAsync(() -> {
+                        synchronized (idOfLongTermTask) {
                             if (e instanceof ExecutionException && e.getCause() != null) {
                                 this.longTermTaskService.updateLongTermTaskByErrorMessage(idOfLongTermTask,
                                         ((ExecutionException) e).getCause());
                             } else {
                                 this.longTermTaskService.updateLongTermTaskByErrorMessage(idOfLongTermTask, e);
                             }
-                        }).get();
-                    } catch (InterruptedException | ExecutionException e4) {
-                        log.error("Failed to saving exception message for long term task \"" + idOfLongTermTask + "\"", e4);
-                    }
+                        }
+                    }).get();
+                } catch (InterruptedException | ExecutionException e4) {
+                    log.error("Failed to saving exception message for long term task \"" + idOfLongTermTask + "\"",
+                            e4);
                 }
             }
         });
