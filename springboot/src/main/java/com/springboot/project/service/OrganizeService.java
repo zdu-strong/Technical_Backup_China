@@ -57,13 +57,13 @@ public class OrganizeService extends BaseService {
         return this.organizeFormatter.format(organizeEntity);
     }
 
-    public OrganizeModel moveOrganize(String organizeId, String parentOrganizeId) {
+    public OrganizeModel moveOrganize(String organizeId, String targetParentOrganizeId) {
         var organizeEntity = this.OrganizeEntity().where(s -> s.getId().equals(organizeId))
                 .where(s -> !JinqStream.from(s.getAncestorList()).where(m -> !m.getAncestor().getDeleteKey().equals(""))
                         .exists())
                 .getOnlyValue();
-        var parentOrganize = StringUtils.isNotBlank(parentOrganizeId)
-                ? this.OrganizeEntity().where(s -> s.getId().equals(parentOrganizeId))
+        var targetParentOrganize = StringUtils.isNotBlank(targetParentOrganizeId)
+                ? this.OrganizeEntity().where(s -> s.getId().equals(targetParentOrganizeId))
                         .where(s -> !JinqStream.from(s.getAncestorList())
                                 .where(m -> !m.getAncestor().getDeleteKey().equals(""))
                                 .exists())
@@ -72,7 +72,7 @@ public class OrganizeService extends BaseService {
 
         var targetOrganizeEntity = new OrganizeEntity();
         targetOrganizeEntity.setId(Generators.timeBasedGenerator().generate().toString());
-        targetOrganizeEntity.setLevel(parentOrganize == null ? 0 : parentOrganize.getLevel() + 1);
+        targetOrganizeEntity.setLevel(targetParentOrganize == null ? 0 : targetParentOrganize.getLevel() + 1);
         targetOrganizeEntity.setDeleteKey(Generators.timeBasedGenerator().generate().toString());
         targetOrganizeEntity.setOrganizeShadow(organizeEntity.getOrganizeShadow());
         targetOrganizeEntity.setAncestorList(Lists.newArrayList());
@@ -81,9 +81,9 @@ public class OrganizeService extends BaseService {
 
         this.organizeClosureService.createOrganizeClosure(targetOrganizeEntity.getId(), targetOrganizeEntity.getId());
 
-        if (parentOrganize != null) {
+        if (targetParentOrganize != null) {
             var ancestorIdList = this.OrganizeClosureEntity()
-                    .where(s -> s.getDescendant().getId().equals(parentOrganizeId))
+                    .where(s -> s.getDescendant().getId().equals(targetParentOrganizeId))
                     .select(s -> s.getAncestor().getId())
                     .toList();
             for (var ancestorId : ancestorIdList) {
@@ -110,14 +110,14 @@ public class OrganizeService extends BaseService {
                 .toList();
 
         for (var sourceChildOrganizeId : sourceChildOrganizeIdList) {
-            var parentOrganize = this.OrganizeEntity().where(s -> s.getId().equals(targetOrganizeId))
+            var targetParentOrganize = this.OrganizeEntity().where(s -> s.getId().equals(targetOrganizeId))
                     .getOnlyValue();
             var sourceChildOrganizeEntity = this.OrganizeEntity().where(s -> s.getId().equals(sourceChildOrganizeId))
                     .getOnlyValue();
 
             var childTargetOrganizeEntity = new OrganizeEntity();
             childTargetOrganizeEntity.setId(Generators.timeBasedGenerator().generate().toString());
-            childTargetOrganizeEntity.setLevel(parentOrganize.getLevel() + 1);
+            childTargetOrganizeEntity.setLevel(targetParentOrganize.getLevel() + 1);
             childTargetOrganizeEntity.setDeleteKey("");
             childTargetOrganizeEntity.setOrganizeShadow(sourceChildOrganizeEntity.getOrganizeShadow());
             childTargetOrganizeEntity.setAncestorList(Lists.newArrayList());
