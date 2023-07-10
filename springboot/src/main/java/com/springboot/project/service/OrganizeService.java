@@ -99,6 +99,8 @@ public class OrganizeService extends BaseService {
         organizeEntity.setDeleteKey(Generators.timeBasedGenerator().generate().toString());
         this.entityManager.merge(organizeEntity);
         targetOrganizeEntity.setDeleteKey("");
+        targetOrganizeEntity.getOrganizeShadow()
+                .setParent(targetParentOrganize != null ? targetParentOrganize.getOrganizeShadow() : null);
         this.entityManager.merge(targetOrganizeEntity);
 
         return this.organizeFormatter.format(targetOrganizeEntity);
@@ -148,6 +150,7 @@ public class OrganizeService extends BaseService {
                 .where(s -> !JinqStream.from(s.getAncestorList()).where(m -> !m.getAncestor().getDeleteKey().equals(""))
                         .exists())
                 .getOnlyValue();
+        organizeEntity.getOrganizeShadow().setDeleteKey(Generators.timeBasedGenerator().generate().toString());
         organizeEntity.getOrganizeShadow().setUpdateDate(new Date());
         organizeEntity.setDeleteKey(Generators.timeBasedGenerator().generate().toString());
         this.entityManager.merge(organizeEntity);

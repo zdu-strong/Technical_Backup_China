@@ -7,6 +7,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,12 +26,32 @@ public class OrganizeShadowEntity {
     private String name;
 
     @Column(nullable = false)
+    private String deleteKey;
+
+    @Column(nullable = false)
     private Date createDate;
 
     @Column(nullable = false)
     private Date updateDate;
 
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, optional = true)
+    private OrganizeShadowEntity parent;
+
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OrganizeShadowEntity> childList;
+
     @OneToMany(mappedBy = "organizeShadow", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrganizeEntity> organizeList;
+
+    public OrganizeShadowEntity setParent(OrganizeShadowEntity parent) {
+        if (this.parent != null) {
+            this.parent.getChildList().remove(this);
+        }
+        this.parent = parent;
+        if (this.parent != null) {
+            this.parent.getChildList().add(this);
+        }
+        return this;
+    }
 
 }

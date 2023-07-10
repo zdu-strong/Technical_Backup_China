@@ -1,9 +1,0 @@
-<?xml version="1.1" encoding="UTF-8" standalone="no"?>
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
-    <changeSet author="zdust (generated)" id="1665394491749-1">
-        <addUniqueConstraint columnNames="delete_key, email" constraintName="UK3p1gui2lihpiaob8vx1y00hum" tableName="user_email_entity"/>
-    </changeSet>
-    <changeSet author="zdust (generated)" id="1665394491749-2">
-        <addUniqueConstraint columnNames="delete_key, username" constraintName="UK9glfsnfw1ks31p552ckbfsy7d" tableName="user_entity"/>
-    </changeSet>
-</databaseChangeLog>

@@ -1,0 +1,343 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="John (generated)" id="1689005552986-1">
+        <createTable tableName="encrypt_decrypt_entity">
+            <column name="id" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="create_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="private_key_ofrsa" type="MEDIUMTEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="public_key_ofrsa" type="MEDIUMTEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="secret_key_ofaes" type="MEDIUMTEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-2">
+        <createTable tableName="friendship_entity">
+            <column name="id" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="create_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="has_initiative" type="BIT(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_friend" type="BIT(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_in_blacklist" type="BIT(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="secret_key_ofaes" type="MEDIUMTEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="friend_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-3">
+        <createTable tableName="logger_entity">
+            <column name="id" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="caller_class_name" type="MEDIUMTEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="caller_line_number" type="INT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="caller_method_name" type="MEDIUMTEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="create_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="exception_class_name" type="MEDIUMTEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="exception_message" type="MEDIUMTEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="exception_stack_trace" type="MEDIUMTEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="git_commit_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="git_commit_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="has_exception" type="BIT(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="level" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="logger_name" type="MEDIUMTEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="message" type="MEDIUMTEXT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-4">
+        <createTable tableName="long_term_task_entity">
+            <column name="id" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="create_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_done" type="BIT(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="result" type="MEDIUMTEXT"/>
+            <column name="update_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-5">
+        <createTable tableName="organize_closure_entity">
+            <column name="id" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="gap" type="BIGINT"/>
+            <column name="ancestor_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="descendant_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-6">
+        <createTable tableName="organize_entity">
+            <column name="id" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="delete_key" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="level" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="organize_shadow_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-7">
+        <createTable tableName="organize_shadow_entity">
+            <column name="id" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="create_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="delete_key" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="MEDIUMTEXT"/>
+            <column name="update_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="parent_id" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-8">
+        <createTable tableName="storage_space_entity">
+            <column name="id" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="create_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="folder_name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-9">
+        <createTable tableName="token_entity">
+            <column name="id" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="create_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="jwt_id" type="VARCHAR(255)">
+                <constraints unique="true"/>
+            </column>
+            <column name="private_key_ofrsa" type="MEDIUMTEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-10">
+        <createTable tableName="user_email_entity">
+            <column name="id" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="create_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="delete_key" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="MEDIUMTEXT"/>
+            <column name="update_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="verification_code" type="VARCHAR(255)"/>
+            <column name="user_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-11">
+        <createTable tableName="user_entity">
+            <column name="id" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="create_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="delete_key" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="has_registered" type="BIT(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="private_key_ofrsa" type="MEDIUMTEXT"/>
+            <column name="public_key_ofrsa" type="MEDIUMTEXT"/>
+            <column name="update_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="username" type="MEDIUMTEXT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-12">
+        <createTable tableName="user_message_entity">
+            <column name="id" type="VARCHAR(255)">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="content" type="MEDIUMTEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="create_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="file_name" type="MEDIUMTEXT"/>
+            <column name="folder_name" type="VARCHAR(255)"/>
+            <column name="folder_size" type="BIGINT"/>
+            <column name="is_recall" type="BIT(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-13">
+        <addUniqueConstraint columnNames="user_id, friend_id" constraintName="UK9d80pp0etnmlwc9nqbo1wnjj6" tableName="friendship_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-14">
+        <createIndex indexName="FK23c715x0gcdv29x9l92r8dc74" tableName="user_message_entity">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-15">
+        <createIndex indexName="FK87p106yrm418be8a0scsu0ig5" tableName="organize_shadow_entity">
+            <column name="parent_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-16">
+        <createIndex indexName="FKchycpasyr16kt66k09e6ompve" tableName="token_entity">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-17">
+        <createIndex indexName="FKfrbs0stjmmje4we9n1t0cf0oh" tableName="organize_closure_entity">
+            <column name="ancestor_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-18">
+        <createIndex indexName="FKgacw5qpr2xa2hdenbtqo6tcb0" tableName="organize_entity">
+            <column name="organize_shadow_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-19">
+        <createIndex indexName="FKpq2at14h3gljwg848p43aw14w" tableName="friendship_entity">
+            <column name="friend_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-20">
+        <createIndex indexName="FKq1njl6uveplkpgu70115gbf5o" tableName="user_email_entity">
+            <column name="user_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-21">
+        <createIndex indexName="FKrq3vl8q12mdppvdre3bcv6fce" tableName="organize_closure_entity">
+            <column name="descendant_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-22">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="user_message_entity" constraintName="FK23c715x0gcdv29x9l92r8dc74" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="user_entity" validate="true"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-23">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="friendship_entity" constraintName="FK4n7gua4wuvh9ymsen9pdt49v6" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="user_entity" validate="true"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-24">
+        <addForeignKeyConstraint baseColumnNames="parent_id" baseTableName="organize_shadow_entity" constraintName="FK87p106yrm418be8a0scsu0ig5" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="organize_shadow_entity" validate="true"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-25">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="token_entity" constraintName="FKchycpasyr16kt66k09e6ompve" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="user_entity" validate="true"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-26">
+        <addForeignKeyConstraint baseColumnNames="ancestor_id" baseTableName="organize_closure_entity" constraintName="FKfrbs0stjmmje4we9n1t0cf0oh" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="organize_entity" validate="true"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-27">
+        <addForeignKeyConstraint baseColumnNames="organize_shadow_id" baseTableName="organize_entity" constraintName="FKgacw5qpr2xa2hdenbtqo6tcb0" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="organize_shadow_entity" validate="true"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-28">
+        <addForeignKeyConstraint baseColumnNames="friend_id" baseTableName="friendship_entity" constraintName="FKpq2at14h3gljwg848p43aw14w" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="user_entity" validate="true"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-29">
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="user_email_entity" constraintName="FKq1njl6uveplkpgu70115gbf5o" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="user_entity" validate="true"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689005552986-30">
+        <addForeignKeyConstraint baseColumnNames="descendant_id" baseTableName="organize_closure_entity" constraintName="FKrq3vl8q12mdppvdre3bcv6fce" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="organize_entity" validate="true"/>
+    </changeSet>
+</databaseChangeLog>
