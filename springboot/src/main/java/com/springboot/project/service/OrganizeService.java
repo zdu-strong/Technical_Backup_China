@@ -11,14 +11,6 @@ import com.springboot.project.entity.*;
 @Service
 public class OrganizeService extends BaseService {
 
-    public Boolean isChildOrganize(String childOrganizeId, String parentOrganizeId) {
-        return this.OrganizeEntity().where(s -> s.getId().equals(childOrganizeId))
-                .where((s, t) -> !t.stream(OrganizeEntity.class).where(m -> s.getPath().contains(m.getPath()))
-                        .where(m -> !m.getDeleteKey().equals("")).exists())
-                .where(s -> s.getPath().contains(parentOrganizeId))
-                .exists();
-    }
-
     public OrganizeModel createOrganize(OrganizeModel organizeModel) {
         var parentOrganizeId = organizeModel.getParentOrganize() != null
                 ? organizeModel.getParentOrganize().getId()
@@ -63,6 +55,14 @@ public class OrganizeService extends BaseService {
                         .exists())
                 .getOnlyValue();
         return this.organizeFormatter.format(organize);
+    }
+
+    public Boolean isChildOrganize(String childOrganizeId, String parentOrganizeId) {
+        return this.OrganizeEntity().where(s -> s.getId().equals(childOrganizeId))
+                .where((s, t) -> !t.stream(OrganizeEntity.class).where(m -> s.getPath().contains(m.getPath()))
+                        .where(m -> !m.getDeleteKey().equals("")).exists())
+                .where(s -> s.getPath().contains(parentOrganizeId))
+                .exists();
     }
 
     private OrganizeShadowEntity createOrganizeShadow(OrganizeModel organizeModel) {
