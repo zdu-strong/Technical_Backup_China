@@ -37,6 +37,75 @@ public class OrganizeService extends BaseService {
         return this.organizeFormatter.format(organize);
     }
 
+    public OrganizeModel moveOrganize(String organizeId, String parentOrganizeId) {
+        var originOrganize = this.OrganizeEntity().where(s -> s.getId().equals(organizeId))
+                .where((s, t) -> !t.stream(OrganizeEntity.class).where(m -> s.getPath().contains(m.getPath()))
+                        .where(m -> !m.getDeleteKey().equals(""))
+                        .exists())
+                .getOnlyValue();
+        var originOrganizeLevel = originOrganize.getLevel();
+        var parentOrganize = StringUtils.isNotBlank(parentOrganizeId)
+                ? this.OrganizeEntity().where(s -> s.getId().equals(parentOrganizeId))
+                        .where((s, t) -> !t.stream(OrganizeEntity.class).where(m -> s.getPath().contains(m.getPath()))
+                                .where(m -> !m.getDeleteKey().equals(""))
+                                .exists())
+                        .getOnlyValue()
+                : null;
+        var organizeEntity = new OrganizeEntity();
+        organizeEntity.setId(Generators.timeBasedGenerator().generate().toString());
+        organizeEntity.setDeleteKey(Generators.timeBasedGenerator().generate().toString());
+        organizeEntity.setOrganizeShadow(originOrganize.getOrganizeShadow());
+        organizeEntity.setPath(
+                parentOrganize == null ? organizeEntity.getId() + ";"
+                        : parentOrganize.getPath() + organizeEntity.getId() + ";");
+        organizeEntity.setLevel(parentOrganize == null ? 0 : parentOrganize.getLevel() + 1);
+        this.entityManager.persist(organizeEntity);
+
+        var originChildIdList = this.OrganizeEntity()
+                .where(s -> s.getPath().contains(organizeId))
+                .where(s -> s.getLevel() - originOrganizeLevel == 1)
+                .where(s -> s.getDeleteKey().equals(""))
+                .select(s -> s.getId()).toList();
+        for (var originChildId : originChildIdList) {
+            this.moveChildOrganize(originChildId, organizeEntity.getId());
+        }
+
+        organizeEntity.setDeleteKey("");
+        this.entityManager.merge(organizeEntity);
+        originOrganize.setDeleteKey(Generators.timeBasedGenerator().generate().toString());
+        this.entityManager.merge(originOrganize);
+
+        return this.organizeFormatter.format(organizeEntity);
+    }
+
+    public void moveChildOrganize(String organizeId, String parentOrganizeId) {
+        var originOrganize = this.OrganizeEntity().where(s -> s.getId().equals(organizeId))
+                .getOnlyValue();
+        var originOrganizeLevel = originOrganize.getLevel();
+        var parentOrganize = StringUtils.isNotBlank(parentOrganizeId)
+                ? this.OrganizeEntity().where(s -> s.getId().equals(parentOrganizeId))
+                        .getOnlyValue()
+                : null;
+        var organizeEntity = new OrganizeEntity();
+        organizeEntity.setId(Generators.timeBasedGenerator().generate().toString());
+        organizeEntity.setDeleteKey("");
+        organizeEntity.setOrganizeShadow(originOrganize.getOrganizeShadow());
+        organizeEntity.setPath(
+                parentOrganize == null ? organizeEntity.getId() + ";"
+                        : parentOrganize.getPath() + organizeEntity.getId() + ";");
+        organizeEntity.setLevel(parentOrganize == null ? 0 : parentOrganize.getLevel() + 1);
+        this.entityManager.persist(organizeEntity);
+
+        var originChildIdList = this.OrganizeEntity()
+                .where(s -> s.getPath().contains(organizeId))
+                .where(s -> s.getLevel() - originOrganizeLevel == 1)
+                .where(s -> s.getDeleteKey().equals(""))
+                .select(s -> s.getId()).toList();
+        for (var originChildId : originChildIdList) {
+            this.moveChildOrganize(originChildId, organizeEntity.getId());
+        }
+    }
+
     public void deleteOrganize(String id) {
         var organize = this.OrganizeEntity().where(s -> s.getId().equals(id))
                 .where((s, t) -> !t.stream(OrganizeEntity.class).where(m -> s.getPath().contains(m.getPath()))
