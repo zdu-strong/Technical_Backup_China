@@ -95,6 +95,14 @@ public abstract class BaseService {
         return this.streamAll(LoggerEntity.class);
     }
 
+    protected JPAJinqStream<OrganizeShadowEntity> OrganizeShadowEntity() {
+        return this.streamAll(OrganizeShadowEntity.class);
+    }
+
+    protected JPAJinqStream<OrganizeClosureEntity> OrganizeClosureEntity() {
+        return this.streamAll(OrganizeClosureEntity.class);
+    }
+
     private <U> JPAJinqStream<U> streamAll(Class<U> entity) {
         if (this.jinqJPAStreamProvider == null) {
             synchronized (getClass()) {

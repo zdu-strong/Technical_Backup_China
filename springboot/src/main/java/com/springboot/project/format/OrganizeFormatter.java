@@ -9,22 +9,30 @@ import com.springboot.project.service.BaseService;
 public class OrganizeFormatter extends BaseService {
 
     public OrganizeModel format(OrganizeEntity organizeEntity) {
-        var levelOfOrganize = organizeEntity.getLevel();
-        var organizePath = organizeEntity.getPath();
-        var organizeModel = new OrganizeModel().setId(organizeEntity.getId())
-                .setName(organizeEntity.getOrganizeShadow().getName());
+        var organizeModel = new OrganizeModel()
+                .setId(organizeEntity.getId())
+                .setName(organizeEntity.getOrganizeShadow().getName())
+                .setLevel(organizeEntity.getLevel());
 
-        organizeModel.setParentOrganize(this.OrganizeEntity()
-                .where(s -> organizePath.contains(s.getPath()))
-                .where(s -> levelOfOrganize - s.getLevel() == 1)
-                .map(s -> new OrganizeModel().setId(s.getId())).findFirst().orElse(null));
+        var id = organizeEntity.getId();
 
-        var childOrganizeList = this.OrganizeEntity()
-                .where(s -> s.getPath().contains(organizePath))
-                .where(s -> s.getLevel() - levelOfOrganize == 1)
-                .map(s -> new OrganizeModel().setId(s.getId()))
+        var parentOrganize = this.OrganizeClosureEntity()
+                .where(s -> s.getDescendant().getId().equals(id))
+                .where(s -> s.getGap() == 1)
+                .findOne()
+                .map(s -> new OrganizeModel().setId(s.getAncestor().getId()))
+                .orElse(null);
+        organizeModel.setParentOrganize(parentOrganize);
+
+        var childOrganizeList = this.OrganizeClosureEntity()
+                .where(s -> s.getAncestor().getId().equals(id))
+                .where(s -> s.getGap() == 1)
+                .where(s -> s.getDescendant().getDeleteKey().equals(""))
+                .map(s -> new OrganizeModel().setId(s.getDescendant().getId()))
                 .toList();
         organizeModel.setChildOrganizeList(childOrganizeList);
+
         return organizeModel;
     }
+
 }
