@@ -9,6 +9,7 @@ import com.springboot.project.model.PaginationModel;
 
 @Service
 public class FriendshipService extends BaseService {
+
     public void createFriendship(String userId, String friendId, String aesOfUser, String aesOfFriend) {
         var friendshipList = this.FriendshipEntity()
                 .where(s -> (s.getUser().getId().equals(userId) && s.getFriend().getId().equals(friendId))
@@ -69,7 +70,7 @@ public class FriendshipService extends BaseService {
         }
     }
 
-    public void addFriend(String userId, String friendId) {
+    public void addToFriendList(String userId, String friendId) {
         var friendshipEntity = this.FriendshipEntity().where(s -> s.getUser().getId().equals(userId))
                 .where(s -> s.getFriend().getId().equals(friendId))
                 .where(s -> s.getUser().getDeleteKey().equals(""))

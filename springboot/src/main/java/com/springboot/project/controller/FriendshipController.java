@@ -67,7 +67,7 @@ public class FriendshipController extends BaseController {
 
         var userId = this.permissionUtil.getUserId(request);
 
-        this.friendshipService.addFriend(userId, friendId);
+        this.friendshipService.addToFriendList(userId, friendId);
         return ResponseEntity.ok().build();
     }
 

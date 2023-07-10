@@ -53,7 +53,7 @@ public class FriendshipServiceDeleteFromFriendListTest extends BaseTest {
                 .encryptBase64(this.user.getRSA().encryptBase64(keyOfAES, KeyType.PrivateKey), KeyType.PublicKey);
         this.friendshipService.createFriendship(this.user.getUserModel().getId(), this.friend.getUserModel().getId(),
                 aesOfUser, aesOfFriend);
-        this.friendshipService.addFriend(this.user.getUserModel().getId(), this.friend.getUserModel().getId());
+        this.friendshipService.addToFriendList(this.user.getUserModel().getId(), this.friend.getUserModel().getId());
     }
 
 }
