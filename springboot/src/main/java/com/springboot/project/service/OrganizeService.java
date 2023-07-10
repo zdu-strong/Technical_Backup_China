@@ -37,9 +37,9 @@ public class OrganizeService extends BaseService {
         organize.setId(Generators.timeBasedGenerator().generate().toString());
         organize.setDeleteKey("");
         organize.setOrganizeShadow(organizeShadowEntity);
-        organize.setParentOrganize(parentOrganize);
-        organize.setPath(this.getOrganizePath(organize));
-        organize.setChildOrganizeList(Lists.newArrayList());
+        organize.setPath(
+                parentOrganize == null ? organize.getId() + ";" : parentOrganize.getPath() + organize.getId() + ";");
+        organize.setLevel(parentOrganize == null ? 0 : parentOrganize.getLevel() + 1);
         this.entityManager.persist(organize);
 
         return this.organizeFormatter.format(organize);

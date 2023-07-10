@@ -9,14 +9,19 @@ import com.springboot.project.service.BaseService;
 public class OrganizeFormatter extends BaseService {
 
     public OrganizeModel format(OrganizeEntity organizeEntity) {
-        var organizeId = organizeEntity.getId();
+        var levelOfOrganize = organizeEntity.getLevel();
+        var organizePath = organizeEntity.getPath();
         var organizeModel = new OrganizeModel().setId(organizeEntity.getId())
                 .setName(organizeEntity.getOrganizeShadow().getName());
-        if (organizeEntity.getParentOrganize() != null) {
-            organizeModel.setParentOrganize(new OrganizeModel().setId(organizeEntity.getParentOrganize().getId()));
-        }
-        var childOrganizeList = this.OrganizeEntity().where(s -> s.getParentOrganize().getId().equals(organizeId))
-                .where(s -> s.getDeleteKey().equals(""))
+
+        organizeModel.setParentOrganize(this.OrganizeEntity()
+                .where(s -> organizePath.contains(s.getPath()))
+                .where(s -> levelOfOrganize - s.getLevel() == 1)
+                .map(s -> new OrganizeModel().setId(s.getId())).findFirst().orElse(null));
+
+        var childOrganizeList = this.OrganizeEntity()
+                .where(s -> s.getPath().contains(organizePath))
+                .where(s -> s.getLevel() - levelOfOrganize == 1)
                 .map(s -> new OrganizeModel().setId(s.getId()))
                 .toList();
         organizeModel.setChildOrganizeList(childOrganizeList);

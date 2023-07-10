@@ -7,7 +7,6 @@ import org.jinq.jpa.JinqJPAStreamProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.springboot.project.common.database.JPQLFunction;
 import com.springboot.project.common.storage.Storage;
 import com.springboot.project.entity.*;
@@ -108,14 +107,6 @@ public abstract class BaseService {
             }
         }
         return this.jinqJPAStreamProvider.streamAll(entityManager, entity);
-    }
-
-    protected String getOrganizePath(OrganizeEntity organizeEntity) {
-        if (organizeEntity.getParentOrganize() != null) {
-            return organizeEntity.getParentOrganize().getPath() + organizeEntity.getId() + ";";
-        } else {
-            return organizeEntity.getId() + ";";
-        }
     }
 
 }
