@@ -30,7 +30,8 @@ public class OrganizeServiceMoveOrganizeTest extends BaseTest {
         {
             var organizeModel = new OrganizeModel().setName("超级赛亚人孙悟空");
             this.organizeId = this.organizeService.createOrganize(organizeModel).getId();
-            var childOrganizeModel = new OrganizeModel().setName("孙悟饭").setParentOrganize(organizeModel);
+            var childOrganizeModel = new OrganizeModel().setName("孙悟饭")
+                    .setParentOrganize(new OrganizeModel().setId(organizeId));
             this.childOrganizeId = this.organizeService.createOrganize(childOrganizeModel).getId();
         }
         {

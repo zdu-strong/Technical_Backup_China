@@ -5,13 +5,12 @@ import org.junit.jupiter.api.Test;
 import com.springboot.project.model.OrganizeModel;
 import com.springboot.project.test.BaseTest;
 
-public class OrganizeServiceDeleteOrganizeTest extends BaseTest {
-
+public class OrganizeServiceCheckExistOrganizeTest extends BaseTest {
     private String organizeId;
 
     @Test
     public void test() {
-        this.organizeService.deleteOrganize(this.organizeId);
+        this.organizeService.checkExistOrganize(this.organizeId);
     }
 
     @BeforeEach
