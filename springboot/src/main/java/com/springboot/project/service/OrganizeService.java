@@ -39,7 +39,7 @@ public class OrganizeService extends BaseService {
         var organizeEntity = new OrganizeEntity();
         organizeEntity.setId(Generators.timeBasedGenerator().generate().toString());
         organizeEntity.setLevel(parentOrganize == null ? 0 : parentOrganize.getLevel() + 1);
-        organizeEntity.setDeleteKey("");
+        organizeEntity.setDeleteKey(Generators.timeBasedGenerator().generate().toString());
         organizeEntity.setOrganizeShadow(organizeShadow);
         organizeEntity.setAncestorList(Lists.newArrayList());
         organizeEntity.setDescendantList(Lists.newArrayList());
@@ -56,6 +56,10 @@ public class OrganizeService extends BaseService {
                 this.organizeClosureService.createOrganizeClosure(ancestorId, organizeEntity.getId());
             }
         }
+
+        organizeEntity.setDeleteKey("");
+        organizeEntity.getOrganizeShadow().setDeleteKey("");
+        this.entityManager.merge(organizeEntity);
 
         return this.organizeFormatter.format(organizeEntity);
     }
