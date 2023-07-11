@@ -15,8 +15,10 @@ public class OrganizeShadowService extends BaseService {
     protected String createOrganizeShadow(OrganizeModel organizeModel) {
         var parentOrganizeId = organizeModel.getParentOrganize() != null ? organizeModel.getParentOrganize().getId()
                 : null;
-        var parentOrganize = StringUtils.isNotBlank(parentOrganizeId)
-                ? this.OrganizeEntity().where(s -> s.getId().equals(parentOrganizeId)).getOnlyValue()
+        var parentOrganizeShadow = StringUtils.isNotBlank(parentOrganizeId)
+                ? this.OrganizeEntity().where(s -> s.getId().equals(parentOrganizeId))
+                        .select(s -> s.getOrganizeShadow())
+                        .getOnlyValue()
                 : null;
         var organizeShadowEntity = new OrganizeShadowEntity();
         organizeShadowEntity.setId(Generators.timeBasedGenerator().generate().toString());
@@ -24,11 +26,12 @@ public class OrganizeShadowService extends BaseService {
         organizeShadowEntity.setDeleteKey("");
         organizeShadowEntity.setCreateDate(new Date());
         organizeShadowEntity.setUpdateDate(new Date());
-        organizeShadowEntity.setParent(parentOrganize != null ? parentOrganize.getOrganizeShadow() : null);
+        organizeShadowEntity.setParent(parentOrganizeShadow);
         organizeShadowEntity.setChildList(Lists.newArrayList());
         organizeShadowEntity.setOrganizeList(Lists.newArrayList());
         this.entityManager.persist(organizeShadowEntity);
 
         return organizeShadowEntity.getId();
     }
+
 }
