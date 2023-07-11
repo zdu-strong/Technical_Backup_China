@@ -21,15 +21,15 @@ export default observer(forwardRef((props: {
 }>) => {
 
   const state = useMobxState({
-    /* 每一行的高度 */
+    /* the height of each row */
     rowHeightMap: {
 
     } as Record<number, number>,
 
-    /* 可见区域之外呈现的行的数量 */
+    /* The number of lines rendered outside the visible area */
     overscanCount: 0,
 
-    /* 子元素id的前缀 */
+    /* The prefix of the child element id */
     idPrefix: `${v1()}-message-child-`,
 
     extraScrollOffsetSubject: new ReplaySubject<number>(1),
@@ -46,7 +46,7 @@ export default observer(forwardRef((props: {
 
     scrollTopOffset: 0,
 
-    /* 是否需要滚动到最后, 仅作一部分参考 */
+    /* Is need to scroll to the end, just for a part of reference */
     isNeedScrollToEndByCaluate: true,
     initTotalPage: 0,
     baseTotalPage: 0,
@@ -92,8 +92,8 @@ export default observer(forwardRef((props: {
   }
 
   /**
-   * 列表模式能够承受大约10万条消息, 所以取往前5万条, 未来5万条, 合10万条进行显示.
-   * 当总条数增大或减小, 会自动调整.
+   * The list mode can bear about 100,000 messages, so the previous 50,000 messages, the next 50,000 messages, and 100,000 messages are displayed together.
+   * When the total number increases or decreases, it will be adjusted automatically.
    */
   useMobxEffect(() => {
     if (!state.initTotalPage) {
@@ -122,12 +122,12 @@ export default observer(forwardRef((props: {
     return baseTotalPage;
   }
 
-  /* 获得每行的行高 */
+  /* Get the row height of each row */
   function getRowHeightByPageNum(pageNum: number) {
     return state.rowHeightMap[pageNum] || DefaultVariableSizeListChildRowHeight;
   }
 
-  /* 为ref添加方法 */
+  /* Add method for ref */
   useImperativeHandle(state.ref, () => ({
     scrollToItemByPageNum,
     isNeedScrollToEnd
@@ -230,7 +230,7 @@ export default observer(forwardRef((props: {
       ref={state.variableSizeListRef as any}
       className={state.css.VariableSizeList}
       innerRef={state.innerRef}
-      /* 要在可见区域之外呈现的行的数量 */
+      /* The number of rows to render outside the visible area */
       overscanCount={state.overscanCount}
       style={state.ready ? {} : { visibility: "hidden" }}
       onScroll={({ scrollOffset }) => {
@@ -239,10 +239,10 @@ export default observer(forwardRef((props: {
       }}
       key={state.baseTotalPage}
     >
-      {/* 子元素 */}
+      {/* child element */}
       {(props) => <MessageUnlimitedVariableSizeListChildComponent
         {...props}
-        /* 设置当前元素的高度 */
+        /* Set the height of the current element */
         setRowHeight={async (rowHeight) => {
           const pageNum = state.baseTotalPage + props.index + 1;
           const originHeight = getRowHeightByPageNum(pageNum);

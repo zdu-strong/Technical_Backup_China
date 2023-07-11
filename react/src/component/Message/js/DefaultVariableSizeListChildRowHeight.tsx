@@ -1,7 +1,7 @@
 /**
- * 每条信息高度有默认值，每行高度不得低于默认值.
- * 基于第一条, 所以默认高度一定要大于或等于撤回， 删除 等情况的高度
- * 为了确保读过消息的人不会产生是否度过的疑虑, 所以发出后不允许修改.
- * 图片等等必须资源设置最大宽高，由于图片等加载时间不确定， 所以可以变小， 不能变得更大
+ * The height of each message has a default value, and the height of each line must not be lower than the default value.
+ * Based on the first article, the default height must be greater than or equal to the height of withdrawal, deletion, etc.
+ * In order to ensure that people who have read the message will not have doubts about whether to pass it, it is not allowed to modify it after it is sent.
+ * Images, etc. must be resources to set the maximum width and height. Since the loading time of images, etc. is uncertain, they can be smaller, but cannot be larger
  */
 export const DefaultVariableSizeListChildRowHeight = 100;

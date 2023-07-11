@@ -27,13 +27,13 @@ public class BaseStorageSave extends BaseStorageCreateTempFile {
             var storageFileModel = new StorageFileModel()
                     .setFolderName(Generators.timeBasedGenerator().generate().toString());
 
-            /* 设置文件名称 */
+            /* Set file name */
             storageFileModel.setFileName(this.getFileNameFromResource(resource));
             if (resource.isFile() && resource.getFile().isDirectory()) {
                 storageFileModel.setFileName(null);
             }
 
-            /* 设置文件夹大小 */
+            /* Set directory size */
             if (resource.isFile()) {
                 File sourceFile = resource.getFile();
                 if (!sourceFile.exists()) {
@@ -48,20 +48,20 @@ public class BaseStorageSave extends BaseStorageCreateTempFile {
                 storageFileModel.setFolderSize(resource.contentLength());
             }
 
-            /* 获取相对路径 */
+            /* Get relative path */
             String relativePath = this.getRelativePathFromResourcePath(storageFileModel.getFolderName());
             if (StringUtils.isNotBlank(storageFileModel.getFileName())) {
                 relativePath = this.getRelativePathFromResourcePath(
                         Paths.get(storageFileModel.getFolderName(), storageFileModel.getFileName()).toString());
             }
 
-            /* 设置相对路径 */
+            /* Set relative path */
             storageFileModel.setRelativePath(relativePath);
 
-            /* 设置相对url */
+            /* Set relative url */
             storageFileModel.setRelativeUrl(this.getResoureUrlFromResourcePath(relativePath));
 
-            /* 设置相对下载url */
+            /* Set relative download url */
             storageFileModel.setRelativeDownloadUrl("/download" + storageFileModel.getRelativeUrl());
 
             if (resource.isFile()) {
@@ -129,10 +129,10 @@ public class BaseStorageSave extends BaseStorageCreateTempFile {
                 .findFirst().orElse(null));
         storageFileModel.setRelativePath(relativePath);
 
-        /* 设置相对url */
+        /* Set relative url */
         storageFileModel.setRelativeUrl(this.getResoureUrlFromResourcePath(relativePath));
 
-        /* 设置相对下载url */
+        /* Set relative download url */
         storageFileModel.setRelativeDownloadUrl("/download" + storageFileModel.getRelativeUrl());
         return storageFileModel;
     }
@@ -182,10 +182,10 @@ public class BaseStorageSave extends BaseStorageCreateTempFile {
         storageFileModel.setFileName(null);
         storageFileModel.setRelativePath(relativePath);
 
-        /* 设置相对url */
+        /* Set relative url */
         storageFileModel.setRelativeUrl(this.getResoureUrlFromResourcePath(relativePath));
 
-        /* 设置相对下载url */
+        /* Set relative download url */
         storageFileModel.setRelativeDownloadUrl("/download" + storageFileModel.getRelativeUrl());
         if (this.cloud.enabled()) {
             this.cloud.storageResource(tempFolder, relativePath);

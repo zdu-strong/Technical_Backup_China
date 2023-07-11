@@ -145,7 +145,7 @@ public class OrganizeService extends BaseService {
      * @return
      */
     public Boolean fixConcurrencyMoveOrganize() {
-        // 1. OrganizeShadow被删除, OrganizeEntity也要被删除
+        // 1. OrganizeShadow is deleted, and OrganizeEntity is also deleted
         {
             var organizeEntity = this.OrganizeEntity()
                     .where(s -> !JinqStream.from(s.getAncestorList())
@@ -161,7 +161,7 @@ public class OrganizeService extends BaseService {
             }
         }
 
-        // 2. OrganizeShadow有的子组织, OrganizeEntity也要有
+        // 2. OrganizeShadow has sub-organizations, and OrganizeEntity also has
         {
             var organizeGroup = this.OrganizeEntity().join((s, t) -> t.stream(OrganizeEntity.class))
                     .where(s -> !JinqStream.from(s.getTwo().getAncestorList())
@@ -188,7 +188,7 @@ public class OrganizeService extends BaseService {
             }
         }
 
-        // 3. OrganizeShadow的父组织和OrganizeEntity的父组织不同
+        // 3. The parent organization of OrganizeShadow is different from the parent organization of OrganizeEntity
         {
             var organizeEntity = this.OrganizeEntity()
                     .where(s -> !JinqStream.from(s.getAncestorList())
@@ -223,7 +223,7 @@ public class OrganizeService extends BaseService {
             }
         }
 
-        // 4. OrganizeShadow的父组织和OrganizeEntity的父组织相同, 存在多于一个的OrganizeEntity
+        // 4. The parent organization of OrganizeShadow is the same as the parent organization of OrganizeEntity, there is more than one OrganizeEntity
         {
             var organizeGroup = this.OrganizeEntity().join((s, t) -> t.stream(OrganizeEntity.class))
                     .where(s -> !s.getOne().getId().equals(s.getTwo().getId()))

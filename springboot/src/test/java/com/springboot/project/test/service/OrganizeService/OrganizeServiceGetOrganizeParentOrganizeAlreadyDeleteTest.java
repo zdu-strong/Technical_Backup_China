@@ -20,9 +20,9 @@ public class OrganizeServiceGetOrganizeParentOrganizeAlreadyDeleteTest extends B
 
     @BeforeEach
     public void beforeEach() {
-        var parentOrganizeModel = new OrganizeModel().setName("超级赛亚人孙悟空");
+        var parentOrganizeModel = new OrganizeModel().setName("Super Saiyan Son Goku");
         var parentOrganize = this.organizeService.createOrganize(parentOrganizeModel);
-        var childOrganizeModel = new OrganizeModel().setName("孙悟饭").setParentOrganize(parentOrganize);
+        var childOrganizeModel = new OrganizeModel().setName("Son Gohan").setParentOrganize(parentOrganize);
         var childOrganize = this.organizeService.createOrganize(childOrganizeModel);
         this.organizeService.deleteOrganize(parentOrganize.getId());
         this.organizeId = childOrganize.getId();

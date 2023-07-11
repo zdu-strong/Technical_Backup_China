@@ -24,7 +24,7 @@ public class OrganizeControllerGetOrganizeTest extends BaseTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(StringUtils.isNotBlank(response.getBody().getId()));
         assertEquals(36, response.getBody().getId().length());
-        assertEquals("超级赛亚人孙悟空", response.getBody().getName());
+        assertEquals("Super Saiyan Son Goku", response.getBody().getName());
         assertEquals(0, response.getBody().getLevel());
         assertNull(response.getBody().getParentOrganize());
         assertEquals(0, response.getBody().getChildOrganizeList().size());
@@ -32,7 +32,7 @@ public class OrganizeControllerGetOrganizeTest extends BaseTest {
 
     @BeforeEach
     public void beforeEach() {
-        var organizeModel = new OrganizeModel().setName("超级赛亚人孙悟空");
+        var organizeModel = new OrganizeModel().setName("Super Saiyan Son Goku");
         var organize = this.organizeService.createOrganize(organizeModel);
         this.organizeId = organize.getId();
     }

@@ -29,7 +29,7 @@ public class OrganizeControllerMoveOrganizeNotExistOrganizeTest extends BaseTest
     @BeforeEach
     public void beforeEach() {
         this.organizeId = Generators.timeBasedGenerator().generate().toString();
-        var organizeModel = new OrganizeModel().setName("比克");
+        var organizeModel = new OrganizeModel().setName("piccolo");
         this.parentOrganizeIdOfMove = this.organizeService.createOrganize(organizeModel).getId();
     }
 }

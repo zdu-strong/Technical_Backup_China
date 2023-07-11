@@ -51,7 +51,7 @@ export default observer(() => {
   });
 
   useMount((subscription) => {
-    /* 产生随机数 */
+    /* Generate random number */
     subscription.add(of(null).pipe(
       concatMap(() => from((async () => {
         while (true) {

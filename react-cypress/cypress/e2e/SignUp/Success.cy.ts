@@ -4,7 +4,7 @@ import page from '../../page'
 it('', () => {
   page.SignUp.nickname().type('John Hancock')
   page.SignUp.nextStepButton().click()
-  page.SignUp.password().type('葫芦娃, 葫芦娃, 一根藤上七个娃')
+  page.SignUp.password().type('Hello, World!')
   page.SignUp.nextStepButton().click()
   page.SignUp.addEmailOrPhoneNumber().click()
   page.SignUp.email().type(email)

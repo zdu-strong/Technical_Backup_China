@@ -15,7 +15,7 @@ public class GameRotateBoxOfGdxTest extends BaseTest {
     public void test() throws NoSuchAlgorithmException, InvalidKeySpecException {
         var box = new BoundingBox(new Vector3(0, 0, 0), new Vector3(2, 2, 2));
         {
-            /* 移动BoundingBox的中心到坐标系中点, 然后旋转, 旋转结束后移动BoudingBox到原来位置 */
+            /* Move the center of the BoundingBox to the midpoint of the coordinate system, then rotate, and move the BoudingBox to its original position after the rotation */
             var centerOfBox = new Vector3();
             box.getCenter(centerOfBox);
             var reverseCenterBox = new Vector3(-centerOfBox.x, -centerOfBox.y, -centerOfBox.z);

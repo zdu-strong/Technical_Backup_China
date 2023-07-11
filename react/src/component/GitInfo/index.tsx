@@ -26,7 +26,7 @@ export default observer(() => {
       await loadServerGitInfo();
       state.ready = true;
     } catch {
-      state.error = "服务器访问出错哦";
+      state.error = new Error("Network Error");
     }
   })
 

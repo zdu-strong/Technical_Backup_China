@@ -26,14 +26,14 @@ public class OrganizeServiceFixConcurrencyMoveOrganizeTest extends BaseTest {
     @BeforeEach
     public void beforeEach() {
         {
-            var organizeModel = new OrganizeModel().setName("超级赛亚人孙悟空");
+            var organizeModel = new OrganizeModel().setName("Super Saiyan Son Goku");
             this.organizeId = this.organizeService.createOrganize(organizeModel).getId();
-            var childOrganizeModel = new OrganizeModel().setName("孙悟饭")
+            var childOrganizeModel = new OrganizeModel().setName("Son Gohan")
                     .setParentOrganize(new OrganizeModel().setId(organizeId));
             this.childOrganizeId = this.organizeService.createOrganize(childOrganizeModel).getId();
         }
         {
-            var organizeModel = new OrganizeModel().setName("比克");
+            var organizeModel = new OrganizeModel().setName("piccolo");
             this.parentOrganizeIdOfMove = this.organizeService.createOrganize(organizeModel).getId();
         }
 
@@ -41,7 +41,7 @@ public class OrganizeServiceFixConcurrencyMoveOrganizeTest extends BaseTest {
         assertNotNull(result.getId());
         assertNotEquals(this.childOrganizeId, result.getId());
         assertNotEquals(this.organizeId, result.getParentOrganize().getId());
-        assertEquals("孙悟饭", result.getName());
+        assertEquals("Son Gohan", result.getName());
         assertEquals(0, result.getChildOrganizeList().size());
         assertEquals(this.parentOrganizeIdOfMove, result.getParentOrganize().getId());
     }

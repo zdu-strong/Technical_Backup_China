@@ -14,9 +14,9 @@ import MessageMoreActionDialog from "@/component/MessageMoreAction/MessageMoreAc
 
 export default observer((props: { username: string, userId: string }) => {
   const state = useMobxState({
-    /* 待发送的消息 */
+    /* Pending send message */
     messageContent: "",
-    /* 是否正在发送消息 */
+    /* Is the message being sent */
     loadingOfSend: false,
     inputFileId: v1(),
     messageInputId: v1(),

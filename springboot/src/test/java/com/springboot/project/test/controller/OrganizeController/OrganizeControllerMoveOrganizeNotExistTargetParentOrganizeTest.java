@@ -28,9 +28,9 @@ public class OrganizeControllerMoveOrganizeNotExistTargetParentOrganizeTest exte
 
     @BeforeEach
     public void beforeEach() {
-        var organizeModel = new OrganizeModel().setName("超级赛亚人孙悟空");
+        var organizeModel = new OrganizeModel().setName("Super Saiyan Son Goku");
         var organizeId = this.organizeService.createOrganize(organizeModel).getId();
-        var childOrganizeModel = new OrganizeModel().setName("孙悟饭")
+        var childOrganizeModel = new OrganizeModel().setName("Son Gohan")
                 .setParentOrganize(new OrganizeModel().setId(organizeId));
         this.childOrganizeId = this.organizeService.createOrganize(childOrganizeModel).getId();
         this.targetParentOrganizeId = Generators.timeBasedGenerator().generate().toString();

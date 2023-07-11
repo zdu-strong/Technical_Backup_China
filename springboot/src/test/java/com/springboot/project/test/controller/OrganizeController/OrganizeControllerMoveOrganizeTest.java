@@ -27,7 +27,7 @@ public class OrganizeControllerMoveOrganizeTest extends BaseTest {
         assertNotNull(response.getBody().getId());
         assertNotEquals(this.childOrganizeId, response.getBody().getId());
         assertNotEquals(this.organizeId, response.getBody().getParentOrganize().getId());
-        assertEquals("孙悟饭", response.getBody().getName());
+        assertEquals("Son Gohan", response.getBody().getName());
         assertEquals(0, response.getBody().getChildOrganizeList().size());
         assertEquals(this.parentOrganizeIdOfMove, response.getBody().getParentOrganize().getId());
     }
@@ -35,14 +35,14 @@ public class OrganizeControllerMoveOrganizeTest extends BaseTest {
     @BeforeEach
     public void beforeEach() {
         {
-            var organizeModel = new OrganizeModel().setName("超级赛亚人孙悟空");
+            var organizeModel = new OrganizeModel().setName("Super Saiyan Son Goku");
             this.organizeId = this.organizeService.createOrganize(organizeModel).getId();
-            var childOrganizeModel = new OrganizeModel().setName("孙悟饭")
+            var childOrganizeModel = new OrganizeModel().setName("Son Gohan")
                     .setParentOrganize(new OrganizeModel().setId(this.organizeId));
             this.childOrganizeId = this.organizeService.createOrganize(childOrganizeModel).getId();
         }
         {
-            var organizeModel = new OrganizeModel().setName("比克");
+            var organizeModel = new OrganizeModel().setName("piccolo");
             this.parentOrganizeIdOfMove = this.organizeService.createOrganize(organizeModel).getId();
         }
     }

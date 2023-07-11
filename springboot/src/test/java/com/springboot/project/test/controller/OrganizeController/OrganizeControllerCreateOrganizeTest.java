@@ -23,15 +23,15 @@ public class OrganizeControllerCreateOrganizeTest extends BaseTest {
         assertNotNull(response.getBody().getId());
         assertEquals(36, response.getBody().getId().length());
         assertEquals(this.organizeModel.getParentOrganize().getId(), response.getBody().getParentOrganize().getId());
-        assertEquals("孙悟饭", response.getBody().getName());
+        assertEquals("Son Gohan", response.getBody().getName());
         assertEquals(0, response.getBody().getChildOrganizeList().size());
     }
 
     @BeforeEach
     public void beforeEach() {
-        var parentOrganizeModel = new OrganizeModel().setName("超级赛亚人孙悟空");
+        var parentOrganizeModel = new OrganizeModel().setName("Super Saiyan Son Goku");
         var parentOrganize = this.organizeService.createOrganize(parentOrganizeModel);
-        var childOrganizeModel = new OrganizeModel().setName("孙悟饭")
+        var childOrganizeModel = new OrganizeModel().setName("Son Gohan")
                 .setParentOrganize(new OrganizeModel().setId(parentOrganize.getId()));
         this.organizeModel = childOrganizeModel;
     }

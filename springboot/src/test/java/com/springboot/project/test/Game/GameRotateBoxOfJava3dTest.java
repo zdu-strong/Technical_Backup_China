@@ -15,7 +15,7 @@ public class GameRotateBoxOfJava3dTest extends BaseTest {
     public void test() {
         var boundingBox = new BoundingBox(new Point3d(0, 0, 0), new Point3d(2, 2, 2));
         {
-            // 移动到坐标系中心
+            // Move to the center of the coordinate system
             var firstPoint = new Point3d();
             boundingBox.getLower(firstPoint);
             var secondPoint = new Point3d();
@@ -26,7 +26,7 @@ public class GameRotateBoxOfJava3dTest extends BaseTest {
             var firstTransform3D = new Transform3D();
             firstTransform3D.setTranslation(reverseCenter);
             boundingBox.transform(firstTransform3D);
-            // 旋转, 然后移回原来位置
+            // Rotate, then move back to original position
             var secondTransform3D = new Transform3D();
             secondTransform3D.setRotation(new AxisAngle4d(new Vector3d(1, 1, 1), Math.PI / 2));
             secondTransform3D.setTranslation(center);

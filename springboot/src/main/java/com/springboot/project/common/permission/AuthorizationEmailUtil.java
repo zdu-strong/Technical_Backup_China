@@ -41,7 +41,7 @@ public class AuthorizationEmailUtil {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setFrom(this.authorizationEmailProperties.getSenderEmail());
             helper.setTo(email);
-            helper.setSubject("登录的验证码");
+            helper.setSubject("Verification Code For Login");
             helper.setText(this.getEmailOfBody(verificationCode), true);
             mailSender.send(message);
         } catch (MessagingException e) {

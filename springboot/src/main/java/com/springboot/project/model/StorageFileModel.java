@@ -11,7 +11,7 @@ public class StorageFileModel {
     private String folderName;
 
     /**
-     * 当存储一个文件夹时, fileName为null. 当存储文件时, fileName不能为null, 也不能为空字符串.
+     * When storing a folder, fileName is null. When storing a file, fileName cannot be null, nor can it be an empty string.
      */
     private String fileName;
 

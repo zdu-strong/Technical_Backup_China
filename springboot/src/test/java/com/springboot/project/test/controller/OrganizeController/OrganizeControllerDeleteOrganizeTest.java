@@ -25,7 +25,7 @@ public class OrganizeControllerDeleteOrganizeTest extends BaseTest {
 
     @BeforeEach
     public void beforeEach() {
-        var organizeModel = new OrganizeModel().setName("超级赛亚人孙悟空");
+        var organizeModel = new OrganizeModel().setName("Super Saiyan Son Goku");
         var organize = this.organizeService.createOrganize(organizeModel);
         this.organizeId = organize.getId();
     }

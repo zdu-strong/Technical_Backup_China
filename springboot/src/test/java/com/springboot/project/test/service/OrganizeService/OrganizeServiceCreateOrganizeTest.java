@@ -11,11 +11,11 @@ public class OrganizeServiceCreateOrganizeTest extends BaseTest {
 
     @Test
     public void test() {
-        var organizeModel = new OrganizeModel().setName("超级赛亚人孙悟空");
+        var organizeModel = new OrganizeModel().setName("Super Saiyan Son Goku");
         var result = this.organizeService.createOrganize(organizeModel);
         assertNotNull(result.getId());
         assertEquals(36, result.getId().length());
-        assertEquals("超级赛亚人孙悟空", result.getName());
+        assertEquals("Super Saiyan Son Goku", result.getName());
         assertEquals(0, result.getChildOrganizeList().size());
         assertNull(result.getParentOrganize());
     }

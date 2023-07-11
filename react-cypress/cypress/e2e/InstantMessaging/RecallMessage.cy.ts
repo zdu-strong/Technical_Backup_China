@@ -16,4 +16,4 @@ before(() => {
 
 const message = `Hello, World! ${v1()}`
 const email = `${v1()}zdu.strong@gmail.com`
-const password = '葫芦娃, 葫芦娃, 一根藤上七个娃'
+const password = 'Hello, World!'

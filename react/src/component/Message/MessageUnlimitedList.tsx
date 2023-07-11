@@ -16,18 +16,18 @@ export default observer((props: {
   setReadyForMessageList: (readyForMessageList: boolean) => Promise<void>,
 }) => {
   const state = useMobxState({
-    /* 想要跳转到哪一项, 输入框的值 */
+    /* Which item you want to jump to, the value of the input box */
     jumpItemOfInput: "",
-    /* 消息的总条数 */
+    /* total number of messages */
     totalPage: 0,
-    /* 消息的websocket */
+    /* message websocket */
     websocketInput: new ReplaySubject<{
       pageNum: number,
       isCancel: boolean,
     }>(1000),
-    /* 是否准备好了 */
+    /* Is ready */
     ready: false,
-    /* 是否有错误 */
+    /* Is there an error */
     error: null as boolean | null,
     messageMap: {} as Record<string, UserMessageModel>,
     listenMessageSet: new Set<number>(),

@@ -21,7 +21,6 @@ export default observer((props: {
   username: string,
 }) => {
 
-  /* 属性来源, props, 第三方hooks */
   const state = useMobxState({
     loadingOfRecall: false,
   }, {

@@ -39,9 +39,9 @@ export default observer(() => {
             state.navigation = newValue;
           }}
         >
-          <BottomNavigationAction value={NavigationEnum.Friend} label="好友" icon={<RestoreIcon />} />
-          <BottomNavigationAction value={NavigationEnum.Stranger} label="陌生人" icon={<FavoriteIcon />} />
-          <BottomNavigationAction value={NavigationEnum.Setting} label="设置" icon={<LocationOnIcon />} />
+          <BottomNavigationAction value={NavigationEnum.Friend} label="Friend" icon={<RestoreIcon />} />
+          <BottomNavigationAction value={NavigationEnum.Stranger} label="Stranger" icon={<FavoriteIcon />} />
+          <BottomNavigationAction value={NavigationEnum.Setting} label="Setting" icon={<LocationOnIcon />} />
         </BottomNavigation>
       </div>
     </div>
