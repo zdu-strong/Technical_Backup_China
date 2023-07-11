@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
 import com.springboot.project.model.OrganizeModel;
 import com.springboot.project.entity.*;
 
@@ -65,49 +64,12 @@ public class OrganizeService extends BaseService {
     }
 
     public OrganizeModel moveOrganize(String organizeId, String targetParentOrganizeId) {
-        var organizeEntity = this.OrganizeEntity().where(s -> s.getId().equals(organizeId))
-                .where(s -> !JinqStream.from(s.getAncestorList()).where(m -> !m.getAncestor().getDeleteKey().equals(""))
-                        .exists())
-                .getOnlyValue();
-        var targetParentOrganize = StringUtils.isNotBlank(targetParentOrganizeId)
-                ? this.OrganizeEntity().where(s -> s.getId().equals(targetParentOrganizeId))
-                        .where(s -> !JinqStream.from(s.getAncestorList())
-                                .where(m -> !m.getAncestor().getDeleteKey().equals(""))
-                                .exists())
-                        .getOnlyValue()
-                : null;
-
-        var targetOrganizeEntity = new OrganizeEntity();
-        targetOrganizeEntity.setId(Generators.timeBasedGenerator().generate().toString());
-        targetOrganizeEntity.setLevel(targetParentOrganize == null ? 0 : targetParentOrganize.getLevel() + 1);
-        targetOrganizeEntity.setDeleteKey(Generators.timeBasedGenerator().generate().toString());
-        targetOrganizeEntity.setOrganizeShadow(organizeEntity.getOrganizeShadow());
-        targetOrganizeEntity.setAncestorList(Lists.newArrayList());
-        targetOrganizeEntity.setDescendantList(Lists.newArrayList());
-        this.entityManager.persist(organizeEntity);
-
-        this.organizeClosureService.createOrganizeClosure(targetOrganizeEntity.getId(), targetOrganizeEntity.getId());
-
-        if (targetParentOrganize != null) {
-            var ancestorIdList = this.OrganizeClosureEntity()
-                    .where(s -> s.getDescendant().getId().equals(targetParentOrganizeId))
-                    .select(s -> s.getAncestor().getId())
-                    .toList();
-            for (var ancestorId : ancestorIdList) {
-                this.organizeClosureService.createOrganizeClosure(ancestorId, targetOrganizeEntity.getId());
-            }
+        this.checkExistOrganize(organizeId);
+        if (StringUtils.isNotBlank(targetParentOrganizeId)) {
+            this.checkExistOrganize(targetParentOrganizeId);
         }
 
-        this.moveChildOrganizeList(organizeId, targetOrganizeEntity.getId());
-
-        organizeEntity.setDeleteKey(Generators.timeBasedGenerator().generate().toString());
-        this.entityManager.merge(organizeEntity);
-        targetOrganizeEntity.setDeleteKey("");
-        targetOrganizeEntity.getOrganizeShadow()
-                .setParent(targetParentOrganize != null ? targetParentOrganize.getOrganizeShadow() : null);
-        this.entityManager.merge(targetOrganizeEntity);
-
-        return this.organizeFormatter.format(targetOrganizeEntity);
+        return this.moveOrganizeNotCheck(organizeId, targetParentOrganizeId);
     }
 
     private void moveChildOrganizeList(String sourceOrganizeId, String targetOrganizeId) {
@@ -176,6 +138,164 @@ public class OrganizeService extends BaseService {
         if (!isPresent) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Organize does not exist");
         }
+    }
+
+    /**
+     * has Next data need fix
+     * @return
+     */
+    public Boolean fixConcurrencyMoveOrganize() {
+        // 1. OrganizeShadow被删除, OrganizeEntity也要被删除
+        {
+            var organizeEntity = this.OrganizeEntity()
+                    .where(s -> !JinqStream.from(s.getAncestorList())
+                            .where(m -> !m.getAncestor().getDeleteKey().equals(""))
+                            .exists())
+                    .where(s -> !s.getOrganizeShadow().getDeleteKey().equals(""))
+                    .findFirst()
+                    .orElse(null);
+            if (organizeEntity != null) {
+                organizeEntity.setDeleteKey(Generators.timeBasedGenerator().generate().toString());
+                this.entityManager.merge(organizeEntity);
+                return true;
+            }
+        }
+
+        // 2. OrganizeShadow有的子组织, OrganizeEntity也要有
+        {
+            var organizeGroup = this.OrganizeEntity().join((s, t) -> t.stream(OrganizeEntity.class))
+                    .where(s -> !JinqStream.from(s.getTwo().getAncestorList())
+                            .where(m -> !m.getAncestor().getDeleteKey().equals(""))
+                            .exists())
+                    .where(s -> s.getOne().getDeleteKey().equals(""))
+                    .where(s -> JinqStream.from(s.getTwo().getOrganizeShadow().getChildList())
+                            .where(m -> m.getDeleteKey().equals(""))
+                            .where(m -> m.getId().equals(s.getOne().getOrganizeShadow().getId()))
+                            .exists())
+                    .where(s -> !JinqStream.from(s.getTwo().getDescendantList())
+                            .where(m -> m.getGap() == 1)
+                            .where(m -> m.getDescendant().getDeleteKey().equals(""))
+                            .where(m -> m.getDescendant().getOrganizeShadow().getId()
+                                    .equals(s.getOne().getOrganizeShadow().getId()))
+                            .exists())
+                    .findFirst()
+                    .orElse(null);
+            if (organizeGroup != null) {
+                var childOrganize = organizeGroup.getOne();
+                var parentOrganize = organizeGroup.getTwo();
+                this.moveOrganizeNotCheck(childOrganize.getId(), parentOrganize.getId());
+                return true;
+            }
+        }
+
+        // 3. OrganizeShadow的父组织和OrganizeEntity的父组织不同
+        {
+            var organizeEntity = this.OrganizeEntity()
+                    .where(s -> !JinqStream.from(s.getAncestorList())
+                            .where(m -> !m.getAncestor().getDeleteKey().equals(""))
+                            .exists())
+                    .where(s -> s.getLevel() == 0)
+                    .where(s -> s.getOrganizeShadow().getParent() != null)
+                    .findFirst().orElse(null);
+            if (organizeEntity != null) {
+                organizeEntity.setDeleteKey(Generators.timeBasedGenerator().generate().toString());
+                this.entityManager.merge(organizeEntity);
+                return true;
+            }
+        }
+        {
+            var organizeEntity = this.OrganizeEntity()
+                    .where(s -> !JinqStream.from(s.getAncestorList())
+                            .where(m -> !m.getAncestor().getDeleteKey().equals(""))
+                            .exists())
+                    .where(s -> s.getLevel() != 0)
+                    .where(s -> !JinqStream.from(s.getAncestorList())
+                            .where(m -> m.getGap() == 1)
+                            .where(m -> m.getAncestor().getOrganizeShadow().getId()
+                                    .equals(s.getOrganizeShadow().getParent().getId()))
+                            .exists())
+                    .findFirst()
+                    .orElse(null);
+            if (organizeEntity != null) {
+                organizeEntity.setDeleteKey(Generators.timeBasedGenerator().generate().toString());
+                this.entityManager.merge(organizeEntity);
+                return true;
+            }
+        }
+
+        // 4. OrganizeShadow的父组织和OrganizeEntity的父组织相同, 存在多于一个的OrganizeEntity
+        {
+            var organizeGroup = this.OrganizeEntity().join((s, t) -> t.stream(OrganizeEntity.class))
+                    .where(s -> !s.getOne().getId().equals(s.getTwo().getId()))
+                    .where(s -> s.getOne().getOrganizeShadow().getId().equals(s.getTwo().getOrganizeShadow().getId()))
+                    .where(s -> s.getOne().getLevel().equals(s.getTwo().getLevel()))
+                    .where(s -> !JinqStream.from(s.getOne().getAncestorList())
+                            .where(m -> !m.getAncestor().getDeleteKey().equals(""))
+                            .exists())
+                    .where(s -> !JinqStream.from(s.getTwo().getAncestorList())
+                            .where(m -> !m.getAncestor().getDeleteKey().equals(""))
+                            .exists())
+                    .where((s, t) -> s.getOne().getLevel() == 0L || t.stream(OrganizeClosureEntity.class)
+                            .where(m -> m.getGap() == 1)
+                            .where(m -> m.getDescendant().getId().equals(s.getOne().getId())
+                                    || m.getDescendant().getId().equals(s.getTwo().getId()))
+                            .select(m -> m.getAncestor().getId())
+                            .distinct()
+                            .count() == 1)
+                    .findFirst().orElse(null);
+            if (organizeGroup != null) {
+                var organizeEntity = JinqStream.from(Lists.newArrayList(organizeGroup.getOne(), organizeGroup.getTwo()))
+                        .sortedBy(s -> s.getId()).skip(1).getOnlyValue();
+                organizeEntity.setDeleteKey(Generators.timeBasedGenerator().generate().toString());
+                this.entityManager.merge(organizeEntity);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private OrganizeModel moveOrganizeNotCheck(String organizeId, String targetParentOrganizeId) {
+        var organizeEntity = this.OrganizeEntity().where(s -> s.getId().equals(organizeId))
+                .getOnlyValue();
+        var targetParentOrganize = StringUtils.isNotBlank(targetParentOrganizeId)
+                ? this.OrganizeEntity().where(s -> s.getId().equals(targetParentOrganizeId))
+                        .where(s -> !JinqStream.from(s.getAncestorList())
+                                .where(m -> !m.getAncestor().getDeleteKey().equals(""))
+                                .exists())
+                        .getOnlyValue()
+                : null;
+        var targetOrganizeEntity = new OrganizeEntity();
+        targetOrganizeEntity.setId(Generators.timeBasedGenerator().generate().toString());
+        targetOrganizeEntity.setLevel(targetParentOrganize == null ? 0 : targetParentOrganize.getLevel() + 1);
+        targetOrganizeEntity.setDeleteKey(Generators.timeBasedGenerator().generate().toString());
+        targetOrganizeEntity.setOrganizeShadow(organizeEntity.getOrganizeShadow());
+        targetOrganizeEntity.setAncestorList(Lists.newArrayList());
+        targetOrganizeEntity.setDescendantList(Lists.newArrayList());
+        this.entityManager.persist(organizeEntity);
+
+        this.organizeClosureService.createOrganizeClosure(targetOrganizeEntity.getId(), targetOrganizeEntity.getId());
+
+        if (targetParentOrganize != null) {
+            var ancestorIdList = this.OrganizeClosureEntity()
+                    .where(s -> s.getDescendant().getId().equals(targetParentOrganizeId))
+                    .select(s -> s.getAncestor().getId())
+                    .toList();
+            for (var ancestorId : ancestorIdList) {
+                this.organizeClosureService.createOrganizeClosure(ancestorId, targetOrganizeEntity.getId());
+            }
+        }
+
+        this.moveChildOrganizeList(organizeId, targetOrganizeEntity.getId());
+
+        organizeEntity.setDeleteKey(Generators.timeBasedGenerator().generate().toString());
+        this.entityManager.merge(organizeEntity);
+        targetOrganizeEntity.setDeleteKey("");
+        targetOrganizeEntity.getOrganizeShadow()
+                .setParent(targetParentOrganize != null ? targetParentOrganize.getOrganizeShadow() : null);
+        this.entityManager.merge(targetOrganizeEntity);
+
+        return this.organizeFormatter.format(targetOrganizeEntity);
     }
 
 }
