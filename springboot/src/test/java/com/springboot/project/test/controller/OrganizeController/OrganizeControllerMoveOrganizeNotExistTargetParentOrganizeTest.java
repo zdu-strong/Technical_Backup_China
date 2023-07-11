@@ -17,7 +17,7 @@ public class OrganizeControllerMoveOrganizeNotExistTargetParentOrganizeTest exte
 
     @Test
     public void test() throws URISyntaxException {
-        var url = new URIBuilder("/organize/move")
+        var url = new URIBuilder("/move_organize")
                 .setParameter("organizeId", this.childOrganizeId)
                 .setParameter("targetParentOrganizeId", this.targetParentOrganizeId)
                 .build();

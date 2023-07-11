@@ -19,7 +19,7 @@ public class OrganizeControllerMoveOrganizeTest extends BaseTest {
 
     @Test
     public void test() throws URISyntaxException {
-        var url = new URIBuilder("/organize/move").setParameter("organizeId", this.childOrganizeId)
+        var url = new URIBuilder("/move_organize").setParameter("organizeId", this.childOrganizeId)
                 .setParameter("targetParentOrganizeId", this.parentOrganizeIdOfMove)
                 .build();
         var response = this.testRestTemplate.postForEntity(url, null, OrganizeModel.class);
