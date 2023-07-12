@@ -1,0 +1,23 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="John (generated)" id="1689151314895-1">
+        <addColumn tableName="organize_entity">
+            <column name="is_deleted" type="BIT(1)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689151314895-2">
+        <addColumn tableName="organize_shadow_entity">
+            <column name="is_deleted" type="BIT(1)">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689151314895-3">
+        <dropColumn columnName="delete_key" tableName="organize_entity"/>
+    </changeSet>
+    <changeSet author="John (generated)" id="1689151314895-4">
+        <dropColumn columnName="delete_key" tableName="organize_shadow_entity"/>
+    </changeSet>
+</databaseChangeLog>
