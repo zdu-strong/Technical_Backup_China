@@ -1,5 +1,6 @@
 package com.springboot.project.service;
 
+import java.util.Date;
 import org.springframework.stereotype.Service;
 import com.fasterxml.uuid.Generators;
 import com.springboot.project.entity.*;
@@ -13,6 +14,8 @@ public class OrganizeClosureService extends BaseService {
 
         var organizeClosureEntity = new OrganizeClosureEntity();
         organizeClosureEntity.setId(Generators.timeBasedGenerator().generate().toString());
+        organizeClosureEntity.setCreateDate(new Date());
+        organizeClosureEntity.setUpdateDate(new Date());
         organizeClosureEntity.setAncestor(ancestor);
         organizeClosureEntity.setDescendant(descendant);
         organizeClosureEntity.setGap(descendant.getLevel() - ancestor.getLevel());

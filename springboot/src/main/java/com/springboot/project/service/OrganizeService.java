@@ -37,6 +37,8 @@ public class OrganizeService extends BaseService {
 
         var organizeEntity = new OrganizeEntity();
         organizeEntity.setId(Generators.timeBasedGenerator().generate().toString());
+        organizeEntity.setCreateDate(new Date());
+        organizeEntity.setUpdateDate(new Date());
         organizeEntity.setLevel(parentOrganize == null ? 0 : parentOrganize.getLevel() + 1);
         organizeEntity.setIsDeleted(true);
         organizeEntity.setOrganizeShadow(organizeShadow);
@@ -88,6 +90,8 @@ public class OrganizeService extends BaseService {
 
             var childTargetOrganizeEntity = new OrganizeEntity();
             childTargetOrganizeEntity.setId(Generators.timeBasedGenerator().generate().toString());
+            childTargetOrganizeEntity.setCreateDate(new Date());
+            childTargetOrganizeEntity.setUpdateDate(new Date());
             childTargetOrganizeEntity.setLevel(targetParentOrganize.getLevel() + 1);
             childTargetOrganizeEntity.setIsDeleted(false);
             childTargetOrganizeEntity.setOrganizeShadow(sourceChildOrganizeEntity.getOrganizeShadow());
@@ -189,6 +193,8 @@ public class OrganizeService extends BaseService {
                 if (organizeShadowEntity != null) {
                     var organizeEntity = new OrganizeEntity();
                     organizeEntity.setId(Generators.timeBasedGenerator().generate().toString());
+                    organizeEntity.setCreateDate(new Date());
+                    organizeEntity.setUpdateDate(new Date());
                     organizeEntity.setLevel(parentOrganize.getLevel() + 1);
                     organizeEntity.setIsDeleted(true);
                     organizeEntity.setOrganizeShadow(organizeShadowEntity);
@@ -274,6 +280,8 @@ public class OrganizeService extends BaseService {
                 : null;
         var targetOrganizeEntity = new OrganizeEntity();
         targetOrganizeEntity.setId(Generators.timeBasedGenerator().generate().toString());
+        targetOrganizeEntity.setCreateDate(new Date());
+        targetOrganizeEntity.setUpdateDate(new Date());
         targetOrganizeEntity.setLevel(targetParentOrganize == null ? 0 : targetParentOrganize.getLevel() + 1);
         targetOrganizeEntity.setIsDeleted(true);
         targetOrganizeEntity.setOrganizeShadow(organizeEntity.getOrganizeShadow());

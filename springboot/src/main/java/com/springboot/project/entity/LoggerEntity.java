@@ -23,6 +23,9 @@ public class LoggerEntity {
     private Date createDate;
 
     @Column(nullable = false)
+    private Date updateDate;
+
+    @Column(nullable = false)
     private String level;
 
     @Column(nullable = false, length = 1024 * 1024)

@@ -1,5 +1,6 @@
 package com.springboot.project.entity;
 
+import java.util.Date;
 import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -20,6 +21,12 @@ public class OrganizeEntity {
 
     @Id
     private String id;
+
+    @Column(nullable = false)
+    private Date createDate;
+
+    @Column(nullable = false)
+    private Date updateDate;
 
     /**
      * init level is 0
