@@ -57,7 +57,7 @@ public class OrganizeService extends BaseService {
         }
 
         organizeEntity.setIsDeleted(false);
-        organizeEntity.getOrganizeShadow().setDeleteKey("");
+        organizeEntity.getOrganizeShadow().setIsDeleted(false);
         this.entityManager.merge(organizeEntity);
 
         return this.organizeFormatter.format(organizeEntity);
@@ -116,7 +116,7 @@ public class OrganizeService extends BaseService {
                 .where(s -> !JinqStream.from(s.getAncestorList()).where(m -> m.getAncestor().getIsDeleted())
                         .exists())
                 .getOnlyValue();
-        organizeEntity.getOrganizeShadow().setDeleteKey(Generators.timeBasedGenerator().generate().toString());
+        organizeEntity.getOrganizeShadow().setIsDeleted(true);
         organizeEntity.getOrganizeShadow().setUpdateDate(new Date());
         organizeEntity.setIsDeleted(true);
         this.entityManager.merge(organizeEntity);
@@ -152,7 +152,7 @@ public class OrganizeService extends BaseService {
                     .where(s -> !JinqStream.from(s.getAncestorList())
                             .where(m -> m.getAncestor().getIsDeleted())
                             .exists())
-                    .where(s -> !s.getOrganizeShadow().getDeleteKey().equals(""))
+                    .where(s -> s.getOrganizeShadow().getIsDeleted())
                     .findFirst()
                     .orElse(null);
             if (organizeEntity != null) {
@@ -170,7 +170,7 @@ public class OrganizeService extends BaseService {
                             .exists())
                     .where((s) -> JinqStream.from(s.getDescendantList())
                             .where(m -> !m.getDescendant().getIsDeleted()).count() < JinqStream
-                                    .from(s.getOrganizeShadow().getChildList()).where(m -> m.getDeleteKey().equals(""))
+                                    .from(s.getOrganizeShadow().getChildList()).where(m -> !m.getIsDeleted())
                                     .count())
                     .findFirst()
                     .orElse(null);

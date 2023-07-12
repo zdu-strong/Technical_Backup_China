@@ -26,7 +26,7 @@ public class OrganizeShadowEntity {
     private String name;
 
     @Column(nullable = false)
-    private String deleteKey;
+    private Boolean isDeleted;
 
     @Column(nullable = false)
     private Date createDate;

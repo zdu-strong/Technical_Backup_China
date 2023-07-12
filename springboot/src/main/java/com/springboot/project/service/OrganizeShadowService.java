@@ -22,7 +22,7 @@ public class OrganizeShadowService extends BaseService {
         var organizeShadowEntity = new OrganizeShadowEntity();
         organizeShadowEntity.setId(Generators.timeBasedGenerator().generate().toString());
         organizeShadowEntity.setName(organizeModel.getName());
-        organizeShadowEntity.setDeleteKey(Generators.timeBasedGenerator().generate().toString());
+        organizeShadowEntity.setIsDeleted(true);
         organizeShadowEntity.setCreateDate(new Date());
         organizeShadowEntity.setUpdateDate(new Date());
         organizeShadowEntity.setParent(parentOrganizeShadow);
