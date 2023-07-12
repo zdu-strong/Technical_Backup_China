@@ -225,7 +225,8 @@ public class OrganizeService extends BaseService {
                     .group((s) -> s.getOrganizeShadow().getId(), (s, t) -> t.count())
                     .where(s -> s.getTwo() > 1)
                     .select(s -> s.getOne())
-                    .findFirst().orElse(null);
+                    .findFirst()
+                    .orElse(null);
             if (StringUtils.isNotBlank(organizeShadowId)) {
                 var organizeList = this.OrganizeEntity()
                         .where(s -> !JinqStream.from(s.getAncestorList())
