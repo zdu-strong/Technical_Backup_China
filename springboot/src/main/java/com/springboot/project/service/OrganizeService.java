@@ -164,27 +164,54 @@ public class OrganizeService extends BaseService {
 
         // 2. OrganizeShadow has sub-organizations, and OrganizeEntity also has
         {
-            var organizeGroup = this.OrganizeEntity().join((s, t) -> t.stream(OrganizeEntity.class))
-                    .where(s -> !JinqStream.from(s.getTwo().getAncestorList())
+            var parentOrganize = this.OrganizeEntity()
+                    .where(s -> !JinqStream.from(s.getAncestorList())
                             .where(m -> !m.getAncestor().getDeleteKey().equals(""))
                             .exists())
-                    .where(s -> s.getOne().getDeleteKey().equals(""))
-                    .where(s -> JinqStream.from(s.getTwo().getOrganizeShadow().getChildList())
-                            .where(m -> m.getDeleteKey().equals(""))
-                            .where(m -> m.getId().equals(s.getOne().getOrganizeShadow().getId()))
-                            .exists())
-                    .where(s -> !JinqStream.from(s.getTwo().getDescendantList())
-                            .where(m -> m.getGap() == 1)
-                            .where(m -> m.getDescendant().getDeleteKey().equals(""))
-                            .where(m -> m.getDescendant().getOrganizeShadow().getId()
-                                    .equals(s.getOne().getOrganizeShadow().getId()))
-                            .exists())
+                    .where((s) -> JinqStream.from(s.getDescendantList())
+                            .where(m -> m.getDescendant().getDeleteKey().equals("")).count() < JinqStream
+                                    .from(s.getOrganizeShadow().getChildList()).where(m -> m.getDeleteKey().equals(""))
+                                    .count())
                     .findFirst()
                     .orElse(null);
-            if (organizeGroup != null) {
-                var childOrganize = organizeGroup.getOne();
-                var parentOrganize = organizeGroup.getTwo();
-                this.moveOrganizeNotCheck(childOrganize.getId(), parentOrganize.getId());
+            if (parentOrganize != null) {
+                var parentOrganizeId = parentOrganize.getId();
+                var parentOrganizeShadowId = parentOrganize.getOrganizeShadow().getId();
+                var organizeShadowEntity = this.OrganizeShadowEntity()
+                        .where(s -> s.getParent().getId().equals(parentOrganizeShadowId))
+                        .where((s, t) -> !t.stream(OrganizeClosureEntity.class)
+                                .where(m -> m.getAncestor().getId().equals(parentOrganizeId))
+                                .where(m -> !m.getDescendant().getDeleteKey().equals(""))
+                                .where(m -> m.getDescendant().getOrganizeShadow().getId().equals(s.getId()))
+                                .exists())
+                        .findFirst()
+                        .orElse(null);
+                if (organizeShadowEntity != null) {
+                    var organizeEntity = new OrganizeEntity();
+                    organizeEntity.setId(Generators.timeBasedGenerator().generate().toString());
+                    organizeEntity.setLevel(parentOrganize.getLevel() + 1);
+                    organizeEntity.setDeleteKey(Generators.timeBasedGenerator().generate().toString());
+                    organizeEntity.setOrganizeShadow(organizeShadowEntity);
+                    organizeEntity.setAncestorList(Lists.newArrayList());
+                    organizeEntity.setDescendantList(Lists.newArrayList());
+                    this.entityManager.persist(organizeEntity);
+
+                    this.organizeClosureService.createOrganizeClosure(organizeEntity.getId(), organizeEntity.getId());
+
+                    if (parentOrganize != null) {
+                        var ancestorIdList = this.OrganizeClosureEntity()
+                                .where(s -> s.getDescendant().getId().equals(parentOrganizeId))
+                                .select(s -> s.getAncestor().getId())
+                                .toList();
+                        for (var ancestorId : ancestorIdList) {
+                            this.organizeClosureService.createOrganizeClosure(ancestorId, organizeEntity.getId());
+                        }
+                    }
+
+                    organizeEntity.setDeleteKey("");
+                    this.entityManager.merge(organizeEntity);
+                }
+
                 return true;
             }
         }
