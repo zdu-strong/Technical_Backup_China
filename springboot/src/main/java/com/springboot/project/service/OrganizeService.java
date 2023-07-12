@@ -252,7 +252,7 @@ public class OrganizeService extends BaseService {
                                     return false;
                                 } else {
                                     return organizeModel.getParentOrganize().getId()
-                                            .equals(s.getOrganizeShadow().getId());
+                                            .equals(s.getOrganizeShadow().getParent().getId());
                                 }
                             })
                             .findFirst()
