@@ -27,7 +27,7 @@ public class OrganizeFormatter extends BaseService {
         var childOrganizeList = this.OrganizeClosureEntity()
                 .where(s -> s.getAncestor().getId().equals(id))
                 .where(s -> s.getGap() == 1)
-                .where(s -> s.getDescendant().getDeleteKey().equals(""))
+                .where(s -> !s.getDescendant().getIsDeleted())
                 .map(s -> new OrganizeModel().setId(s.getDescendant().getId()))
                 .toList();
         organizeModel.setChildOrganizeList(childOrganizeList);

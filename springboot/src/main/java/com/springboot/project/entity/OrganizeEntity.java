@@ -1,7 +1,6 @@
 package com.springboot.project.entity;
 
 import java.util.List;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,7 +28,7 @@ public class OrganizeEntity {
     private Long level;
 
     @Column(nullable = false)
-    private String deleteKey;
+    private Boolean isDeleted;
 
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, optional = false)
     private OrganizeShadowEntity organizeShadow;
