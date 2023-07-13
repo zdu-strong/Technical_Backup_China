@@ -194,12 +194,18 @@ All data can be obtained and set to the model, support any structure
 
     public UserModel format(UserEntity userEntity) {
         var userId = userEntity.getId();
-        var email = this.UserEmailEntity().where(s -> s.getUser().getId().equals(userId))
-                .where(s -> s.getDeleteKey().equals("")).sortedDescendingBy(s -> s.getId()).sortedDescendingBy(s -> s.getUpdateDate()).findFirst().get();
+        var email = this.UserEmailEntity()
+                .where(s -> s.getUser().getId().equals(userId))
+                .where(s -> !s.getIsDeleted())
+                .sortedDescendingBy(s -> s.getId())
+                .sortedDescendingBy(s -> s.getUpdateDate())
+                .select(s -> s.getEmail())
+                .findFirst()
+                .orElse("");
         var userModel = new UserModel().setId(userEntity.getId()).setUsername(userEntity.getUsername()).setEmail(email);
         return userModel;
     }
-    
+
 ## Notes - Params date
 
 javascript:
