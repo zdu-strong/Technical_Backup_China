@@ -159,24 +159,30 @@ public class OrganizeUtil extends BaseService {
      * 
      * @return
      */
-    public Boolean fixConcurrencyMoveOrganize() {
+    public Boolean fixConcurrencyMoveOrganizeDueToOrganizeIsDeletedAndOrganizeEntityIsAlsoDeleted() {
         // 1. OrganizeShadow is deleted, and OrganizeEntity is also deleted
-        {
-            var organizeEntity = this.OrganizeEntity()
-                    .where(s -> !JinqStream.from(s.getAncestorList())
-                            .where(m -> m.getAncestor().getIsDeleted())
-                            .exists())
-                    .where(s -> s.getOrganizeShadow().getIsDeleted())
-                    .findFirst()
-                    .orElse(null);
-            if (organizeEntity != null) {
-                organizeEntity.setIsDeleted(true);
-                organizeEntity.setUpdateDate(new Date());
-                this.entityManager.merge(organizeEntity);
-                return true;
-            }
+        var organizeEntity = this.OrganizeEntity()
+                .where(s -> !JinqStream.from(s.getAncestorList())
+                        .where(m -> m.getAncestor().getIsDeleted())
+                        .exists())
+                .where(s -> s.getOrganizeShadow().getIsDeleted())
+                .findFirst()
+                .orElse(null);
+        if (organizeEntity != null) {
+            organizeEntity.setIsDeleted(true);
+            organizeEntity.setUpdateDate(new Date());
+            this.entityManager.merge(organizeEntity);
+            return true;
         }
+        return false;
+    }
 
+    /**
+     * has Next data need fix
+     * 
+     * @return
+     */
+    public FixConcurrencyMoveOrganizeModel fixConcurrencyMoveOrganizeDueToOrganizeHasSubOrganizationsAndOrganizeEntityAlsoHasToStart() {
         // 2. OrganizeShadow has sub-organizations, and OrganizeEntity also has
         {
             var parentOrganize = this.OrganizeEntity()
@@ -219,68 +225,81 @@ public class OrganizeUtil extends BaseService {
 
                     this.organizeClosureService.createOrganizeClosure(organizeEntity.getId(), organizeEntity.getId());
 
-                    if (parentOrganize != null) {
-                        var ancestorIdList = this.OrganizeClosureEntity()
-                                .where(s -> s.getDescendant().getId().equals(parentOrganizeId))
-                                .select(s -> s.getAncestor().getId())
-                                .toList();
-                        for (var ancestorId : ancestorIdList) {
-                            this.organizeClosureService.createOrganizeClosure(ancestorId, organizeEntity.getId());
-                        }
-                    }
+                    return new FixConcurrencyMoveOrganizeModel().setHasNext(true)
+                            .setParentOrganizeId(parentOrganizeId)
+                            .setOrganizeId(organizeEntity.getId());
 
-                    organizeEntity.setIsDeleted(false);
-                    organizeEntity.setUpdateDate(new Date());
-                    this.entityManager.merge(organizeEntity);
                 }
 
-                return true;
+                return new FixConcurrencyMoveOrganizeModel().setHasNext(true);
             }
         }
 
+        return new FixConcurrencyMoveOrganizeModel().setHasNext(false);
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public void fixConcurrencyMoveOrganizeDueToOrganizeHasSubOrganizationsAndOrganizeEntityAlsoHasToEnd(
+            String organizeId) {
+
+        var organizeEntity = this.OrganizeEntity()
+                .where(s -> s.getId().equals(organizeId))
+                .getOnlyValue();
+        organizeEntity.setIsDeleted(false);
+        organizeEntity.setUpdateDate(new Date());
+        this.entityManager.merge(organizeEntity);
+    }
+
+    /**
+     * has Next data need fix
+     * 
+     * @return
+     */
+    public Boolean fixConcurrencyMoveOrganizeDueToOrganizeShadowShouldOnlyHaveOneAliveOrganizeEntity() {
         // 3. An OrganizeShadow should only have one alive OrganizeEntity
-        {
-            var organizeShadowId = this.OrganizeEntity()
+        var organizeShadowId = this.OrganizeEntity()
+                .where(s -> !JinqStream.from(s.getAncestorList())
+                        .where(m -> m.getAncestor().getIsDeleted())
+                        .exists())
+                .group((s) -> s.getOrganizeShadow().getId(), (s, t) -> t.count())
+                .where(s -> s.getTwo() > 1)
+                .select(s -> s.getOne())
+                .findFirst()
+                .orElse(null);
+        if (StringUtils.isNotBlank(organizeShadowId)) {
+            var organizeList = this.OrganizeEntity()
                     .where(s -> !JinqStream.from(s.getAncestorList())
                             .where(m -> m.getAncestor().getIsDeleted())
                             .exists())
-                    .group((s) -> s.getOrganizeShadow().getId(), (s, t) -> t.count())
-                    .where(s -> s.getTwo() > 1)
-                    .select(s -> s.getOne())
-                    .findFirst()
-                    .orElse(null);
-            if (StringUtils.isNotBlank(organizeShadowId)) {
-                var organizeList = this.OrganizeEntity()
-                        .where(s -> !JinqStream.from(s.getAncestorList())
-                                .where(m -> m.getAncestor().getIsDeleted())
-                                .exists())
-                        .where(s -> s.getOrganizeShadow().getId().equals(organizeShadowId))
-                        .limit(2)
-                        .toList();
-                if (organizeList.size() == 2) {
-                    var organizeEntity = JinqStream.from(organizeList)
-                            .sortedDescendingBy(s -> s.getId())
-                            .sortedDescendingBy(s -> s.getCreateDate())
-                            .sortedBy(s -> {
-                                var organizeModel = this.organizeFormatter.format(s);
-                                if (s.getOrganizeShadow().getParent() == null) {
-                                    return organizeModel.getParentOrganize() == null;
-                                } else if (organizeModel.getParentOrganize() == null) {
-                                    return false;
-                                } else {
-                                    return organizeModel.getParentOrganize().getId()
-                                            .equals(s.getOrganizeShadow().getParent().getId());
-                                }
-                            })
-                            .findFirst()
-                            .get();
-                    organizeEntity.setIsDeleted(true);
-                    organizeEntity.setUpdateDate(new Date());
-                    this.entityManager.merge(organizeEntity);
-                }
-
-                return true;
+                    .where(s -> s.getOrganizeShadow().getId().equals(organizeShadowId))
+                    .limit(2)
+                    .toList();
+            if (organizeList.size() == 2) {
+                var organizeEntity = JinqStream.from(organizeList)
+                        .sortedDescendingBy(s -> s.getId())
+                        .sortedDescendingBy(s -> s.getCreateDate())
+                        .sortedBy(s -> {
+                            var organizeModel = this.organizeFormatter.format(s);
+                            if (s.getOrganizeShadow().getParent() == null) {
+                                return organizeModel.getParentOrganize() == null;
+                            } else if (organizeModel.getParentOrganize() == null) {
+                                return false;
+                            } else {
+                                return organizeModel.getParentOrganize().getId()
+                                        .equals(s.getOrganizeShadow().getParent().getId());
+                            }
+                        })
+                        .findFirst()
+                        .get();
+                organizeEntity.setIsDeleted(true);
+                organizeEntity.setUpdateDate(new Date());
+                this.entityManager.merge(organizeEntity);
             }
+
+            return true;
         }
 
         return false;
