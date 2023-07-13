@@ -24,18 +24,6 @@ public class OrganizeController extends BaseController {
         return ResponseEntity.ok(organize);
     }
 
-    @PostMapping("/move_organize")
-    public ResponseEntity<?> moveOrganize(
-            @RequestParam String organizeId,
-            @RequestParam String targetParentOrganizeId) {
-
-        this.organizeService.checkExistOrganize(organizeId);
-        this.organizeService.checkExistOrganize(targetParentOrganizeId);
-
-        var organizeModel = this.organizeService.moveOrganize(organizeId, targetParentOrganizeId);
-        return ResponseEntity.ok(organizeModel);
-    }
-
     @DeleteMapping("/delete_organize")
     public ResponseEntity<?> deleteOrganize(@RequestParam String id) {
 
@@ -51,6 +39,18 @@ public class OrganizeController extends BaseController {
         this.organizeService.checkExistOrganize(id);
 
         var organizeModel = this.organizeService.getOrganize(id);
+        return ResponseEntity.ok(organizeModel);
+    }
+
+    @PostMapping("/move_organize")
+    public ResponseEntity<?> moveOrganize(
+            @RequestParam String organizeId,
+            @RequestParam String targetParentOrganizeId) {
+
+        this.organizeService.checkExistOrganize(organizeId);
+        this.organizeService.checkExistOrganize(targetParentOrganizeId);
+
+        var organizeModel = this.organizeService.moveOrganize(organizeId, targetParentOrganizeId);
         return ResponseEntity.ok(organizeModel);
     }
 }

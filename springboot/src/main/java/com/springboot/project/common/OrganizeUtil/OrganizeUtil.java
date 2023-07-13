@@ -70,6 +70,36 @@ public class OrganizeUtil extends BaseService {
         return this.organizeFormatter.format(organizeEntity);
     }
 
+    public void deleteOrganize(String id) {
+        var organizeEntity = this.OrganizeEntity().where(s -> s.getId().equals(id))
+                .where(s -> !JinqStream.from(s.getAncestorList()).where(m -> m.getAncestor().getIsDeleted())
+                        .exists())
+                .getOnlyValue();
+        organizeEntity.getOrganizeShadow().setIsDeleted(true);
+        organizeEntity.getOrganizeShadow().setUpdateDate(new Date());
+        organizeEntity.setIsDeleted(true);
+        organizeEntity.setUpdateDate(new Date());
+        this.entityManager.merge(organizeEntity);
+    }
+
+    public OrganizeModel getOrganize(String id) {
+        var organizeEntity = this.OrganizeEntity().where(s -> s.getId().equals(id))
+                .where(s -> !JinqStream.from(s.getAncestorList()).where(m -> m.getAncestor().getIsDeleted())
+                        .exists())
+                .getOnlyValue();
+        return this.organizeFormatter.format(organizeEntity);
+    }
+
+    public void checkExistOrganize(String id) {
+        var isPresent = this.OrganizeEntity().where(s -> s.getId().equals(id))
+                .where(s -> !JinqStream.from(s.getAncestorList()).where(m -> m.getAncestor().getIsDeleted())
+                        .exists())
+                .exists();
+        if (!isPresent) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Organize does not exist");
+        }
+    }
+
     public OrganizeModel moveOrganize(String organizeId, String targetParentOrganizeId) {
         this.checkExistOrganize(organizeId);
         if (StringUtils.isNotBlank(targetParentOrganizeId)) {
@@ -118,36 +148,6 @@ public class OrganizeUtil extends BaseService {
             this.moveChildOrganizeList(sourceChildOrganizeId, childTargetOrganizeEntity.getId());
         }
 
-    }
-
-    public void deleteOrganize(String id) {
-        var organizeEntity = this.OrganizeEntity().where(s -> s.getId().equals(id))
-                .where(s -> !JinqStream.from(s.getAncestorList()).where(m -> m.getAncestor().getIsDeleted())
-                        .exists())
-                .getOnlyValue();
-        organizeEntity.getOrganizeShadow().setIsDeleted(true);
-        organizeEntity.getOrganizeShadow().setUpdateDate(new Date());
-        organizeEntity.setIsDeleted(true);
-        organizeEntity.setUpdateDate(new Date());
-        this.entityManager.merge(organizeEntity);
-    }
-
-    public OrganizeModel getOrganize(String id) {
-        var organizeEntity = this.OrganizeEntity().where(s -> s.getId().equals(id))
-                .where(s -> !JinqStream.from(s.getAncestorList()).where(m -> m.getAncestor().getIsDeleted())
-                        .exists())
-                .getOnlyValue();
-        return this.organizeFormatter.format(organizeEntity);
-    }
-
-    public void checkExistOrganize(String id) {
-        var isPresent = this.OrganizeEntity().where(s -> s.getId().equals(id))
-                .where(s -> !JinqStream.from(s.getAncestorList()).where(m -> m.getAncestor().getIsDeleted())
-                        .exists())
-                .exists();
-        if (!isPresent) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Organize does not exist");
-        }
     }
 
     /**
