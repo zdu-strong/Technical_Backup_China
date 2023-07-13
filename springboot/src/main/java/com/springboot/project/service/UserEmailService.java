@@ -12,7 +12,7 @@ import com.springboot.project.entity.UserEmailEntity;
 public class UserEmailService extends BaseService {
 
     public void createUserEmailWithVerificationCode(String email, String userId, String verificationCode) {
-        var userEntity = this.UserEntity().where(s -> s.getDeleteKey().equals("")).where(s -> s.getId().equals(userId))
+        var userEntity = this.UserEntity().where(s -> !s.getIsDeleted()).where(s -> s.getId().equals(userId))
                 .getOnlyValue();
         UserEmailEntity userEmailEntity = new UserEmailEntity();
         userEmailEntity.setId(Generators.timeBasedGenerator().generate().toString());
@@ -20,6 +20,7 @@ public class UserEmailService extends BaseService {
         userEmailEntity.setUser(userEntity);
         userEmailEntity.setCreateDate(new Date());
         userEmailEntity.setUpdateDate(new Date());
+        userEmailEntity.setIsDeleted(true);
         userEmailEntity.setDeleteKey(Generators.timeBasedGenerator().generate().toString());
         userEmailEntity.setVerificationCode(verificationCode);
 
@@ -27,14 +28,19 @@ public class UserEmailService extends BaseService {
     }
 
     public void updateUserEmailWithVerificationCodePassed(String email, String userId, String verificationCode) {
-        var userEmailEntity = this.UserEmailEntity().where(s -> s.getUser().getId().equals(userId))
-                .where(s -> s.getUser().getDeleteKey().equals("")).where(s -> s.getEmail().equals(email))
-                .where(s -> !s.getDeleteKey().equals("")).where(s -> s.getVerificationCode().equals(verificationCode))
+        var userEmailEntity = this.UserEmailEntity()
+                .where(s -> s.getUser().getId().equals(userId))
+                .where(s -> !s.getUser().getIsDeleted())
+                .where(s -> s.getEmail().equals(email))
+                .where(s -> s.getIsDeleted())
+                .where(s -> s.getVerificationCode().equals(verificationCode))
                 .sortedDescendingBy(s -> s.getId())
                 .sortedDescendingBy(s -> s.getCreateDate())
-                .findFirst().get();
+                .findFirst()
+                .get();
         userEmailEntity.setCreateDate(new Date());
         userEmailEntity.setUpdateDate(new Date());
+        userEmailEntity.setIsDeleted(false);
         userEmailEntity.setDeleteKey("");
         userEmailEntity.setVerificationCode(null);
 
@@ -42,8 +48,10 @@ public class UserEmailService extends BaseService {
     }
 
     public void checkEmailIsNotUsed(String email) {
-        var isPresent = this.UserEmailEntity().where(s -> s.getDeleteKey().equals(""))
-                .where(s -> s.getEmail().equals(email)).exists();
+        var isPresent = this.UserEmailEntity()
+                .where(s -> !s.getIsDeleted())
+                .where(s -> s.getEmail().equals(email))
+                .exists();
         if (isPresent) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "E-mail " + email + " has bound account");
         }
@@ -55,9 +63,12 @@ public class UserEmailService extends BaseService {
                     "The verification code of email " + email + " cannot be empty");
         }
 
-        var stream = this.UserEmailEntity().where(s -> s.getUser().getId().equals(userId))
-                .where(s -> s.getUser().getDeleteKey().equals("")).where(s -> s.getEmail().equals(email))
-                .where(s -> !s.getDeleteKey().equals("")).where(s -> s.getVerificationCode().equals(verificationCode));
+        var stream = this.UserEmailEntity()
+                .where(s -> s.getUser().getId().equals(userId))
+                .where(s -> !s.getUser().getIsDeleted())
+                .where(s -> s.getEmail().equals(email))
+                .where(s -> s.getIsDeleted())
+                .where(s -> s.getVerificationCode().equals(verificationCode));
         if (!stream.exists()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "The verification code of email " + email + " is wrong");

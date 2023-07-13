@@ -30,7 +30,7 @@ public class UserEntity {
     private Date updateDate;
 
     @Column(nullable = false)
-    private String deleteKey;
+    private Boolean isDeleted;
 
     @Column(nullable = true, length = 1024 * 1024)
     private String publicKeyOfRSA;

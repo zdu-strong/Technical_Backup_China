@@ -19,9 +19,9 @@ public class UserFormatter extends BaseService {
         var userId = userEntity.getId();
         var userModel = this.format(userEntity);
         userModel.setPrivateKeyOfRSA(userEntity.getPrivateKeyOfRSA());
-        var userEmailList = this.UserEmailEntity().where(s -> s.getUser().getId().equals(userId))
-                .where(s -> s.getDeleteKey().equals(""))
-                .where(s -> s.getDeleteKey().equals(""))
+        var userEmailList = this.UserEmailEntity()
+                .where(s -> s.getUser().getId().equals(userId))
+                .where(s -> !s.getIsDeleted())
                 .map(s -> this.userEmailFormatter.format(s))
                 .toList();
         userModel.setUserEmailList(userEmailList);

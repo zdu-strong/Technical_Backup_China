@@ -33,7 +33,7 @@ public class UserService extends BaseService {
         user.setReverseFridendList(Lists.newArrayList());
         user.setTokenList(Lists.newArrayList());
         user.setHasRegistered(false);
-        user.setDeleteKey("");
+        user.setIsDeleted(false);
         try {
             var keyPairGenerator = KeyPairGenerator.getInstance("RSA");
             keyPairGenerator.initialize(2048);
@@ -52,13 +52,13 @@ public class UserService extends BaseService {
 
     public void signUp(UserModel userModel) {
         var userId = userModel.getId();
-        var userEntity = this.UserEntity().where(s -> s.getId().equals(userId)).where(s -> s.getDeleteKey().equals(""))
+        var userEntity = this.UserEntity().where(s -> s.getId().equals(userId)).where(s -> !s.getIsDeleted())
                 .where(s -> !s.getHasRegistered())
                 .getOnlyValue();
         userEntity.setCreateDate(new Date());
         userEntity.setUpdateDate(new Date());
         userEntity.setUsername(userModel.getUsername());
-        userEntity.setDeleteKey("");
+        userEntity.setIsDeleted(false);
         userEntity.setPrivateKeyOfRSA(userModel.getPrivateKeyOfRSA());
         userEntity.setPublicKeyOfRSA(userModel.getPublicKeyOfRSA());
         userEntity.setHasRegistered(true);
@@ -71,15 +71,18 @@ public class UserService extends BaseService {
     }
 
     public UserModel getAccountForSignIn(String userIdOrEmail) {
-        var user = this.UserEntity().where(s -> s.getId().equals(userIdOrEmail) || JinqStream.from(s.getUserEmailList())
-                .where(m -> m.getDeleteKey().equals("")).where(m -> m.getEmail().equals(userIdOrEmail)).exists())
-                .where(s -> s.getDeleteKey().equals(""))
+        var user = this.UserEntity()
+                .where(s -> !s.getIsDeleted())
+                .where(s -> s.getId().equals(userIdOrEmail) || JinqStream.from(s.getUserEmailList())
+                        .where(m -> !m.getIsDeleted())
+                        .where(m -> m.getEmail().equals(userIdOrEmail))
+                        .exists())
                 .getOnlyValue();
         return this.userFormatter.formatWithMoreInformation(user);
     }
 
     public UserModel getUserById(String userId) {
-        var user = this.UserEntity().where(s -> s.getId().equals(userId)).where(s -> s.getDeleteKey().equals(""))
+        var user = this.UserEntity().where(s -> s.getId().equals(userId)).where(s -> !s.getIsDeleted())
                 .where(s -> s.getHasRegistered())
                 .getOnlyValue();
         return this.userFormatter.format(user);
@@ -88,9 +91,12 @@ public class UserService extends BaseService {
     public void checkExistAccount(String userIdOrEmail) {
         var userId = userIdOrEmail;
         var email = userIdOrEmail;
-        var stream = this.UserEntity().where(s -> s.getDeleteKey().equals("")).where(s -> s.getHasRegistered());
-        stream = stream.where(s -> s.getId().equals(userId) || JinqStream.from(s.getUserEmailList())
-                .where(m -> m.getDeleteKey().equals("")).where(m -> m.getEmail().equals(email)).exists());
+        var stream = this.UserEntity()
+                .where(s -> !s.getIsDeleted()).where(s -> s.getHasRegistered())
+                .where(s -> s.getId().equals(userId) || JinqStream.from(s.getUserEmailList())
+                        .where(m -> !m.getIsDeleted())
+                        .where(m -> m.getEmail().equals(email))
+                        .exists());
         if (!stream.exists()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Account does not exist");
         }

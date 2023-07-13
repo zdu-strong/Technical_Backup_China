@@ -32,6 +32,9 @@ public class UserEmailEntity {
     private Date updateDate;
 
     @Column(nullable = false)
+    private Boolean isDeleted;
+
+    @Column(nullable = false)
     private String deleteKey;
 
     @Column(nullable = true)
