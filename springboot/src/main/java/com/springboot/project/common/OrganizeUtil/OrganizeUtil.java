@@ -24,7 +24,7 @@ public class OrganizeUtil extends BaseService {
     @Autowired
     private OrganizeClosureService organizeClosureService;
 
-    public OrganizeModel createOrganize(OrganizeModel organizeModel) {
+    public OrganizeModel createOrganizeToStart(OrganizeModel organizeModel) {
         var organizeShadowId = this.organizeShadowService.createOrganizeShadow(organizeModel);
         var organizeShadow = this.OrganizeShadowEntity().where(s -> s.getId().equals(organizeShadowId)).getOnlyValue();
 
@@ -51,15 +51,13 @@ public class OrganizeUtil extends BaseService {
 
         this.organizeClosureService.createOrganizeClosure(organizeEntity.getId(), organizeEntity.getId());
 
-        if (parentOrganize != null) {
-            var ancestorIdList = this.OrganizeClosureEntity()
-                    .where(s -> s.getDescendant().getId().equals(parentOrganizeId))
-                    .select(s -> s.getAncestor().getId())
-                    .toList();
-            for (var ancestorId : ancestorIdList) {
-                this.organizeClosureService.createOrganizeClosure(ancestorId, organizeEntity.getId());
-            }
-        }
+        return this.organizeFormatter.format(organizeEntity);
+    }
+
+    public OrganizeModel createOrganizeToEnd(String organizeId) {
+        var organizeEntity = this.OrganizeEntity()
+                .where(s -> s.getId().equals(organizeId))
+                .getOnlyValue();
 
         organizeEntity.setIsDeleted(false);
         organizeEntity.setUpdateDate(new Date());

@@ -4,6 +4,7 @@ import java.util.Date;
 import org.springframework.stereotype.Service;
 import com.fasterxml.uuid.Generators;
 import com.springboot.project.entity.*;
+import com.springboot.project.model.PaginationModel;
 
 @Service
 public class OrganizeClosureService extends BaseService {
@@ -20,6 +21,13 @@ public class OrganizeClosureService extends BaseService {
         organizeClosureEntity.setDescendant(descendant);
         organizeClosureEntity.setGap(descendant.getLevel() - ancestor.getLevel());
         this.entityManager.persist(organizeClosureEntity);
+    }
+
+    public PaginationModel<String> getAncestorOfOrganizeByPagination(Long pageNum, Long pageSize, String organizeId) {
+        var steam = this.OrganizeClosureEntity()
+                .where(s -> s.getDescendant().getId().equals(organizeId))
+                .sortedBy(s -> s.getAncestor().getLevel());
+        return new PaginationModel<>(pageNum, pageSize, steam, (s) -> s.getAncestor().getId());
     }
 
 }
