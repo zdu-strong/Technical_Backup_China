@@ -6,17 +6,20 @@ import com.springboot.project.model.OrganizeModel;
 import com.springboot.project.common.OrganizeUtil.OrganizeUtil;
 
 @Component
-public class OrganizeService extends BaseService {
+public class OrganizeService {
 
     @Autowired
     private OrganizeUtil organizeUtil;
 
     public OrganizeModel createOrganize(OrganizeModel organizeModel) {
-        return this.organizeUtil.createOrganize(organizeModel);
+        var organize = this.organizeUtil.createOrganize(organizeModel);
+        this.organizeUtil.fixConcurrencyMoveOrganize();
+        return organize;
     }
 
     public void deleteOrganize(String id) {
         this.organizeUtil.deleteOrganize(id);
+        this.organizeUtil.fixConcurrencyMoveOrganize();
     }
 
     public OrganizeModel getOrganize(String id) {
@@ -28,7 +31,9 @@ public class OrganizeService extends BaseService {
     }
 
     public OrganizeModel moveOrganize(String organizeId, String targetParentOrganizeId) {
-        return this.organizeUtil.moveOrganize(organizeId, targetParentOrganizeId);
+        var organize = this.organizeUtil.moveOrganize(organizeId, targetParentOrganizeId);
+        this.organizeUtil.fixConcurrencyMoveOrganize();
+        return organize;
     }
 
 }

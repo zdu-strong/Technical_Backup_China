@@ -71,8 +71,10 @@ public class OrganizeUtil extends BaseService {
     }
 
     public void deleteOrganize(String id) {
-        var organizeEntity = this.OrganizeEntity().where(s -> s.getId().equals(id))
-                .where(s -> !JinqStream.from(s.getAncestorList()).where(m -> m.getAncestor().getIsDeleted())
+        var organizeEntity = this.OrganizeEntity()
+                .where(s -> s.getId().equals(id))
+                .where(s -> !JinqStream.from(s.getAncestorList())
+                        .where(m -> m.getAncestor().getIsDeleted())
                         .exists())
                 .getOnlyValue();
         organizeEntity.getOrganizeShadow().setIsDeleted(true);
@@ -83,16 +85,20 @@ public class OrganizeUtil extends BaseService {
     }
 
     public OrganizeModel getOrganize(String id) {
-        var organizeEntity = this.OrganizeEntity().where(s -> s.getId().equals(id))
-                .where(s -> !JinqStream.from(s.getAncestorList()).where(m -> m.getAncestor().getIsDeleted())
+        var organizeEntity = this.OrganizeEntity()
+                .where(s -> s.getId().equals(id))
+                .where(s -> !JinqStream.from(s.getAncestorList())
+                        .where(m -> m.getAncestor().getIsDeleted())
                         .exists())
                 .getOnlyValue();
         return this.organizeFormatter.format(organizeEntity);
     }
 
     public void checkExistOrganize(String id) {
-        var isPresent = this.OrganizeEntity().where(s -> s.getId().equals(id))
-                .where(s -> !JinqStream.from(s.getAncestorList()).where(m -> m.getAncestor().getIsDeleted())
+        var isPresent = this.OrganizeEntity()
+                .where(s -> s.getId().equals(id))
+                .where(s -> !JinqStream.from(s.getAncestorList())
+                        .where(m -> m.getAncestor().getIsDeleted())
                         .exists())
                 .exists();
         if (!isPresent) {
@@ -180,8 +186,10 @@ public class OrganizeUtil extends BaseService {
                             .where(m -> m.getAncestor().getIsDeleted())
                             .exists())
                     .where((s) -> JinqStream.from(s.getDescendantList())
-                            .where(m -> !m.getDescendant().getIsDeleted()).count() < JinqStream
-                                    .from(s.getOrganizeShadow().getChildList()).where(m -> !m.getIsDeleted())
+                            .where(m -> m.getGap() == 1)
+                            .where(m -> !m.getDescendant().getIsDeleted())
+                            .count() < JinqStream.from(s.getOrganizeShadow().getChildList())
+                                    .where(m -> !m.getIsDeleted())
                                     .count())
                     .findFirst()
                     .orElse(null);
@@ -190,9 +198,11 @@ public class OrganizeUtil extends BaseService {
                 var parentOrganizeShadowId = parentOrganize.getOrganizeShadow().getId();
                 var organizeShadowEntity = this.OrganizeShadowEntity()
                         .where(s -> s.getParent().getId().equals(parentOrganizeShadowId))
+                        .where(s -> !s.getIsDeleted())
                         .where((s, t) -> !t.stream(OrganizeClosureEntity.class)
                                 .where(m -> m.getAncestor().getId().equals(parentOrganizeId))
-                                .where(m -> m.getDescendant().getIsDeleted())
+                                .where(m -> m.getGap() == 1)
+                                .where(m -> !m.getDescendant().getIsDeleted())
                                 .where(m -> m.getDescendant().getOrganizeShadow().getId().equals(s.getId()))
                                 .exists())
                         .findFirst()
@@ -252,6 +262,7 @@ public class OrganizeUtil extends BaseService {
                 if (organizeList.size() == 2) {
                     var organizeEntity = JinqStream.from(organizeList)
                             .sortedDescendingBy(s -> s.getId())
+                            .sortedDescendingBy(s -> s.getCreateDate())
                             .sortedBy(s -> {
                                 var organizeModel = this.organizeFormatter.format(s);
                                 if (s.getOrganizeShadow().getParent() == null) {
@@ -281,10 +292,8 @@ public class OrganizeUtil extends BaseService {
         var organizeEntity = this.OrganizeEntity().where(s -> s.getId().equals(organizeId))
                 .getOnlyValue();
         var targetParentOrganize = StringUtils.isNotBlank(targetParentOrganizeId)
-                ? this.OrganizeEntity().where(s -> s.getId().equals(targetParentOrganizeId))
-                        .where(s -> !JinqStream.from(s.getAncestorList())
-                                .where(m -> m.getAncestor().getIsDeleted())
-                                .exists())
+                ? this.OrganizeEntity()
+                        .where(s -> s.getId().equals(targetParentOrganizeId))
                         .getOnlyValue()
                 : null;
         var targetOrganizeEntity = new OrganizeEntity();
@@ -316,9 +325,10 @@ public class OrganizeUtil extends BaseService {
         organizeEntity.setUpdateDate(new Date());
         this.entityManager.merge(organizeEntity);
         targetOrganizeEntity.setIsDeleted(false);
+        targetOrganizeEntity.setUpdateDate(new Date());
         targetOrganizeEntity.getOrganizeShadow()
                 .setParent(targetParentOrganize != null ? targetParentOrganize.getOrganizeShadow() : null);
-        targetOrganizeEntity.setUpdateDate(new Date());
+        targetOrganizeEntity.getOrganizeShadow().setUpdateDate(new Date());
         this.entityManager.merge(targetOrganizeEntity);
 
         return this.organizeFormatter.format(targetOrganizeEntity);
