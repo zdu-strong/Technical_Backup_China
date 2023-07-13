@@ -59,7 +59,9 @@ public class OrganizeService extends BaseService {
         }
 
         organizeEntity.setIsDeleted(false);
+        organizeEntity.setUpdateDate(new Date());
         organizeEntity.getOrganizeShadow().setIsDeleted(false);
+        organizeEntity.getOrganizeShadow().setUpdateDate(new Date());
         this.entityManager.merge(organizeEntity);
 
         return this.organizeFormatter.format(organizeEntity);
@@ -123,6 +125,7 @@ public class OrganizeService extends BaseService {
         organizeEntity.getOrganizeShadow().setIsDeleted(true);
         organizeEntity.getOrganizeShadow().setUpdateDate(new Date());
         organizeEntity.setIsDeleted(true);
+        organizeEntity.setUpdateDate(new Date());
         this.entityManager.merge(organizeEntity);
     }
 
@@ -161,6 +164,7 @@ public class OrganizeService extends BaseService {
                     .orElse(null);
             if (organizeEntity != null) {
                 organizeEntity.setIsDeleted(true);
+                organizeEntity.setUpdateDate(new Date());
                 this.entityManager.merge(organizeEntity);
                 return true;
             }
@@ -215,6 +219,7 @@ public class OrganizeService extends BaseService {
                     }
 
                     organizeEntity.setIsDeleted(false);
+                    organizeEntity.setUpdateDate(new Date());
                     this.entityManager.merge(organizeEntity);
                 }
 
@@ -258,6 +263,7 @@ public class OrganizeService extends BaseService {
                             .findFirst()
                             .get();
                     organizeEntity.setIsDeleted(true);
+                    organizeEntity.setUpdateDate(new Date());
                     this.entityManager.merge(organizeEntity);
                 }
 
@@ -304,10 +310,12 @@ public class OrganizeService extends BaseService {
         this.moveChildOrganizeList(organizeId, targetOrganizeEntity.getId());
 
         organizeEntity.setIsDeleted(true);
+        organizeEntity.setUpdateDate(new Date());
         this.entityManager.merge(organizeEntity);
         targetOrganizeEntity.setIsDeleted(false);
         targetOrganizeEntity.getOrganizeShadow()
                 .setParent(targetParentOrganize != null ? targetParentOrganize.getOrganizeShadow() : null);
+        targetOrganizeEntity.setUpdateDate(new Date());
         this.entityManager.merge(targetOrganizeEntity);
 
         return this.organizeFormatter.format(targetOrganizeEntity);
