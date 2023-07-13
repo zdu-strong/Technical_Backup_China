@@ -8,7 +8,7 @@ import com.springboot.project.entity.*;
 @Service
 public class OrganizeClosureService extends BaseService {
 
-    protected void createOrganizeClosure(String ancestorId, String descendantId) {
+    public void createOrganizeClosure(String ancestorId, String descendantId) {
         var ancestor = this.OrganizeEntity().where(s -> s.getId().equals(ancestorId)).getOnlyValue();
         var descendant = this.OrganizeEntity().where(s -> s.getId().equals(descendantId)).getOnlyValue();
 

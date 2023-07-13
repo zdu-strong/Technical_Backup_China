@@ -11,7 +11,7 @@ import com.springboot.project.entity.*;
 @Service
 public class OrganizeShadowService extends BaseService {
 
-    protected String createOrganizeShadow(OrganizeModel organizeModel) {
+    public String createOrganizeShadow(OrganizeModel organizeModel) {
         var parentOrganizeId = organizeModel.getParentOrganize() != null ? organizeModel.getParentOrganize().getId()
                 : null;
         var parentOrganizeShadow = StringUtils.isNotBlank(parentOrganizeId)
