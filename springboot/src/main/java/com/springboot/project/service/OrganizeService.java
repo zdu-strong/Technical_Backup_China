@@ -1,11 +1,11 @@
 package com.springboot.project.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import com.springboot.project.model.OrganizeModel;
 import com.springboot.project.common.OrganizeUtil.OrganizeUtil;
 
-@Service
+@Component
 public class OrganizeService extends BaseService {
 
     @Autowired
