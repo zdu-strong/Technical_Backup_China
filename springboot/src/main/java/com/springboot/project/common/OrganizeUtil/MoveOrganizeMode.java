@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public class MoveOrganizeMode {
+    private Boolean hasNext;
     private String organizeId;
     private String targetOrganizeId;
     private String targetParentOrganizeId;

@@ -64,8 +64,31 @@ public class OrganizeService {
                         moveOrganizeMode.getTargetOrganizeId());
             }
         }
-        this.organizeUtil.moveChildOrganizeList(moveOrganizeMode.getOrganizeId(),
-                moveOrganizeMode.getTargetOrganizeId());
+        while (true) {
+            var moveModel = this.organizeUtil.moveChildOrganizeList(moveOrganizeMode.getOrganizeId(),
+                    moveOrganizeMode.getTargetOrganizeId());
+
+            if (!moveModel.getHasNext()) {
+                break;
+            }
+            if (StringUtils.isBlank(moveModel.getTargetOrganizeId())) {
+                continue;
+            }
+            if (StringUtils.isBlank(moveModel.getTargetParentOrganizeId())) {
+                continue;
+            }
+            var paginationModel = this.organizeClosureService.getAncestorOfOrganizeByPagination(1L, 1L,
+                    moveModel.getTargetParentOrganizeId());
+            for (var i = paginationModel.getTotalPage(); i > 0; i--) {
+                var ancestorId = JinqStream.from(this.organizeClosureService
+                        .getAncestorOfOrganizeByPagination(i, 1L,
+                                moveModel.getTargetParentOrganizeId())
+                        .getList())
+                        .getOnlyValue();
+                this.organizeClosureService.createOrganizeClosure(ancestorId,
+                        moveModel.getTargetOrganizeId());
+            }
+        }
         var organize = this.organizeUtil.moveOrganizeToEnd(moveOrganizeMode.getOrganizeId(),
                 moveOrganizeMode.getTargetOrganizeId(), moveOrganizeMode.getTargetParentOrganizeId());
         this.fixConcurrencyMoveOrganize();
