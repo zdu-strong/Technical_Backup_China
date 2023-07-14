@@ -49,8 +49,8 @@ The following dependencies are currently unable to continue to be upgraded:<br/>
     </dependency>
 
     <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
     </dependency>
 
 ## Notes - How to use vscode
