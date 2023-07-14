@@ -21,7 +21,6 @@ async function installDependencies() {
       env: {
         ...process.env,
         "CYPRESS_INSTALL_BINARY": `${cypressInstallUrl}`,
-        "npm_config_canvas_binary_host_mirror": "https://npmmirror.com/mirrors/canvas",
         "npm_config_package_lock": "false",
       } as any,
     }
