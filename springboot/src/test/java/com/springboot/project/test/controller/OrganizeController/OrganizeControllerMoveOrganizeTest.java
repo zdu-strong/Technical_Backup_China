@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.net.URISyntaxException;
 import org.apache.http.client.utils.URIBuilder;
+import org.jinq.orm.stream.JinqStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -28,7 +29,16 @@ public class OrganizeControllerMoveOrganizeTest extends BaseTest {
         assertNotEquals(this.childOrganizeId, response.getBody().getId());
         assertNotEquals(this.organizeId, response.getBody().getParentOrganize().getId());
         assertEquals("Son Gohan", response.getBody().getName());
-        assertEquals(0, response.getBody().getChildOrganizeList().size());
+        assertEquals(1, response.getBody().getChildOrganizeList().size());
+        assertEquals("Pan", this.organizeService.getOrganize(
+                JinqStream.from(response.getBody().getChildOrganizeList()).select(s -> s.getId()).getOnlyValue())
+                .getName());
+        assertEquals(0, this.organizeService.getOrganize(
+                JinqStream.from(response.getBody().getChildOrganizeList()).select(s -> s.getId()).getOnlyValue())
+                .getChildOrganizeList().size());
+        assertEquals(response.getBody().getId(), this.organizeService.getOrganize(
+                JinqStream.from(response.getBody().getChildOrganizeList()).select(s -> s.getId()).getOnlyValue())
+                .getParentOrganize().getId());
         assertEquals(this.parentOrganizeIdOfMove, response.getBody().getParentOrganize().getId());
     }
 
@@ -40,6 +50,9 @@ public class OrganizeControllerMoveOrganizeTest extends BaseTest {
             var childOrganizeModel = new OrganizeModel().setName("Son Gohan")
                     .setParentOrganize(new OrganizeModel().setId(this.organizeId));
             this.childOrganizeId = this.organizeService.createOrganize(childOrganizeModel).getId();
+            this.organizeService
+                    .createOrganize(new OrganizeModel().setName("Pan")
+                            .setParentOrganize(new OrganizeModel().setId(childOrganizeId)));
         }
         {
             var organizeModel = new OrganizeModel().setName("piccolo");
