@@ -104,13 +104,74 @@ public class OrganizeUtil extends BaseService {
         }
     }
 
-    public OrganizeModel moveOrganize(String organizeId, String targetParentOrganizeId) {
-        this.checkExistOrganize(organizeId);
-        if (StringUtils.isNotBlank(targetParentOrganizeId)) {
-            this.checkExistOrganize(targetParentOrganizeId);
+    public MoveOrganizeMode moveOrganizeToStart(String organizeId, String targetParentOrganizeId) {
+        var organizeEntity = this.OrganizeEntity().where(s -> s.getId().equals(organizeId))
+                .where(s -> !JinqStream.from(s.getAncestorList())
+                        .where(m -> m.getAncestor().getIsDeleted())
+                        .exists())
+                .getOnlyValue();
+        var targetParentOrganize = StringUtils.isNotBlank(targetParentOrganizeId)
+                ? this.OrganizeEntity()
+                        .where(s -> s.getId().equals(targetParentOrganizeId))
+                        .where(s -> !JinqStream.from(s.getAncestorList())
+                                .where(m -> m.getAncestor().getIsDeleted())
+                                .exists())
+                        .getOnlyValue()
+                : null;
+        var targetOrganizeEntity = new OrganizeEntity();
+        targetOrganizeEntity.setId(Generators.timeBasedGenerator().generate().toString());
+        targetOrganizeEntity.setCreateDate(new Date());
+        targetOrganizeEntity.setUpdateDate(new Date());
+        targetOrganizeEntity.setLevel(targetParentOrganize == null ? 0 : targetParentOrganize.getLevel() + 1);
+        targetOrganizeEntity.setIsDeleted(true);
+        targetOrganizeEntity.setOrganizeShadow(organizeEntity.getOrganizeShadow());
+        targetOrganizeEntity.setAncestorList(Lists.newArrayList());
+        targetOrganizeEntity.setDescendantList(Lists.newArrayList());
+        this.entityManager.persist(organizeEntity);
+
+        this.organizeClosureService.createOrganizeClosure(targetOrganizeEntity.getId(), targetOrganizeEntity.getId());
+
+        if (targetParentOrganize != null) {
+            var ancestorIdList = this.OrganizeClosureEntity()
+                    .where(s -> s.getDescendant().getId().equals(targetParentOrganizeId))
+                    .select(s -> s.getAncestor().getId())
+                    .toList();
+            for (var ancestorId : ancestorIdList) {
+                this.organizeClosureService.createOrganizeClosure(ancestorId, targetOrganizeEntity.getId());
+            }
         }
 
-        return this.moveOrganizeNotCheck(organizeId, targetParentOrganizeId);
+        this.moveChildOrganizeList(organizeId, targetOrganizeEntity.getId());
+
+        return new MoveOrganizeMode().setOrganizeId(organizeEntity.getId())
+                .setTargetOrganizeId(targetOrganizeEntity.getId())
+                .setTargetParentOrganizeId(targetParentOrganizeId);
+    }
+
+    public OrganizeModel moveOrganizeToEnd(String organizeId, String targetOrganizeId, String targetParentOrganizeId) {
+        var organizeEntity = this.OrganizeEntity()
+                .where(s -> s.getId().equals(organizeId))
+                .getOnlyValue();
+        var targetOrganizeEntity = this.OrganizeEntity()
+                .where(s -> s.getId().equals(targetOrganizeId))
+                .getOnlyValue();
+        var targetParentOrganize = StringUtils.isNotBlank(targetParentOrganizeId)
+                ? this.OrganizeEntity()
+                        .where(s -> s.getId().equals(targetParentOrganizeId))
+                        .getOnlyValue()
+                : null;
+
+        organizeEntity.setIsDeleted(true);
+        organizeEntity.setUpdateDate(new Date());
+        this.entityManager.merge(organizeEntity);
+        targetOrganizeEntity.setIsDeleted(false);
+        targetOrganizeEntity.setUpdateDate(new Date());
+        targetOrganizeEntity.getOrganizeShadow()
+                .setParent(targetParentOrganize != null ? targetParentOrganize.getOrganizeShadow() : null);
+        targetOrganizeEntity.getOrganizeShadow().setUpdateDate(new Date());
+        this.entityManager.merge(targetOrganizeEntity);
+
+        return this.organizeFormatter.format(targetOrganizeEntity);
     }
 
     private void moveChildOrganizeList(String sourceOrganizeId, String targetOrganizeId) {
@@ -303,52 +364,6 @@ public class OrganizeUtil extends BaseService {
         }
 
         return false;
-    }
-
-    private OrganizeModel moveOrganizeNotCheck(String organizeId, String targetParentOrganizeId) {
-        var organizeEntity = this.OrganizeEntity().where(s -> s.getId().equals(organizeId))
-                .getOnlyValue();
-        var targetParentOrganize = StringUtils.isNotBlank(targetParentOrganizeId)
-                ? this.OrganizeEntity()
-                        .where(s -> s.getId().equals(targetParentOrganizeId))
-                        .getOnlyValue()
-                : null;
-        var targetOrganizeEntity = new OrganizeEntity();
-        targetOrganizeEntity.setId(Generators.timeBasedGenerator().generate().toString());
-        targetOrganizeEntity.setCreateDate(new Date());
-        targetOrganizeEntity.setUpdateDate(new Date());
-        targetOrganizeEntity.setLevel(targetParentOrganize == null ? 0 : targetParentOrganize.getLevel() + 1);
-        targetOrganizeEntity.setIsDeleted(true);
-        targetOrganizeEntity.setOrganizeShadow(organizeEntity.getOrganizeShadow());
-        targetOrganizeEntity.setAncestorList(Lists.newArrayList());
-        targetOrganizeEntity.setDescendantList(Lists.newArrayList());
-        this.entityManager.persist(organizeEntity);
-
-        this.organizeClosureService.createOrganizeClosure(targetOrganizeEntity.getId(), targetOrganizeEntity.getId());
-
-        if (targetParentOrganize != null) {
-            var ancestorIdList = this.OrganizeClosureEntity()
-                    .where(s -> s.getDescendant().getId().equals(targetParentOrganizeId))
-                    .select(s -> s.getAncestor().getId())
-                    .toList();
-            for (var ancestorId : ancestorIdList) {
-                this.organizeClosureService.createOrganizeClosure(ancestorId, targetOrganizeEntity.getId());
-            }
-        }
-
-        this.moveChildOrganizeList(organizeId, targetOrganizeEntity.getId());
-
-        organizeEntity.setIsDeleted(true);
-        organizeEntity.setUpdateDate(new Date());
-        this.entityManager.merge(organizeEntity);
-        targetOrganizeEntity.setIsDeleted(false);
-        targetOrganizeEntity.setUpdateDate(new Date());
-        targetOrganizeEntity.getOrganizeShadow()
-                .setParent(targetParentOrganize != null ? targetParentOrganize.getOrganizeShadow() : null);
-        targetOrganizeEntity.getOrganizeShadow().setUpdateDate(new Date());
-        this.entityManager.merge(targetOrganizeEntity);
-
-        return this.organizeFormatter.format(targetOrganizeEntity);
     }
 
 }

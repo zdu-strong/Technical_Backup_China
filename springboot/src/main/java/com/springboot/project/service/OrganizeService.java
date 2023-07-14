@@ -49,7 +49,9 @@ public class OrganizeService {
     }
 
     public OrganizeModel moveOrganize(String organizeId, String targetParentOrganizeId) {
-        var organize = this.organizeUtil.moveOrganize(organizeId, targetParentOrganizeId);
+        var moveOrganizeMode = this.organizeUtil.moveOrganizeToStart(organizeId, targetParentOrganizeId);
+        var organize = this.organizeUtil.moveOrganizeToEnd(moveOrganizeMode.getOrganizeId(),
+                moveOrganizeMode.getTargetOrganizeId(), moveOrganizeMode.getTargetParentOrganizeId());
         this.fixConcurrencyMoveOrganize();
         return organize;
     }
