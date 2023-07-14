@@ -69,7 +69,7 @@
     "@emotion/styled": "11.11.0",
     "@fontsource/roboto": "5.0.2",
     "@mui/icons-material": "5.11.16",
-    "@mui/lab": "5.0.0-alpha.133",
+    "@mui/lab": "5.0.0-alpha.136",
     "@mui/material": "5.13.4",
     "@mui/x-date-pickers": "6.6.0",
     "@nestjs/cli": "9.5.0",
