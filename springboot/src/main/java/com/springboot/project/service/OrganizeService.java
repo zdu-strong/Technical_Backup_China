@@ -50,6 +50,22 @@ public class OrganizeService {
 
     public OrganizeModel moveOrganize(String organizeId, String targetParentOrganizeId) {
         var moveOrganizeMode = this.organizeUtil.moveOrganizeToStart(organizeId, targetParentOrganizeId);
+        if (StringUtils.isNotBlank(moveOrganizeMode.getTargetOrganizeId())
+                && StringUtils.isNotBlank(moveOrganizeMode.getTargetParentOrganizeId())) {
+            var paginationModel = this.organizeClosureService.getAncestorOfOrganizeByPagination(1L, 1L,
+                    moveOrganizeMode.getTargetParentOrganizeId());
+            for (var i = paginationModel.getTotalPage(); i > 0; i--) {
+                var ancestorId = JinqStream.from(this.organizeClosureService
+                        .getAncestorOfOrganizeByPagination(i, 1L,
+                                moveOrganizeMode.getTargetParentOrganizeId())
+                        .getList())
+                        .getOnlyValue();
+                this.organizeClosureService.createOrganizeClosure(ancestorId,
+                        moveOrganizeMode.getTargetOrganizeId());
+            }
+        }
+        this.organizeUtil.moveChildOrganizeList(moveOrganizeMode.getOrganizeId(),
+                moveOrganizeMode.getTargetOrganizeId());
         var organize = this.organizeUtil.moveOrganizeToEnd(moveOrganizeMode.getOrganizeId(),
                 moveOrganizeMode.getTargetOrganizeId(), moveOrganizeMode.getTargetParentOrganizeId());
         this.fixConcurrencyMoveOrganize();

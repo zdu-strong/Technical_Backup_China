@@ -131,18 +131,6 @@ public class OrganizeUtil extends BaseService {
 
         this.organizeClosureService.createOrganizeClosure(targetOrganizeEntity.getId(), targetOrganizeEntity.getId());
 
-        if (targetParentOrganize != null) {
-            var ancestorIdList = this.OrganizeClosureEntity()
-                    .where(s -> s.getDescendant().getId().equals(targetParentOrganizeId))
-                    .select(s -> s.getAncestor().getId())
-                    .toList();
-            for (var ancestorId : ancestorIdList) {
-                this.organizeClosureService.createOrganizeClosure(ancestorId, targetOrganizeEntity.getId());
-            }
-        }
-
-        this.moveChildOrganizeList(organizeId, targetOrganizeEntity.getId());
-
         return new MoveOrganizeMode().setOrganizeId(organizeEntity.getId())
                 .setTargetOrganizeId(targetOrganizeEntity.getId())
                 .setTargetParentOrganizeId(targetParentOrganizeId);
@@ -174,7 +162,7 @@ public class OrganizeUtil extends BaseService {
         return this.organizeFormatter.format(targetOrganizeEntity);
     }
 
-    private void moveChildOrganizeList(String sourceOrganizeId, String targetOrganizeId) {
+    public void moveChildOrganizeList(String sourceOrganizeId, String targetOrganizeId) {
         var sourceChildOrganizeIdList = this.OrganizeClosureEntity()
                 .where(s -> s.getAncestor().getId().equals(sourceOrganizeId))
                 .where(s -> s.getGap() == 1)
