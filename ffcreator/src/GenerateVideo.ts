@@ -1,6 +1,6 @@
 import path from 'path';
 import { FFCreator, FFScene } from 'ffcreator';
-import { imageOnCenter } from './ImageOnCenter';
+import { imageOnCenter } from '@/ImageOnCenter';
 import * as mathjs from 'mathjs'
 
 export async function generateVideo(config: {
