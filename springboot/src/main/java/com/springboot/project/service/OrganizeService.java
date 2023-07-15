@@ -30,10 +30,6 @@ public class OrganizeService {
                 this.organizeClosureService.createOrganizeClosure(ancestorId, organize.getId());
             }
         }
-        if (organizeModel.getParentOrganize() != null
-                && StringUtils.isNotBlank(organizeModel.getParentOrganize().getId())) {
-            this.organizeUtil.checkExistOrganize(organizeModel.getParentOrganize().getId());
-        }
         organize = this.organizeUtil.createOrganizeToEnd(organize.getId());
         this.fixConcurrencyMoveOrganize();
         return organize;
@@ -93,8 +89,6 @@ public class OrganizeService {
                         moveModel.getTargetOrganizeId());
             }
         }
-        this.checkExistOrganize(organizeId);
-        this.checkExistOrganize(targetParentOrganizeId);
         var organize = this.organizeUtil.moveOrganizeToEnd(moveOrganizeMode.getOrganizeId(),
                 moveOrganizeMode.getTargetOrganizeId(), moveOrganizeMode.getTargetParentOrganizeId());
         this.fixConcurrencyMoveOrganize();
