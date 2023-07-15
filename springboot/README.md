@@ -68,6 +68,7 @@ Some experience in use, if you already know it, you can skip it.
 2. Jinq does not support nested select statements(select * from (select * from user)). This doesn't matter because it doesn't need to be used.
 3. Jinq does not support union and union all. It doesn't matter, we can add database association table for query.
 4. Jinq doest not support right join. This does not matter, we can use left join.
+5. Jinq doest not support outer join. It doesn't matter, we can add database association table for query.
 
 ## Notes - jinq - getOnlyValue
 
@@ -134,6 +135,8 @@ get model array
 
     this.UserEmailEntity().join(s -> JinqStream.of(s.getUser()));
 
+    this.UserEntity().join((s, t) -> t.stream(UserEmailEntity.class));
+
 ## Notes - jinq - left join
 
     this.UserEmailEntity().leftOuterJoin(s -> JinqStream.of(s.getUser()));
@@ -142,10 +145,6 @@ get model array
 
     this.UserEntity().leftOuterJoin((s, t) -> t.stream(UserEmailEntity.class),
         (s, t) -> s.getId().equals(t.getId()));
-
-## Notes - jinq- outer join
-
-    this.UserEntity().join((s, t) -> t.stream(UserEmailEntity.class));
 
 ## Notes - jinq - group by
 
