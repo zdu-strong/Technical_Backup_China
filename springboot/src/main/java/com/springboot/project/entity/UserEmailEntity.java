@@ -37,7 +37,7 @@ public class UserEmailEntity {
     @Column(nullable = false)
     private String deleteKey;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private String verificationCode;
 
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, optional = false)

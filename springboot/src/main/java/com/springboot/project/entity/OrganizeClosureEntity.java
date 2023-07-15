@@ -27,7 +27,7 @@ public class OrganizeClosureEntity {
     @Column(nullable = false)
     private Date updateDate;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private Long gap;
 
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, optional = false)

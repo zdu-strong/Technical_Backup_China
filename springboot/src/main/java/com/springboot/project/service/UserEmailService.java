@@ -42,7 +42,7 @@ public class UserEmailService extends BaseService {
         userEmailEntity.setUpdateDate(new Date());
         userEmailEntity.setIsDeleted(false);
         userEmailEntity.setDeleteKey("");
-        userEmailEntity.setVerificationCode(null);
+        userEmailEntity.setVerificationCode("");
 
         this.entityManager.merge(userEmailEntity);
     }

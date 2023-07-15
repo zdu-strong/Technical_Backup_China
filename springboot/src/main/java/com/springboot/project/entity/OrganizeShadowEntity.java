@@ -22,7 +22,7 @@ public class OrganizeShadowEntity {
     @Id
     private String id;
 
-    @Column(nullable = true, length = 1024 * 1024)
+    @Column(nullable = false, length = 1024 * 1024)
     private String name;
 
     @Column(nullable = false)
