@@ -41,10 +41,10 @@ subject.pipe(
   retry(),
 ).subscribe();
 
-export async function LANDSCAPE() {
+export function LANDSCAPE() {
   subject.next("LANDSCAPE");
 }
 
-export async function PORTRAIT_PRIMARY() {
+export function PORTRAIT_PRIMARY() {
   subject.next("PORTRAIT_PRIMARY");
 }
