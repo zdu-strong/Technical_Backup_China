@@ -1,11 +1,14 @@
 package com.springboot.project.entity;
 
 import java.util.Date;
+
+import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -37,7 +40,9 @@ public class FriendshipEntity {
     @Column(nullable = false)
     private Boolean hasInitiative;
 
-    @Column(nullable = false, length = 1024 * 4)
+    @Column(nullable = false, length = 1024 * 1024 * 1024)
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
     private String secretKeyOfAES;
 
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, optional = false)
