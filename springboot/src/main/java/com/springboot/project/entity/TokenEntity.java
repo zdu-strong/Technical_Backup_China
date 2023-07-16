@@ -19,10 +19,10 @@ public class TokenEntity {
     @Id
     private String id;
 
-    @Column(unique = true)
+    @Column(unique = false)
     private String jwtId;
 
-    @Column(nullable = false, length = 1024 * 1024)
+    @Column(nullable = false, length = 4000)
     private String privateKeyOfRSA;
 
     @Column(nullable = false)

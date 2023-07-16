@@ -10,8 +10,8 @@ import fs from 'fs';
 import { timer } from 'rxjs'
 
 async function main() {
-  const newDatabaseName = v1().replaceAll('-', '_');
-  const oldDatabaseName = v1().replaceAll('-', '_');
+  const newDatabaseName = await getANewDatabaseName();
+  const oldDatabaseName = await getANewDatabaseName();
   await buildNewDatabase(newDatabaseName);
   const isCreateChangeLogFile = await diffDatabase(
     newDatabaseName,
@@ -62,7 +62,7 @@ async function diffDatabase(
       'src/main/resources',
       'liquibase/changelog',
       formatInTimeZone(today, "UTC", 'yyyy.MM.dd'),
-      `${formatInTimeZone(today, "UTC", 'yyyy.MM.dd.HH.mm.ss')}_changelog.xml`,
+      `${formatInTimeZone(today, "UTC", 'yyyy.MM.dd.HH.mm.ss')}_changelog.mysql.sql`,
     )
     .replaceAll('\\', '/');
   const isCreateFolder = !(await existFolder(
@@ -89,7 +89,7 @@ async function diffDatabase(
     { encoding: 'utf8' },
   );
   const isEmptyOfDiffChangeLogFile =
-    !textContentOfDiffChangeLogFile.includes('</changeSet>');
+    !textContentOfDiffChangeLogFile.includes('-- changeset ');
   if (isEmptyOfDiffChangeLogFile) {
     if (isCreateFolder) {
       await fs.promises.rm(path.join(filePathOfDiffChangeLogFile, '..'), {
@@ -150,6 +150,11 @@ async function existFolder(folderPath: string) {
     await fs.promises.rm(folderPath, { recursive: true, force: true });
     return false;
   }
+}
+
+async function getANewDatabaseName() {
+  const newDatabaseName = `database_${v1().replaceAll('-', '_')}`;
+  return newDatabaseName;
 }
 
 export default main();

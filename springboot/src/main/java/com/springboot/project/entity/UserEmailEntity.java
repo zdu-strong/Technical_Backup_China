@@ -22,7 +22,7 @@ public class UserEmailEntity {
     @Id
     private String id;
 
-    @Column(nullable = true, length = 1024 * 1024)
+    @Column(nullable = false, length = 4000)
     private String email;
 
     @Column(nullable = false)
