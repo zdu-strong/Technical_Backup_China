@@ -1,9 +1,13 @@
 package com.springboot.project.entity;
 
 import java.util.Date;
+
+import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -16,7 +20,7 @@ public class LoggerEntity {
     @Id
     private String id;
 
-    @Column(nullable = false, length = 4000)
+    @Column(nullable = false, length = 1000)
     private String message;
 
     @Column(nullable = false)
@@ -37,10 +41,12 @@ public class LoggerEntity {
     @Column(nullable = false)
     private String exceptionClassName;
 
-    @Column(nullable = false, length = 4000)
+    @Column(nullable = false, length = 1000)
     private String exceptionMessage;
 
-    @Column(nullable = false, length = 4000)
+    @Column(nullable = false, length = 1024 * 1024 * 1024)
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
     private String exceptionStackTrace;
 
     @Column(nullable = false)
