@@ -37,7 +37,7 @@ public class FriendshipEntity {
     @Column(nullable = false)
     private Boolean hasInitiative;
 
-    @Column(nullable = false, length = 4000)
+    @Column(nullable = false, length = 1024 * 4)
     private String secretKeyOfAES;
 
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, optional = false)

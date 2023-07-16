@@ -16,13 +16,13 @@ public class EncryptDecryptEntity {
     @Id
     private String id;
 
-    @Column(nullable = false, length = 4000)
+    @Column(nullable = false, length = 1024 * 4)
     private String publicKeyOfRSA;
 
-    @Column(nullable = false, length = 4000)
+    @Column(nullable = false, length = 1024 * 4)
     private String privateKeyOfRSA;
 
-    @Column(nullable = false, length = 4000)
+    @Column(nullable = false, length = 1024 * 4)
     private String secretKeyOfAES;
 
     @Column(nullable = false)

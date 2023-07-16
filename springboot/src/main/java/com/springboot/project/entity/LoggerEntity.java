@@ -20,7 +20,7 @@ public class LoggerEntity {
     @Id
     private String id;
 
-    @Column(nullable = false, length = 1000)
+    @Column(nullable = false, length = 1024 * 4)
     private String message;
 
     @Column(nullable = false)
@@ -41,7 +41,7 @@ public class LoggerEntity {
     @Column(nullable = false)
     private String exceptionClassName;
 
-    @Column(nullable = false, length = 1000)
+    @Column(nullable = false, length = 1024 * 4)
     private String exceptionMessage;
 
     @Column(nullable = false, length = 1024 * 1024 * 1024)
