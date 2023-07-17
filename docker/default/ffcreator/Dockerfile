@@ -11,7 +11,6 @@ RUN dnf makecache
 
 # support utf-8
 RUN dnf install -y langpacks-en
-RUN dnf install -y glibc-common
 ENV LANG en_US.UTF-8
 ENV LC_ALL C.UTF-8
 
