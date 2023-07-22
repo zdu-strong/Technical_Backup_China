@@ -6,7 +6,7 @@ import execa from "execa"
 import treeKill from 'tree-kill'
 import util from 'util'
 import fs from 'fs'
-// import CapacitorConfig from '../capacitor.config'
+import CapacitorConfig from '../capacitor.config'
 
 async function main() {
   const isRunAndroid = await getIsRunAndroid();
@@ -15,7 +15,7 @@ async function main() {
   const deviceList = await getDeviceList(isRunAndroid);
   await buildReact();
   await runAndroidOrIOS(isRunAndroid, androidSdkRootPath, deviceList);
-  // await copySignedApk(isRunAndroid);
+  await copySignedApk(isRunAndroid);
   process.exit();
 }
 
@@ -30,7 +30,7 @@ async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string
       cwd: path.join(__dirname, ".."),
       extendEnv: true,
       env: (isRunAndroid ? {
-        "ANDROID_SDK_ROOT": `${androidSdkRootPath}`
+        "ANDROID_HOME": `${androidSdkRootPath}`
       } : {
       }) as any,
     }
@@ -49,21 +49,20 @@ async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string
       cwd: path.join(__dirname, ".."),
       extendEnv: true,
       env: (isRunAndroid ? {
-        "ANDROID_SDK_ROOT": `${androidSdkRootPath}`,
+        "ANDROID_HOME": `${androidSdkRootPath}`,
       } : {
       }) as any,
     }
   );
   const childProcess = execa.command(
     [
-      // `cap build`,
-      // ...(isRunAndroid ? [`--keystorepath ${path.relative(path.join(__dirname, "..", "android"), CapacitorConfig.android!.buildOptions!.keystorePath!)}`] : []),
-      // ...(isRunAndroid ? [`--keystorepass ${CapacitorConfig.android?.buildOptions?.keystorePassword}`] : []),
-      // ...(isRunAndroid ? [`--keystorealias ${CapacitorConfig.android?.buildOptions?.keystoreAlias}`] : []),
-      // ...(isRunAndroid ? [`--keystorealiaspass ${CapacitorConfig.android?.buildOptions?.keystoreAliasPassword}`] : []),
-      // ...(isRunAndroid ? [`--signing-type ${CapacitorConfig.android?.buildOptions?.signingType}`] : []),
-      // ...(isRunAndroid ? [`--androidreleasetype ${CapacitorConfig.android?.buildOptions?.releaseType}`] : []),
-      `cap open`,
+      `cap build`,
+      ...(isRunAndroid ? [`--keystorepath ${path.relative(path.join(__dirname, "..", "android"), CapacitorConfig.android!.buildOptions!.keystorePath!)}`] : []),
+      ...(isRunAndroid ? [`--keystorepass ${CapacitorConfig.android?.buildOptions?.keystorePassword}`] : []),
+      ...(isRunAndroid ? [`--keystorealias ${CapacitorConfig.android?.buildOptions?.keystoreAlias}`] : []),
+      ...(isRunAndroid ? [`--keystorealiaspass ${CapacitorConfig.android?.buildOptions?.keystoreAliasPassword}`] : []),
+      ...(isRunAndroid ? [`--signing-type ${CapacitorConfig.android?.buildOptions?.signingType}`] : []),
+      ...(isRunAndroid ? [`--androidreleasetype ${CapacitorConfig.android?.buildOptions?.releaseType}`] : []),
       `${isRunAndroid ? "android" : "ios"}`,
     ].join(" "),
     {
@@ -71,13 +70,51 @@ async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string
       cwd: path.join(__dirname, ".."),
       extendEnv: true,
       env: (isRunAndroid ? {
-        "ANDROID_SDK_ROOT": `${androidSdkRootPath}`
+        "ANDROID_HOME": `${androidSdkRootPath}`
       } : {
       }) as any,
     }
   );
   await childProcess;
   await util.promisify(treeKill)(childProcess.pid!).catch(async () => null);
+  await Promise.resolve(null);
+  await signSithApksigner(isRunAndroid, androidSdkRootPath);
+}
+
+async function signSithApksigner(isRunAndroid: boolean, androidSdkRootPath: string) {
+  if (!isRunAndroid) {
+    return;
+  }
+  const apkPath = path.join(__dirname, "..", "android/app/build/outputs/apk/release", "app-release-signed.apk");
+  await fs.promises.rm(apkPath, { force: true, recursive: true });
+  const filePathOfUnsignedApk = path.join(apkPath, "..", "app-release-unsigned.apk");
+  await fs.promises.copyFile(filePathOfUnsignedApk, apkPath);
+  const apkSignerParentFolderPath = await getApkSignerParentFolderPath();
+  await execa.command(
+    [
+      "apksigner",
+      "sign",
+      `--ks ${path.relative(path.join(__dirname, "..", "android/app/build/outputs/apk/release"), CapacitorConfig.android!.buildOptions!.keystorePath!)}`,
+      `--ks-pass pass:${CapacitorConfig.android?.buildOptions?.keystorePassword}`,
+      `--ks-key-alias ${CapacitorConfig.android?.buildOptions?.keystoreAlias}`,
+      `--pass-encoding utf-8`,
+      `app-release-signed.apk`,
+    ].join(" "),
+    {
+      stdio: "inherit",
+      cwd: path.join(__dirname, "..", "android/app/build/outputs/apk/release"),
+      extendEnv: true,
+      env: {
+        "ANDROID_HOME": `${androidSdkRootPath}`,
+        ...(os.platform() === "win32" ? {
+          Path: `${process.env.Path};${path.normalize(apkSignerParentFolderPath)}`
+        } : {}),
+        ...(os.platform() !== "win32" ? {
+          PATH: `${process.env.PATH}:${path.normalize(apkSignerParentFolderPath)}`
+        } : {}),
+      } as any,
+    },
+  )
 }
 
 async function buildReact() {
@@ -102,6 +139,15 @@ async function getAndroidSdkRootPath() {
     androidSdkRootPath = path.join(os.homedir(), "Android/Sdk").replace(new RegExp("\\\\", "g"), "/");
   }
   return androidSdkRootPath;
+}
+
+async function getApkSignerParentFolderPath() {
+  const androidSdkRootPath = await getAndroidSdkRootPath();
+  const buildToolsPath = path.join(androidSdkRootPath, "build-tools");
+  const fileNameList = await fs.promises.readdir(buildToolsPath);
+  const fileName = linq.from(fileNameList).select(s => s.split(".")).select(s => linq.from(s).first()).select(s => Number(s)).orderByDescending(s => s).first();
+  const apkSignerParentFolderPath = path.join(buildToolsPath, linq.from(fileNameList).where(s => s.startsWith(String(fileName) + ".")).first());
+  return apkSignerParentFolderPath;
 }
 
 async function getIsRunAndroid() {
@@ -144,6 +190,9 @@ async function copySignedApk(isRunAndroid: boolean) {
     const apkPath = path.join(__dirname, "..", "android/app/build/outputs/apk/release", "app-release-signed.apk");
     const filePathOfNewApk = path.join(__dirname, "..", "app-release-signed.apk");
     await fs.promises.copyFile(apkPath, filePathOfNewApk);
+    console.log("\n");
+    console.log("Copied apk to new location.");
+    console.log(filePathOfNewApk);
   }
 }
 
