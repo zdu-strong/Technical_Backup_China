@@ -133,7 +133,7 @@ async function createChildProcessOfCapacitor(isRunAndroid: boolean, ReactServerA
       cwd: path.join(__dirname, ".."),
       extendEnv: true,
       env: (isRunAndroid ? {
-        "ANDROID_SDK_ROOT": `${androidSdkRootPath}`
+        "ANDROID_HOME": `${androidSdkRootPath}`
       } : {
       }) as any,
     }
@@ -152,7 +152,7 @@ async function createChildProcessOfCapacitor(isRunAndroid: boolean, ReactServerA
       cwd: path.join(__dirname, ".."),
       extendEnv: true,
       env: (isRunAndroid ? {
-        "ANDROID_SDK_ROOT": `${androidSdkRootPath}`,
+        "ANDROID_HOME": `${androidSdkRootPath}`,
       } : {
       }) as any,
     }
@@ -168,7 +168,7 @@ async function createChildProcessOfCapacitor(isRunAndroid: boolean, ReactServerA
       cwd: path.join(__dirname, ".."),
       extendEnv: true,
       env: (isRunAndroid ? {
-        "ANDROID_SDK_ROOT": `${androidSdkRootPath}`,
+        "ANDROID_HOME": `${androidSdkRootPath}`,
       } : {
       }) as any,
     }

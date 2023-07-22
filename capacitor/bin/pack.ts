@@ -26,7 +26,7 @@ async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string
       cwd: path.join(__dirname, ".."),
       extendEnv: true,
       env: (isRunAndroid ? {
-        "ANDROID_SDK_ROOT": `${androidSdkRootPath}`
+        "ANDROID_HOME": `${androidSdkRootPath}`
       } : {
       }) as any,
     }
@@ -45,7 +45,7 @@ async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string
       cwd: path.join(__dirname, ".."),
       extendEnv: true,
       env: (isRunAndroid ? {
-        "ANDROID_SDK_ROOT": `${androidSdkRootPath}`,
+        "ANDROID_HOME": `${androidSdkRootPath}`,
       } : {
       }) as any,
     }
