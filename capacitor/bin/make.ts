@@ -78,10 +78,10 @@ async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string
   await childProcess;
   await util.promisify(treeKill)(childProcess.pid!).catch(async () => null);
   await Promise.resolve(null);
-  await signSithApksigner(isRunAndroid, androidSdkRootPath);
+  await signWithApksigner(isRunAndroid, androidSdkRootPath);
 }
 
-async function signSithApksigner(isRunAndroid: boolean, androidSdkRootPath: string) {
+async function signWithApksigner(isRunAndroid: boolean, androidSdkRootPath: string) {
   if (!isRunAndroid) {
     return;
   }
@@ -190,7 +190,6 @@ async function copySignedApk(isRunAndroid: boolean) {
     const apkPath = path.join(__dirname, "..", "android/app/build/outputs/apk/release", "app-release-signed.apk");
     const filePathOfNewApk = path.join(__dirname, "..", "app-release-signed.apk");
     await fs.promises.copyFile(apkPath, filePathOfNewApk);
-    console.log("\n");
     console.log("Copied apk to new location.");
     console.log(filePathOfNewApk);
   }
