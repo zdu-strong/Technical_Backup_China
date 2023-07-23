@@ -20,7 +20,7 @@ export default observer(() => {
     i18nLocale: useI18nLocale(),
   })
 
-  return <div className="w-screen h-screen overflow-auto">
+  return <div className="w-screen h-screen overflow-auto" style={{ backgroundColor: "white" }}>
     <div style={{ display: "flex", minWidth: "100%", height: "100%" }}>
       <div className='flex flex-col flex-auto' style={{ height: "max-content", minHeight: "100%" }}>
         <CssBaseline />
