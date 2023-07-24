@@ -10,6 +10,8 @@ const css = stylesheet({
     width: "100%",
     height: "0px",
     position: "relative",
+    display: "flex",
+    flexDirection: "row",
   },
   exitButton: {
     position: "absolute",
@@ -27,7 +29,6 @@ export default observer((props: {
       open: false,
     },
     ready: false,
-    isLeftAndNotIsRight: false,
     leftOrRight: 10,
 
   }, {
@@ -44,7 +45,7 @@ export default observer((props: {
         size="small"
         color="primary"
         aria-label="add"
-        style={state.isLeftAndNotIsRight ? { left: `${state.leftOrRight}px` } : { right: `${state.leftOrRight}px` }}
+        style={{ right: `${state.leftOrRight}px`, position: "absolute" }}
         className={css.exitButton}
         onClick={() => {
           state.exitDialog.open = true
