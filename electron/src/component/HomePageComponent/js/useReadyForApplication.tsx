@@ -7,7 +7,7 @@ const GlobalState = observable({
   ready: false,
 })
 
-export const useReadyForApplication = () => {
+export function useReadyForApplication() {
 
   useMount(async () => {
     if (!GlobalState.ready) {

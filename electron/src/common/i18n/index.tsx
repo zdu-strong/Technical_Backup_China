@@ -38,11 +38,11 @@ if (Object.keys(I18nEnum).includes(window.navigator.language)) {
   GlobalState.I18nLocale = window.navigator.language;
 }
 
-export const useI18nLocale = (): string => {
+export function useI18nLocale(): string {
   return ((I18nEnum as any)[GlobalState.I18nLocale] as typeof I18nEnum["en-US"]).id;
 }
 
-export const useI18nJson = () => {
+export function useI18nJson() {
   return ((I18nEnum as any)[GlobalState.I18nLocale] as typeof I18nEnum["en-US"]).json;
 }
 
