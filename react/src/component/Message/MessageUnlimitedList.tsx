@@ -10,11 +10,24 @@ import { Alert, CircularProgress } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import { UserMessageModel } from "@/model/UserMessageModel";
 
+const css = stylesheet({
+  messsageListContainer: {
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    flex: "1 1 auto",
+  },
+})
+
 export default observer((props: {
   userId: string,
   username: string,
   setReadyForMessageList: (readyForMessageList: boolean) => Promise<void>,
 }) => {
+
   const state = useMobxState({
     /* Which item you want to jump to, the value of the input box */
     jumpItemOfInput: "",
@@ -32,23 +45,16 @@ export default observer((props: {
     messageMap: {} as Record<string, UserMessageModel>,
     listenMessageSet: new Set<number>(),
     child,
-    css: stylesheet({
-      messsageListContainer: {
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        flex: "1 1 auto",
-      },
-    }),
   }, {
     ...props,
     variableSizeListRef: useRef<{
       scrollToItemByPageNum: (pageNum: number) => Promise<void>,
       isNeedScrollToEnd: () => boolean,
     }>(),
+  })
+
+  useMount((subscription) => {
+    loadAllMessage(subscription);
   })
 
   function child(props: { pageNum: number }) {
@@ -76,9 +82,7 @@ export default observer((props: {
     />
   }
 
-  useMount((subscription) => {
-    loadAllMessage(subscription);
-  })
+
 
   function loadAllMessage(subscription: Subscription) {
     subscription.add(new Observable<null>((subscriber) => {
@@ -137,7 +141,7 @@ export default observer((props: {
     }
   }
 
-  return <div className={state.css.messsageListContainer}>
+  return <div className={css.messsageListContainer}>
     {!state.error && !state.ready && <CircularProgress style={{ width: "40px", height: "40px" }} />}
     {state.error && <Alert severity="error">
       <FormattedMessage id="ServerAccessError" defaultMessage="Server access error" />

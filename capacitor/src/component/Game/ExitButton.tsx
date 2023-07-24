@@ -9,7 +9,20 @@ import { delay, distinctUntilChanged, from, of, repeat, Subscription, tap } from
 import { exhaustMapWithTrailing } from "rxjs-exhaustmap-with-trailing";
 import SettingsIcon from '@mui/icons-material/Settings';
 
+const css = stylesheet({
+  container: {
+    width: "100%",
+    height: "0px",
+    position: "relative",
+  },
+  exitButton: {
+    position: "absolute",
+    top: "10px"
+  }
+})
+
 export default observer((props: { exit: () => void }) => {
+
   const state = useMobxState({
     exitDialog: {
       open: false,
@@ -17,20 +30,9 @@ export default observer((props: { exit: () => void }) => {
     ready: false,
     isLeftAndNotIsRight: false,
     leftOrRight: 10,
-    css: stylesheet({
-      container: {
-        width: "100%",
-        height: "0px",
-        position: "relative",
-      },
-      exitButton: {
-        position: "absolute",
-        top: "10px"
-      }
-    }),
   }, {
     ...props,
-  });
+  })
 
   useMount(async (subscription) => {
     await loadSafeAreaInsets();
@@ -79,13 +81,13 @@ export default observer((props: { exit: () => void }) => {
   }
 
   return <>
-    <div className={state.css.container}>
+    <div className={css.container}>
       {state.ready && <Fab
         size="small"
         color="primary"
         aria-label="add"
         style={state.isLeftAndNotIsRight ? { left: `${state.leftOrRight}px` } : { right: `${state.leftOrRight}px` }}
-        className={state.css.exitButton}
+        className={css.exitButton}
         onClick={() => {
           state.exitDialog.open = true
         }}>

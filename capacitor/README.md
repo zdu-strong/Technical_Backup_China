@@ -56,31 +56,6 @@ get-port (Current project not support ES module)<br/>
 inquirer (Current project not support ES module)<br/>
 typescript (Dependency incompatibility)<br/>
 
-## Notes - CSS In JS with style
-
-Define componentized css, & represents the current class name.
-
-    import { stylesheet } from 'typestyle';
-    import { useMobxState, observer } from 'mobx-react-use-autorun';
-
-    export default observer(() => {
-
-      const state = useMobxState({
-        css: stylesheet({
-          container: {
-            color: "green",
-            $nest: {
-              "&:hover": {
-                color: "yellow",
-              },
-            }
-          }
-        })
-      })
-
-      return <div className={state.css.container}></div>
-    })
-
 ## Learn More
 
 1. React UI framework (https://react.dev)<br/>

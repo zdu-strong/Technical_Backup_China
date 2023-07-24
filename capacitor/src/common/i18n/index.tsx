@@ -30,24 +30,24 @@ export const I18nEnum: Record<string, {
   }
 }
 
-const state = observable({
+const GlobalState = observable({
   I18nLocale: I18nEnum['en-US'].id,
 });
 
 if (Object.keys(I18nEnum).includes(window.navigator.language)) {
-  state.I18nLocale = window.navigator.language;
+  GlobalState.I18nLocale = window.navigator.language;
 }
 
 export const useI18nLocale = (): string => {
-  return ((I18nEnum as any)[state.I18nLocale] as typeof I18nEnum["en-US"]).id;
+  return ((I18nEnum as any)[GlobalState.I18nLocale] as typeof I18nEnum["en-US"]).id;
 }
 
 export const useI18nJson = () => {
-  return ((I18nEnum as any)[state.I18nLocale] as typeof I18nEnum["en-US"]).json;
+  return ((I18nEnum as any)[GlobalState.I18nLocale] as typeof I18nEnum["en-US"]).json;
 }
 
 export const setI18nLocale = (locale: string) => {
   if (Object.keys(I18nEnum).includes(locale)) {
-    state.I18nLocale = locale;
+    GlobalState.I18nLocale = locale;
   }
 };

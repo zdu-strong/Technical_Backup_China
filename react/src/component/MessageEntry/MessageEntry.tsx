@@ -10,6 +10,20 @@ import { v1 } from "uuid";
 import MessageMenu from "@/component/MessageEntry/MessageMenu";
 import MessageUnlimitedList from "@/component/Message/MessageUnlimitedList";
 
+const css = stylesheet({
+  container: {
+    width: "100%",
+    height: "100%",
+    flex: "1 1 auto",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingLeft: "1em",
+    paddingRight: "1em",
+  },
+})
+
 export default observer(() => {
 
   const state = useMobxState({
@@ -20,22 +34,9 @@ export default observer(() => {
     },
     error: null as any,
     keyOfDiv: v1(),
-    css: stylesheet({
-      container: {
-        width: "100%",
-        height: "100%",
-        flex: "1 1 auto",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        paddingLeft: "1em",
-        paddingRight: "1em",
-      },
-    }),
   }, {
     navigate: useNavigate(),
-  });
+  })
 
   useMount(async () => {
     try {
@@ -52,7 +53,7 @@ export default observer(() => {
 
   return <>
     <LoadingOrErrorComponent ready={state.readyForStart && state.readyForMessageList} error={state.error} />
-    <div key={state.keyOfDiv} className={state.css.container} style={state.readyForStart && state.readyForMessageList ? {} : { position: "absolute", visibility: "hidden" }} >
+    <div key={state.keyOfDiv} className={css.container} style={state.readyForStart && state.readyForMessageList ? {} : { position: "absolute", visibility: "hidden" }} >
       <MessageMenu userId={GlobalUserInfo.id} username={GlobalUserInfo.username} />
       <MessageUnlimitedList userId={GlobalUserInfo.id!} username={GlobalUserInfo.username!} setReadyForMessageList={state.setReadyForMessageList} />
       <MessageChat userId={GlobalUserInfo.id!} username={GlobalUserInfo.username!} />

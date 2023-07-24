@@ -1,33 +1,31 @@
 import { Alert, Dialog, DialogContent, DialogTitle, Divider, Fab } from "@mui/material"
 import { GlobalMessageList, MessageService, MESSAGE_TYPE_ENUM } from "@/common/MessageService"
 import linq from "linq";
-import { useMobxState, observer } from 'mobx-react-use-autorun';
+import { observer } from 'mobx-react-use-autorun';
 import CloseIcon from '@mui/icons-material/Close';
 import HelpIcon from '@mui/icons-material/Help';
 import Tooltip from '@mui/material/Tooltip';
 import { stylesheet } from "typestyle";
 import { FormattedMessage } from "react-intl";
 
-export default observer(() => {
-
-  const state = useMobxState({
-    css: stylesheet({
-      alertMessageContent: {
-        $nest: {
-          '.MuiAlert-message': {
-            fontSize: "large",
-            fontWeight: 'bold',
-            alignItems: "center",
-            display: "flex"
-          },
-          '.MuiAlert-icon': {
-            alignItems: "center",
-            fontSize: "x-large"
-          }
-        }
+const css = stylesheet({
+  alertMessageContent: {
+    $nest: {
+      '.MuiAlert-message': {
+        fontSize: "large",
+        fontWeight: 'bold',
+        alignItems: "center",
+        display: "flex"
+      },
+      '.MuiAlert-icon': {
+        alignItems: "center",
+        fontSize: "x-large"
       }
-    }),
-  });
+    }
+  }
+})
+
+export default observer(() => {
 
   function getMessageType() {
     if (GlobalMessageList.length > 0) {
@@ -114,7 +112,7 @@ export default observer(() => {
       <Divider />
       <DialogContent style={{ padding: "1em" }}>
         {GlobalMessageList.map(messsageObject =>
-          <Alert severity={messsageObject.type as any} className={state.css.alertMessageContent} key={messsageObject.id} style={{ marginTop: "1em", color: getMessageContentTextColor(), whiteSpace: "pre-wrap", wordBreak: "break-word", wordWrap: "break-word" }}>
+          <Alert severity={messsageObject.type as any} className={css.alertMessageContent} key={messsageObject.id} style={{ marginTop: "1em", color: getMessageContentTextColor(), whiteSpace: "pre-wrap", wordBreak: "break-word", wordWrap: "break-word" }}>
             {messsageObject.message}
           </Alert>
         )}

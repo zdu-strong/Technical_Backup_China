@@ -3,14 +3,14 @@ import { useMount } from "mobx-react-use-autorun";
 import { timer } from 'rxjs';
 import remote from '@/remote';
 
-const state = observable({
+const GlobalState = observable({
   ready: false,
 })
 
 export const useReadyForApplication = () => {
 
   useMount(async () => {
-    if (!state.ready) {
+    if (!GlobalState.ready) {
       const isLoaded = await remote.getIsLoaded();
       if (!isLoaded) {
         const display = remote.screen.getDisplayNearestPoint(remote.screen.getCursorScreenPoint());
@@ -47,8 +47,8 @@ export const useReadyForApplication = () => {
         await remote.setIsLoadedToTrue();
       }
     }
-    state.ready = true
+    GlobalState.ready = true
   })
 
-  return state.ready;
+  return GlobalState.ready;
 }

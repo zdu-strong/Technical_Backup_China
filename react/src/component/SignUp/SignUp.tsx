@@ -20,6 +20,18 @@ import { encryptByPublicKeyOfRSA } from "@/common/RSAUtils";
 import LoadingOrErrorComponent from "@/common/LoadingOrErrorComponent/LoadingOrErrorComponent";
 import { ReactNode } from "react";
 
+const css = stylesheet({
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    flex: "1 1 auto",
+    width: "100%",
+    paddingLeft: "5em",
+    paddingRight: "5em",
+  }
+})
+
 export default observer(() => {
 
   const state = useMobxState({
@@ -94,17 +106,6 @@ export default observer(() => {
         return false;
       }
     },
-    css: stylesheet({
-      container: {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        flex: "1 1 auto",
-        width: "100%",
-        paddingLeft: "5em",
-        paddingRight: "5em",
-      }
-    }),
   }, {
     navigate: useNavigate(),
   })
@@ -186,7 +187,7 @@ export default observer(() => {
   }
 
   return <LoadingOrErrorComponent error={state.errorOfInit} ready={state.ready}>
-    <div className={state.css.container}>
+    <div className={css.container}>
       <div className="flex flex-col flex-auto w-full">
         <div className="flex flex-col flex-auto w-full">
           <div className="flex justify-center" style={{ marginTop: "1em" }}>

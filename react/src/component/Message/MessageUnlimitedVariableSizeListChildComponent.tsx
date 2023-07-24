@@ -5,6 +5,16 @@ import { useMount } from "mobx-react-use-autorun";
 import { Subscription, tap, timer } from 'rxjs'
 import { DefaultVariableSizeListChildRowHeight } from "./js/DefaultVariableSizeListChildRowHeight";
 
+const css = stylesheet({
+  container: {
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+    flex: "1 1 auto",
+    minHeight: `${DefaultVariableSizeListChildRowHeight}px`,
+  },
+})
+
 export default observer((props: {
   setRowHeight: (rowHeight: number, topOffset: number) => void,
   children: (props: { pageNum: number }) => ReactNode,
@@ -13,19 +23,15 @@ export default observer((props: {
   baseTotalPage: number,
   pageNum: number,
 }) => {
-  const state = useMobxState({
-    css: stylesheet({
-      container: {
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        flex: "1 1 auto",
-        minHeight: `${DefaultVariableSizeListChildRowHeight}px`,
-      },
-    }),
-  }, {
+
+  const state = useMobxState({}, {
     ...props,
     containerRef: useRef<any>(),
+  })
+
+  useMount((subscription) => {
+    autoChangeSize(subscription);
+    initSetRowHeight();
   })
 
   function autoChangeSize(subscription: Subscription) {
@@ -51,13 +57,8 @@ export default observer((props: {
     }
   }
 
-  useMount((subscription) => {
-    autoChangeSize(subscription);
-    initSetRowHeight();
-  })
-
   return <div style={state.style} className={`${state.idPrefix}-${state.pageNum}`}>
-    <div className={state.css.container} ref={state.containerRef}>
+    <div className={css.container} ref={state.containerRef}>
       {state.children({ pageNum: state.pageNum })}
     </div>
   </div>

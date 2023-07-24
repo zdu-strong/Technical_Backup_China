@@ -51,31 +51,6 @@ typescript (Dependency incompatibility)<br/>
 
 1. The dependencies used in the Electron main process need to be installed in dependencies, and other dependencies are installed in devDependencies. This can keep the application size to a minimum.
 
-## Notes - CSS In JS with style
-
-Define componentized css, & represents the current class name.
-
-    import { stylesheet } from 'typestyle';
-    import { useMobxState, observer } from 'mobx-react-use-autorun';
-
-    export default observer(() => {
-
-      const state = useMobxState({
-        css: stylesheet({
-          container: {
-            color: "green",
-            $nest: {
-              "&:hover": {
-                color: "yellow",
-              },
-            }
-          }
-        })
-      })
-
-      return <div className={state.css.container}></div>
-    })
-
 ## Learn More
 
 1. React UI framework (https://react.dev)<br/>

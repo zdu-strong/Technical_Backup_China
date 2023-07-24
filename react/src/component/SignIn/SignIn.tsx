@@ -10,6 +10,17 @@ import api from "@/api";
 import { MessageService } from "@/common/MessageService";
 import { Link, useNavigate } from "react-router-dom";
 
+const css = stylesheet({
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    paddingTop: "1em",
+    paddingLeft: "5em",
+    paddingRight: "5em",
+  }
+})
+
 export default observer(() => {
 
   const state = useMobxState({
@@ -65,16 +76,6 @@ export default observer(() => {
         return Object.keys(state.error).filter(s => s !== "hasError").some(s => (state.error as any)[s]());
       }
     },
-    css: stylesheet({
-      container: {
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        paddingTop: "1em",
-        paddingLeft: "5em",
-        paddingRight: "5em",
-      }
-    }),
   }, {
     navigate: useNavigate(),
   })
@@ -102,7 +103,7 @@ export default observer(() => {
     }
   }
 
-  return <div className={state.css.container}>
+  return <div className={css.container}>
     <div>
       <FormattedMessage id="SignIn" defaultMessage="SignIn" />
     </div>

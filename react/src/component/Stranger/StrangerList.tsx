@@ -12,7 +12,7 @@ export default observer(() => {
     friendshipList: [] as FriendshipModel[],
     ready: false,
     error: null as any,
-  });
+  })
 
   useMount(async () => {
     try {

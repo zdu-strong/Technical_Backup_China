@@ -11,6 +11,26 @@ import { DefaultVariableSizeListChildRowHeight } from "./js/DefaultVariableSizeL
 import { DefaultVariableSizeListAdjustDuration } from "./js/DefaultVariableSizeListAdjustDuration";
 import * as mathjs from 'mathjs'
 
+const css = stylesheet({
+  VariableSizeList: {
+    border: "1px solid purple",
+    scrollbarWidth: "none",
+    $nest: {
+      "&::-webkit-scrollbar": {
+        display: "none",
+      }
+    }
+  },
+  autoSizer: {
+    display: "flex",
+    flexDirection: "row",
+    flex: "1 1 auto",
+    height: "100%",
+    width: "100%",
+    minHeight: "100px",
+  }
+})
+
 export default observer(forwardRef((props: {
   totalPage: number,
   children: (props: { pageNum: number }) => ReactNode,
@@ -50,25 +70,7 @@ export default observer(forwardRef((props: {
     isNeedScrollToEndByCaluate: true,
     initTotalPage: 0,
     baseTotalPage: 0,
-    css: stylesheet({
-      VariableSizeList: {
-        border: "1px solid purple",
-        scrollbarWidth: "none",
-        $nest: {
-          "&::-webkit-scrollbar": {
-            display: "none",
-          }
-        }
-      },
-      autoSizer: {
-        display: "flex",
-        flexDirection: "row",
-        flex: "1 1 auto",
-        height: "100%",
-        width: "100%",
-        minHeight: "100px",
-      }
-    }),
+
   }, {
     ...props,
     ref,
@@ -228,7 +230,7 @@ export default observer(forwardRef((props: {
       itemSize={state.getRowHeightByIndex}
       width={size.width!}
       ref={state.variableSizeListRef as any}
-      className={state.css.VariableSizeList}
+      className={css.VariableSizeList}
       innerRef={state.innerRef}
       /* The number of rows to render outside the visible area */
       overscanCount={state.overscanCount}
@@ -272,7 +274,7 @@ export default observer(forwardRef((props: {
     </VariableSizeList>;
   }
 
-  return <div className={state.css.autoSizer}>
+  return <div className={css.autoSizer}>
     <AutoSizer>
       {childRender}
     </AutoSizer>

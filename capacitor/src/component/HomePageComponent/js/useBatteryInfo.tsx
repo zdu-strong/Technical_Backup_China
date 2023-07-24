@@ -3,9 +3,14 @@ import { useMobxState } from 'mobx-react-use-autorun';
 import { useMount } from "mobx-react-use-autorun"
 import { concatMap, delay, from, of, repeat, Subscription, tap } from 'rxjs';
 
-export const useBatteryInfo = () => {
+export function useBatteryInfo() {
+
   const state = useMobxState({
     batteryInfo: null as BatteryInfo | null,
+  })
+
+  useMount((subscription) => {
+    loadBatteryInfo(subscription);
   })
 
   function loadBatteryInfo(subscription: Subscription) {
@@ -18,10 +23,6 @@ export const useBatteryInfo = () => {
       repeat(),
     ).subscribe());
   }
-
-  useMount((subscription) => {
-    loadBatteryInfo(subscription);
-  })
 
   return state.batteryInfo;
 }

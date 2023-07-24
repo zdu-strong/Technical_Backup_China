@@ -3,8 +3,13 @@ import { useMount } from "mobx-react-use-autorun"
 import { concatMap, EMPTY, interval, of, repeat, Subscription, take, tap } from "rxjs";
 
 export function useRandomNumber() {
+
   const state = useMobxState({
     randomNumber: 16,
+  })
+
+  useMount((subscription) => {
+    loadRandomNumber(subscription)
   })
 
   function loadRandomNumber(subscription: Subscription) {
@@ -26,10 +31,6 @@ export function useRandomNumber() {
       repeat({ delay: 1000 }),
     ).subscribe());
   }
-
-  useMount((subscription) => {
-    loadRandomNumber(subscription)
-  })
 
   return state.randomNumber;
 }

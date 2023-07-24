@@ -16,11 +16,6 @@ export default observer(() => {
     error: null as any,
   })
 
-  async function loadServerGitInfo() {
-    const { data } = await api.Git.getServerGitInfo();
-    state.serverGitInfo = data;
-  }
-
   useMount(async () => {
     try {
       await loadServerGitInfo();
@@ -29,6 +24,11 @@ export default observer(() => {
       state.error = new Error("Network Error");
     }
   })
+
+  async function loadServerGitInfo() {
+    const { data } = await api.Git.getServerGitInfo();
+    state.serverGitInfo = data;
+  }
 
   return <LoadingOrErrorComponent ready={state.ready} error={state.error}>
     {

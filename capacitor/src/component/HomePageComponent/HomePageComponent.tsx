@@ -9,71 +9,72 @@ import { observer, useMobxState } from 'mobx-react-use-autorun';
 import GameDialog from '@/component/Game/GameDialog';
 import { App } from '@capacitor/app'
 
+const css = stylesheet({
+  container: {
+    textAlign: "center",
+  },
+  header: {
+    backgroundColor: "#282c34",
+    minHeight: "100vh",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "calc(10px + 2vmin)",
+    color: "white",
+  },
+  img: {
+    height: "40vmin",
+    pointerEvents: "none",
+    animationName: keyframes({
+      "from": {
+        transform: "rotate(0deg)"
+      },
+      "to": {
+        transform: "rotate(360deg)",
+      }
+    }),
+    animationDuration: "20s",
+    animationIterationCount: "infinite",
+    animationTimingFunction: "linear",
+  },
+  batteryContainer: {
+    color: "#61dafb",
+    display: "flex",
+    flexDirection: "column",
+  },
+  divContainer: {
+    display: "flex",
+    flexDirection: "column",
+  }
+})
+
 export default observer(() => {
 
   const state = useMobxState({
     gameDialog: {
       open: false,
     },
-    css: stylesheet({
-      container: {
-        textAlign: "center",
-      },
-      header: {
-        backgroundColor: "#282c34",
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: "calc(10px + 2vmin)",
-        color: "white",
-      },
-      img: {
-        height: "40vmin",
-        pointerEvents: "none",
-        animationName: keyframes({
-          "from": {
-            transform: "rotate(0deg)"
-          },
-          "to": {
-            transform: "rotate(360deg)",
-          }
-        }),
-        animationDuration: "20s",
-        animationIterationCount: "infinite",
-        animationTimingFunction: "linear",
-      },
-      batteryContainer: {
-        color: "#61dafb",
-        display: "flex",
-        flexDirection: "column",
-      },
-      divContainer: {
-        display: "flex",
-        flexDirection: "column",
-      }
-    }),
   }, {
     batteryInfo: useBatteryInfo(),
   });
 
   return (<>
     <div
-      className={state.css.container}
+      className={css.container}
     >
       <header
-        className={state.css.header}
+        className={css.header}
       >
         <img
           src={logo}
-          className={state.css.img} alt="logo" />
+          className={css.img} alt="logo" />
         <div className="flex">
           <FormattedMessage id="EditSrcAppTsxAndSaveToReload" defaultMessage="Edit src/App.tsx and save to reload" />
           {"."}
         </div>
         <div
-          className={state.css.batteryContainer}
+          className={css.batteryContainer}
         >
           {
             state.batteryInfo ? (<div>
@@ -92,7 +93,7 @@ export default observer(() => {
               <CircularProgress />
             )
           }
-          <div className={state.css.divContainer}>
+          <div className={css.divContainer}>
             <Link to="/not_found" replace={true} className="no-underline" >
               <LinkAlias underline="hover" component="div" >
                 <Button variant="text" color="primary" style={{ textTransform: "none", marginTop: "1em", fontSize: "large", paddingTop: "0", paddingBottom: "0" }}>

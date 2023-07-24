@@ -27,6 +27,13 @@ export default observer((props: {
     ...props,
   })
 
+  useMount((subscription) => {
+    state.loadMessage();
+    subscription.add(new Subscription(() => {
+      state.unloadMessage();
+    }))
+  })
+
   async function recall() {
     try {
       state.loadingOfRecall = true
@@ -36,13 +43,6 @@ export default observer((props: {
       MessageService.error("Failed to withdraw");
     }
   }
-
-  useMount((subscription) => {
-    state.loadMessage();
-    subscription.add(new Subscription(() => {
-      state.unloadMessage();
-    }))
-  })
 
   return <div className="flex flex-col flex-auto w-full justify-between">
     <div className="flex flex-col flex-auto w-full">

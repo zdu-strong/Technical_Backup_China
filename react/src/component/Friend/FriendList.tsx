@@ -7,11 +7,12 @@ import LoadingOrErrorComponent from "@/common/LoadingOrErrorComponent/LoadingOrE
 import { FormattedMessage } from "react-intl";
 
 export default observer(() => {
+
   const state = useMobxState({
     friendshipList: [] as FriendshipModel[],
     ready: false,
     error: null as any,
-  });
+  })
 
   useMount(async () => {
     try {

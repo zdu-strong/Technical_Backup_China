@@ -6,6 +6,42 @@ import { keyframes, stylesheet } from 'typestyle';
 import { useMobxState, observer, useMount } from 'mobx-react-use-autorun';
 import { concatMap, from, of, repeat, timer } from 'rxjs';
 
+const css = stylesheet({
+  container: {
+    textAlign: "center",
+  },
+  header: {
+    backgroundColor: "#282c34",
+    minHeight: "100vh",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "calc(10px + 2vmin)",
+    color: "white",
+  },
+  img: {
+    height: "40vmin",
+    pointerEvents: "none",
+    animationName: keyframes({
+      "from": {
+        transform: "rotate(0deg)"
+      },
+      "to": {
+        transform: "rotate(360deg)",
+      }
+    }),
+    animationDuration: "20s",
+    animationIterationCount: "infinite",
+    animationTimingFunction: "linear",
+  },
+  batteryContainer: {
+    color: "#61dafb",
+    display: "flex",
+    flexDirection: "column",
+  }
+})
+
 export default observer(() => {
 
   const state = useMobxState({
@@ -13,42 +49,7 @@ export default observer(() => {
     people: {
       name: "",
     },
-    css: stylesheet({
-      container: {
-        textAlign: "center",
-      },
-      header: {
-        backgroundColor: "#282c34",
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: "calc(10px + 2vmin)",
-        color: "white",
-      },
-      img: {
-        height: "40vmin",
-        pointerEvents: "none",
-        animationName: keyframes({
-          "from": {
-            transform: "rotate(0deg)"
-          },
-          "to": {
-            transform: "rotate(360deg)",
-          }
-        }),
-        animationDuration: "20s",
-        animationIterationCount: "infinite",
-        animationTimingFunction: "linear",
-      },
-      batteryContainer: {
-        color: "#61dafb",
-        display: "flex",
-        flexDirection: "column",
-      }
-    }),
-  });
+  })
 
   useMount((subscription) => {
     /* Generate random number */
@@ -69,20 +70,20 @@ export default observer(() => {
 
   return (
     <div
-      className={state.css.container}
+      className={css.container}
     >
       <header
-        className={state.css.container}
+        className={css.container}
       >
         <img
           src={logo}
-          className={state.css.img} alt="logo" />
+          className={css.img} alt="logo" />
         <div className="flex">
           <FormattedMessage id="EditSrcAppTsxAndSaveToReload" defaultMessage="Edit src/App.tsx and save to reload" />
           {"."}
         </div>
         <div
-          className={state.css.batteryContainer}
+          className={css.batteryContainer}
         >
           {
             state.randomNumber !== null ? (<div>

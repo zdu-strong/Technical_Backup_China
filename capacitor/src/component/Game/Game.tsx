@@ -10,6 +10,30 @@ import * as BABYLON from '@babylonjs/core'
 import { Capacitor } from '@capacitor/core';
 import { AndroidNotch } from '@awesome-cordova-plugins/android-notch';
 
+const css = stylesheet({
+  div: {
+    display: "flex",
+    flex: "1 1 auto",
+    flexDirection: "column",
+    height: "100vh",
+    $nest: {
+      "& > canvas": {
+        width: "100%",
+        height: "100%",
+      },
+      "& > div": {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        zIndex: 1000,
+        backgroundColor: "white",
+      }
+    }
+  }
+})
+
 export default observer(() => {
 
   const state = useMobxState({
@@ -17,31 +41,29 @@ export default observer(() => {
     ready: false,
     error: null as any,
     leftOrRight: 10,
-    css: stylesheet({
-      div: {
-        display: "flex",
-        flex: "1 1 auto",
-        flexDirection: "column",
-        height: "100vh",
-        $nest: {
-          "& > canvas": {
-            width: "100%",
-            height: "100%",
-          },
-          "& > div": {
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            zIndex: 1000,
-            backgroundColor: "white",
-          }
-        }
-      }
-    }),
   }, {
     canvasRef: useRef<HTMLCanvasElement>(),
+  })
+
+  useMount(async (subscription) => {
+    try {
+      for (let i = 100; i > 0; i--) {
+        await timer(1).toPromise();
+      }
+      await loadSafeAreaInsets();
+      state.engine = await initGameEngine(state.canvasRef);
+      subscription.add(new Subscription(() => {
+        state.engine?.dispose();
+      }));
+      resizeGameCanvas(subscription);
+      for (let i = 10; i > 0; i--) {
+        await timer(16).toPromise();
+      }
+      state.canvasRef.current!.focus();
+      state.ready = true;
+    } catch (error) {
+      state.error = error
+    }
   })
 
   async function loadSafeAreaInsets() {
@@ -80,29 +102,8 @@ export default observer(() => {
     ).subscribe())
   }
 
-  useMount(async (subscription) => {
-    try {
-      for (let i = 100; i > 0; i--) {
-        await timer(1).toPromise();
-      }
-      await loadSafeAreaInsets();
-      state.engine = await initGameEngine(state.canvasRef);
-      subscription.add(new Subscription(() => {
-        state.engine?.dispose();
-      }));
-      resizeGameCanvas(subscription);
-      for (let i = 10; i > 0; i--) {
-        await timer(16).toPromise();
-      }
-      state.canvasRef.current!.focus();
-      state.ready = true;
-    } catch (error) {
-      state.error = error
-    }
-  })
-
   return <>
-    <div className={state.css.div} style={state.ready ? {} : { position: "relative" }}>
+    <div className={css.div} style={state.ready ? {} : { position: "relative" }}>
       <canvas ref={state.canvasRef as any} style={{ outlineStyle: "none" }} />
       {!state.ready && <div
         className='flex flex-col flex-auto'
