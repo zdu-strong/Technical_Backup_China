@@ -28,12 +28,11 @@ public class TokenService extends BaseService {
     }
 
     public void deleteTokenEntity(String jwtId) {
-        var stream = this.TokenEntity().where(s -> s.getJwtId().equals(jwtId));
-        if (!stream.exists()) {
+        var tokenEntityOptional = this.TokenEntity().where(s -> s.getJwtId().equals(jwtId)).findOne();
+        if (!tokenEntityOptional.isPresent()) {
             return;
         }
-        var tokenEntity = stream.getOnlyValue();
-        tokenEntity.setUser(null);
+        var tokenEntity = tokenEntityOptional.get();
         this.entityManager.remove(tokenEntity);
     }
 

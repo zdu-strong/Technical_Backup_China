@@ -17,6 +17,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public class LoggerEntity {
+
     @Id
     private String id;
 

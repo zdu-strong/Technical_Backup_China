@@ -13,6 +13,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public class StorageSpaceEntity {
+
     @Id
     private String id;
 
@@ -24,4 +25,5 @@ public class StorageSpaceEntity {
 
     @Column(nullable = false)
     private Date updateDate;
+
 }

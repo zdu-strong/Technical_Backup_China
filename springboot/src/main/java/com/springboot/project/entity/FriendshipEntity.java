@@ -1,7 +1,6 @@
 package com.springboot.project.entity;
 
 import java.util.Date;
-
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -22,6 +21,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public class FriendshipEntity {
+
     @Id
     private String id;
 

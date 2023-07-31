@@ -19,6 +19,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public class UserEmailEntity {
+
     @Id
     private String id;
 

@@ -17,6 +17,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public class EncryptDecryptEntity {
+
     @Id
     private String id;
 
@@ -40,4 +41,5 @@ public class EncryptDecryptEntity {
 
     @Column(nullable = false)
     private Date updateDate;
+
 }

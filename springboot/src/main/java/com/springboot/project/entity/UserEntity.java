@@ -20,6 +20,7 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 public class UserEntity {
+
     @Id
     private String id;
 
