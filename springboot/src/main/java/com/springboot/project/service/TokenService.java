@@ -33,6 +33,7 @@ public class TokenService extends BaseService {
             return;
         }
         var tokenEntity = tokenEntityOptional.get();
+        tokenEntity.setUser(null);
         this.entityManager.remove(tokenEntity);
     }
 
