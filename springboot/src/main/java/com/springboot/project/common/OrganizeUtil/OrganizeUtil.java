@@ -47,7 +47,7 @@ public class OrganizeUtil extends BaseService {
         organizeEntity.setOrganizeShadow(organizeShadow);
         organizeEntity.setAncestorList(Lists.newArrayList());
         organizeEntity.setDescendantList(Lists.newArrayList());
-        this.entityManager.persist(organizeEntity);
+        this.persist(organizeEntity);
 
         this.organizeClosureService.createOrganizeClosure(organizeEntity.getId(), organizeEntity.getId());
 
@@ -63,7 +63,7 @@ public class OrganizeUtil extends BaseService {
         organizeEntity.setUpdateDate(new Date());
         organizeEntity.getOrganizeShadow().setIsDeleted(false);
         organizeEntity.getOrganizeShadow().setUpdateDate(new Date());
-        this.entityManager.merge(organizeEntity);
+        this.merge(organizeEntity);
 
         return this.organizeFormatter.format(organizeEntity);
     }
@@ -79,7 +79,7 @@ public class OrganizeUtil extends BaseService {
         organizeEntity.getOrganizeShadow().setUpdateDate(new Date());
         organizeEntity.setIsDeleted(true);
         organizeEntity.setUpdateDate(new Date());
-        this.entityManager.merge(organizeEntity);
+        this.merge(organizeEntity);
     }
 
     public OrganizeModel getOrganize(String id) {
@@ -127,7 +127,7 @@ public class OrganizeUtil extends BaseService {
         targetOrganizeEntity.setOrganizeShadow(organizeEntity.getOrganizeShadow());
         targetOrganizeEntity.setAncestorList(Lists.newArrayList());
         targetOrganizeEntity.setDescendantList(Lists.newArrayList());
-        this.entityManager.persist(organizeEntity);
+        this.persist(targetOrganizeEntity);
 
         this.organizeClosureService.createOrganizeClosure(targetOrganizeEntity.getId(), targetOrganizeEntity.getId());
 
@@ -151,13 +151,13 @@ public class OrganizeUtil extends BaseService {
 
         organizeEntity.setIsDeleted(true);
         organizeEntity.setUpdateDate(new Date());
-        this.entityManager.merge(organizeEntity);
+        this.merge(organizeEntity);
         targetOrganizeEntity.setIsDeleted(false);
         targetOrganizeEntity.setUpdateDate(new Date());
         targetOrganizeEntity.getOrganizeShadow()
                 .setParent(targetParentOrganize != null ? targetParentOrganize.getOrganizeShadow() : null);
         targetOrganizeEntity.getOrganizeShadow().setUpdateDate(new Date());
-        this.entityManager.merge(targetOrganizeEntity);
+        this.merge(targetOrganizeEntity);
 
         return this.organizeFormatter.format(targetOrganizeEntity);
     }
@@ -218,7 +218,7 @@ public class OrganizeUtil extends BaseService {
             childTargetOrganizeEntity.setOrganizeShadow(sourceChildOrganizeGroup.getDescendant().getOrganizeShadow());
             childTargetOrganizeEntity.setAncestorList(Lists.newArrayList());
             childTargetOrganizeEntity.setDescendantList(Lists.newArrayList());
-            this.entityManager.persist(childTargetOrganizeEntity);
+            this.persist(childTargetOrganizeEntity);
 
             this.organizeClosureService.createOrganizeClosure(childTargetOrganizeEntity.getId(),
                     childTargetOrganizeEntity.getId());
@@ -247,7 +247,7 @@ public class OrganizeUtil extends BaseService {
         if (organizeEntity != null) {
             organizeEntity.setIsDeleted(true);
             organizeEntity.setUpdateDate(new Date());
-            this.entityManager.merge(organizeEntity);
+            this.merge(organizeEntity);
             return true;
         }
         return false;
@@ -297,7 +297,7 @@ public class OrganizeUtil extends BaseService {
                     organizeEntity.setOrganizeShadow(organizeShadowEntity);
                     organizeEntity.setAncestorList(Lists.newArrayList());
                     organizeEntity.setDescendantList(Lists.newArrayList());
-                    this.entityManager.persist(organizeEntity);
+                    this.persist(organizeEntity);
 
                     this.organizeClosureService.createOrganizeClosure(organizeEntity.getId(), organizeEntity.getId());
 
@@ -326,7 +326,7 @@ public class OrganizeUtil extends BaseService {
                 .getOnlyValue();
         organizeEntity.setIsDeleted(false);
         organizeEntity.setUpdateDate(new Date());
-        this.entityManager.merge(organizeEntity);
+        this.merge(organizeEntity);
     }
 
     /**
@@ -372,7 +372,7 @@ public class OrganizeUtil extends BaseService {
                         .get();
                 organizeEntity.setIsDeleted(true);
                 organizeEntity.setUpdateDate(new Date());
-                this.entityManager.merge(organizeEntity);
+                this.merge(organizeEntity);
             }
 
             return true;

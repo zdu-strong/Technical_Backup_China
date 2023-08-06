@@ -26,7 +26,7 @@ public class UserMessageService extends BaseService {
                     .setFolderSize(storageFileModel.getFolderSize())
                     .setFileName(storageFileModel.getFileName()).setContent("");
         }
-        this.entityManager.persist(userEntity);
+        this.persist(userMessageEntity);
 
         return this.userMessageFormatter.formatForUserId(userMessageEntity, userId);
     }
@@ -35,7 +35,7 @@ public class UserMessageService extends BaseService {
         var userMessageEntity = this.UserMessageEntity().where(s -> s.getId().equals(id)).getOnlyValue();
         userMessageEntity.setIsRecall(true);
         userMessageEntity.setUpdateDate(new Date());
-        this.entityManager.merge(userMessageEntity);
+        this.merge(userMessageEntity);
     }
 
     public UserMessageModel getUserMessageById(String id, String userId) {

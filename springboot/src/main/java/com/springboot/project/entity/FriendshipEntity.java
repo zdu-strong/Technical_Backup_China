@@ -51,26 +51,4 @@ public class FriendshipEntity {
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, optional = false)
     private UserEntity friend;
 
-    public FriendshipEntity setUser(UserEntity user) {
-        if (this.user != null) {
-            this.user.getFridendList().remove(this);
-        }
-        this.user = user;
-        if (this.user != null) {
-            this.user.getFridendList().add(this);
-        }
-        return this;
-    }
-
-    public FriendshipEntity setFriend(UserEntity friend) {
-        if (this.friend != null) {
-            this.friend.getReverseFridendList().remove(this);
-        }
-        this.friend = friend;
-        if (this.friend != null) {
-            this.friend.getReverseFridendList().add(this);
-        }
-        return this;
-    }
-
 }

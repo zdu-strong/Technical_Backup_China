@@ -28,7 +28,7 @@ public class OrganizeShadowService extends BaseService {
         organizeShadowEntity.setParent(parentOrganizeShadow);
         organizeShadowEntity.setChildList(Lists.newArrayList());
         organizeShadowEntity.setOrganizeList(Lists.newArrayList());
-        this.entityManager.persist(organizeShadowEntity);
+        this.persist(organizeShadowEntity);
 
         return organizeShadowEntity.getId();
     }

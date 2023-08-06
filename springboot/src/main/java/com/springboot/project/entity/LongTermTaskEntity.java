@@ -1,7 +1,6 @@
 package com.springboot.project.entity;
 
 import java.util.Date;
-
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

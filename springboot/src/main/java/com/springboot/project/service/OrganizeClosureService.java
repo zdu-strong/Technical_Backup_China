@@ -20,7 +20,7 @@ public class OrganizeClosureService extends BaseService {
         organizeClosureEntity.setAncestor(ancestor);
         organizeClosureEntity.setDescendant(descendant);
         organizeClosureEntity.setGap(descendant.getLevel() - ancestor.getLevel());
-        this.entityManager.persist(organizeClosureEntity);
+        this.persist(organizeClosureEntity);
     }
 
     public PaginationModel<String> getAncestorOfOrganizeByPagination(Long pageNum, Long pageSize, String organizeId) {

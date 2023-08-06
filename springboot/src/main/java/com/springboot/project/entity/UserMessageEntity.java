@@ -44,15 +44,4 @@ public class UserMessageEntity {
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, optional = false)
     private UserEntity user;
 
-    public UserMessageEntity setUser(UserEntity user) {
-        if (this.user != null) {
-            this.user.getUserMessageList().remove(this);
-        }
-        this.user = user;
-        if (this.user != null) {
-            this.user.getUserMessageList().add(this);
-        }
-        return this;
-    }
-
 }

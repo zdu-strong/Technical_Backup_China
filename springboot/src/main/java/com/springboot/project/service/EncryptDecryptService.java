@@ -113,7 +113,7 @@ public class EncryptDecryptService extends BaseService {
                             encryptDecryptEntity.setPrivateKeyOfRSA(
                                     Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded()));
 
-                            this.entityManager.persist(encryptDecryptEntity);
+                            this.persist(encryptDecryptEntity);
                         }
                         EncryptDecryptEntity encryptDecryptEntity = this.EncryptDecryptEntity()
                                 .where(s -> s.getId().equals(id)).getOnlyValue();

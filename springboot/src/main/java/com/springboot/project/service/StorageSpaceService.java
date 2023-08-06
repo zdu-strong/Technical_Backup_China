@@ -29,7 +29,7 @@ public class StorageSpaceService extends BaseService {
         if (this.isUsedByProgramData(folderName)) {
             var list = this.StorageSpaceEntity().where(s -> s.getFolderName().equals(folderName)).toList();
             for (var storageSpaceEntity : list) {
-                this.entityManager.remove(storageSpaceEntity);
+                this.remove(storageSpaceEntity);
             }
             return true;
         }
@@ -56,7 +56,7 @@ public class StorageSpaceService extends BaseService {
         }
         for (var storageSpaceEntity : this.StorageSpaceEntity().where(s -> s.getFolderName().equals(folderName))
                 .toList()) {
-            this.entityManager.remove(storageSpaceEntity);
+            this.remove(storageSpaceEntity);
         }
         this.storage.delete(folderName);
     }
@@ -67,7 +67,7 @@ public class StorageSpaceService extends BaseService {
             StorageSpaceEntity storageSpaceEntity = this.StorageSpaceEntity()
                     .where(s -> s.getFolderName().equals(folderName)).findFirst().get();
             storageSpaceEntity.setUpdateDate(new Date());
-            this.entityManager.merge(storageSpaceEntity);
+            this.merge(storageSpaceEntity);
 
             return this.storageSpaceFormatter.format(storageSpaceEntity);
         } else {
@@ -76,7 +76,7 @@ public class StorageSpaceService extends BaseService {
             storageSpaceEntity.setFolderName(folderName);
             storageSpaceEntity.setCreateDate(new Date());
             storageSpaceEntity.setUpdateDate(new Date());
-            this.entityManager.persist(storageSpaceEntity);
+            this.persist(storageSpaceEntity);
 
             return this.storageSpaceFormatter.format(storageSpaceEntity);
         }

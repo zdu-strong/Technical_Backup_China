@@ -24,7 +24,7 @@ public class UserEmailService extends BaseService {
         userEmailEntity.setDeleteKey(Generators.timeBasedGenerator().generate().toString());
         userEmailEntity.setVerificationCode(verificationCode);
 
-        this.entityManager.persist(userEmailEntity);
+        this.persist(userEmailEntity);
     }
 
     public void updateUserEmailWithVerificationCodePassed(String email, String userId, String verificationCode) {
@@ -44,7 +44,7 @@ public class UserEmailService extends BaseService {
         userEmailEntity.setDeleteKey("");
         userEmailEntity.setVerificationCode("");
 
-        this.entityManager.merge(userEmailEntity);
+        this.merge(userEmailEntity);
     }
 
     public void checkEmailIsNotUsed(String email) {

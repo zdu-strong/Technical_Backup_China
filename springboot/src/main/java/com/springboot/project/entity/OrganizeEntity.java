@@ -40,21 +40,10 @@ public class OrganizeEntity {
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, optional = false)
     private OrganizeShadowEntity organizeShadow;
 
-    @OneToMany(mappedBy = "descendant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "descendant", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<OrganizeClosureEntity> ancestorList;
 
-    @OneToMany(mappedBy = "ancestor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "ancestor", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<OrganizeClosureEntity> descendantList;
-
-    public OrganizeEntity setOrganizeShadow(OrganizeShadowEntity organizeShadow) {
-        if (this.organizeShadow != null) {
-            this.organizeShadow.getOrganizeList().remove(this);
-        }
-        this.organizeShadow = organizeShadow;
-        if (this.organizeShadow != null) {
-            this.organizeShadow.getOrganizeList().add(this);
-        }
-        return this;
-    }
 
 }

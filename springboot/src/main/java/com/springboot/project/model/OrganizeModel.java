@@ -14,6 +14,7 @@ public class OrganizeModel {
     private String id;
     private String name;
     private Long level;
+    private Long childOrganizeCount;
     private List<OrganizeModel> childOrganizeList;
 
     private OrganizeModel parentOrganize;

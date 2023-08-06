@@ -18,7 +18,7 @@ public class TokenService extends BaseService {
         tokenEntity.setUser(user);
         tokenEntity.setCreateDate(new Date());
         tokenEntity.setUpdateDate(new Date());
-        this.entityManager.persist(tokenEntity);
+        this.persist(tokenEntity);
     }
 
     public String getPrivateKeyOfRSAOfToken(String jwtId) {
@@ -33,8 +33,7 @@ public class TokenService extends BaseService {
             return;
         }
         var tokenEntity = tokenEntityOptional.get();
-        tokenEntity.setUser(null);
-        this.entityManager.remove(tokenEntity);
+        this.remove(tokenEntity);
     }
 
 }

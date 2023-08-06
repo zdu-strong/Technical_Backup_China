@@ -2,6 +2,7 @@ package com.springboot.project.service;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.hibernate.Session;
 import org.jinq.jpa.JPAJinqStream;
 import org.jinq.jpa.JinqJPAStreamProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ import com.springboot.project.format.UserMessageFormatter;
 public abstract class BaseService {
 
     @PersistenceContext
-    protected EntityManager entityManager;
+    private EntityManager entityManager;
 
     @Autowired
     protected Storage storage;
@@ -54,6 +55,18 @@ public abstract class BaseService {
     protected LoggerFormatter loggerFormatter;
 
     private JinqJPAStreamProvider jinqJPAStreamProvider;
+
+    protected void persist(Object entity) {
+        this.entityManager.unwrap(Session.class).persist(entity);
+    }
+
+    protected void merge(Object entity) {
+        this.entityManager.unwrap(Session.class).merge(entity);
+    }
+
+    protected void remove(Object entity) {
+        this.entityManager.unwrap(Session.class).remove(entity);
+    }
 
     protected JPAJinqStream<StorageSpaceEntity> StorageSpaceEntity() {
         return this.streamAll(StorageSpaceEntity.class);

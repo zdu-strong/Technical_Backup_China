@@ -1,7 +1,6 @@
 package com.springboot.project.entity;
 
 import java.util.Date;
-
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -39,16 +38,5 @@ public class TokenEntity {
 
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, optional = false)
     private UserEntity user;
-
-    public TokenEntity setUser(UserEntity user) {
-        if (this.user != null) {
-            this.user.getTokenList().remove(this);
-        }
-        this.user = user;
-        if (this.user != null) {
-            this.user.getTokenList().add(this);
-        }
-        return this;
-    }
 
 }

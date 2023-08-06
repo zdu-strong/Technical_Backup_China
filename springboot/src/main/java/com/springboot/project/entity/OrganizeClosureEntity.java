@@ -1,7 +1,6 @@
 package com.springboot.project.entity;
 
 import java.util.Date;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,27 +34,5 @@ public class OrganizeClosureEntity {
 
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, optional = false)
     private OrganizeEntity descendant;
-
-    public OrganizeClosureEntity setAncestor(OrganizeEntity ancestor) {
-        if (this.ancestor != null) {
-            this.ancestor.getDescendantList().remove(this);
-        }
-        this.ancestor = ancestor;
-        if (this.ancestor != null) {
-            this.ancestor.getDescendantList().add(this);
-        }
-        return this;
-    }
-
-    public OrganizeClosureEntity setDescendant(OrganizeEntity descendant) {
-        if (this.descendant != null) {
-            this.descendant.getAncestorList().remove(this);
-        }
-        this.descendant = descendant;
-        if (this.descendant != null) {
-            this.descendant.getAncestorList().add(this);
-        }
-        return this;
-    }
 
 }

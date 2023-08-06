@@ -22,7 +22,7 @@ public class LongTermTaskService extends BaseService {
         longTermTaskEntity.setIsDone(false);
         longTermTaskEntity.setResult(null);
 
-        this.entityManager.persist(longTermTaskEntity);
+        this.persist(longTermTaskEntity);
         return longTermTaskEntity.getId();
     }
 
@@ -33,7 +33,7 @@ public class LongTermTaskService extends BaseService {
             return;
         }
         longTermTaskEntity.setUpdateDate(new Date());
-        this.entityManager.merge(longTermTaskEntity);
+        this.merge(longTermTaskEntity);
     }
 
     public void updateLongTermTaskByResult(String id, ResponseEntity<?> result) {
@@ -43,7 +43,7 @@ public class LongTermTaskService extends BaseService {
             longTermTaskEntity.setUpdateDate(new Date());
             longTermTaskEntity.setIsDone(true);
             longTermTaskEntity.setResult(new ObjectMapper().writeValueAsString(result));
-            this.entityManager.merge(longTermTaskEntity);
+            this.merge(longTermTaskEntity);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -73,7 +73,7 @@ public class LongTermTaskService extends BaseService {
                                 .configure(SerializationFeature.FAIL_ON_SELF_REFERENCES, false)
                                 .writeValueAsString(e)))));
             }
-            this.entityManager.merge(longTermTaskEntity);
+            this.merge(longTermTaskEntity);
         } catch (JsonProcessingException e1) {
             throw new RuntimeException(e1.getMessage(), e1);
         }

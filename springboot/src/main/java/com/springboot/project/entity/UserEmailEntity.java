@@ -44,15 +44,4 @@ public class UserEmailEntity {
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, optional = false)
     private UserEntity user;
 
-    public UserEmailEntity setUser(UserEntity user) {
-        if (this.user != null) {
-            this.user.getUserEmailList().remove(this);
-        }
-        this.user = user;
-        if (this.user != null) {
-            this.user.getUserEmailList().add(this);
-        }
-        return this;
-    }
-
 }

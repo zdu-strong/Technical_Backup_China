@@ -1,6 +1,7 @@
 package com.springboot.project.format;
 
 import org.springframework.stereotype.Service;
+import com.google.common.collect.Lists;
 import com.springboot.project.entity.OrganizeEntity;
 import com.springboot.project.model.OrganizeModel;
 import com.springboot.project.service.BaseService;
@@ -24,13 +25,14 @@ public class OrganizeFormatter extends BaseService {
                 .orElse(null);
         organizeModel.setParentOrganize(parentOrganize);
 
-        var childOrganizeList = this.OrganizeClosureEntity()
+        var childOrganizeCount = this.OrganizeClosureEntity()
                 .where(s -> s.getAncestor().getId().equals(id))
                 .where(s -> s.getGap() == 1)
                 .where(s -> !s.getDescendant().getIsDeleted())
                 .map(s -> new OrganizeModel().setId(s.getDescendant().getId()))
-                .toList();
-        organizeModel.setChildOrganizeList(childOrganizeList);
+                .count();
+        organizeModel.setChildOrganizeList(Lists.newArrayList());
+        organizeModel.setChildOrganizeCount(childOrganizeCount);
 
         return organizeModel;
     }

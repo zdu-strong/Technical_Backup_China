@@ -25,9 +25,7 @@ public class FriendshipService extends BaseService {
         }
 
         for (var friendship : friendshipList) {
-            friendship.setUser(null);
-            friendship.setFriend(null);
-            this.entityManager.remove(friendship);
+            this.remove(friendship);
         }
 
         {
@@ -50,7 +48,7 @@ public class FriendshipService extends BaseService {
             friendshipEntity.setSecretKeyOfAES(aesOfUser);
             friendshipEntity.setUser(user);
             friendshipEntity.setFriend(friend);
-            this.entityManager.persist(friendshipEntity);
+            this.persist(friendshipEntity);
         }
 
         {
@@ -74,7 +72,7 @@ public class FriendshipService extends BaseService {
                 friendshipEntity.setSecretKeyOfAES(aesOfFriend);
                 friendshipEntity.setUser(friend);
                 friendshipEntity.setFriend(user);
-                this.entityManager.persist(friendshipEntity);
+                this.persist(friendshipEntity);
             }
         }
     }
@@ -88,7 +86,7 @@ public class FriendshipService extends BaseService {
                 .getOnlyValue();
         friendshipEntity.setIsInBlacklist(false);
         friendshipEntity.setIsFriend(true);
-        this.entityManager.merge(friendshipEntity);
+        this.merge(friendshipEntity);
     }
 
     public void addToBlacklist(String userId, String friendId) {
@@ -100,7 +98,7 @@ public class FriendshipService extends BaseService {
                 .getOnlyValue();
         friendshipEntity.setIsInBlacklist(true);
         friendshipEntity.setIsFriend(false);
-        this.entityManager.merge(friendshipEntity);
+        this.merge(friendshipEntity);
     }
 
     public void deleteFromBlacklist(String userId, String friendId) {
@@ -111,7 +109,7 @@ public class FriendshipService extends BaseService {
                 .where(s -> !s.getFriend().getIsDeleted())
                 .getOnlyValue();
         friendshipEntity.setIsInBlacklist(false);
-        this.entityManager.merge(friendshipEntity);
+        this.merge(friendshipEntity);
     }
 
     public void deleteFromFriendList(String userId, String friendId) {
@@ -123,7 +121,7 @@ public class FriendshipService extends BaseService {
                 .getOnlyValue();
         friendshipEntity.setIsInBlacklist(false);
         friendshipEntity.setIsFriend(false);
-        this.entityManager.merge(friendshipEntity);
+        this.merge(friendshipEntity);
     }
 
     public FriendshipModel getFriendship(String userId, String friendId) {

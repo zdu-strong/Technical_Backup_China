@@ -45,7 +45,7 @@ public class UserService extends BaseService {
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
-        this.entityManager.persist(user);
+        this.persist(user);
 
         return this.userFormatter.format(user);
     }
@@ -62,7 +62,7 @@ public class UserService extends BaseService {
         userEntity.setPrivateKeyOfRSA(userModel.getPrivateKeyOfRSA());
         userEntity.setPublicKeyOfRSA(userModel.getPublicKeyOfRSA());
         userEntity.setHasRegistered(true);
-        this.entityManager.merge(userEntity);
+        this.merge(userEntity);
 
         for (var userEmail : userModel.getUserEmailList()) {
             this.userEmailService.updateUserEmailWithVerificationCodePassed(userEmail.getEmail(), userEntity.getId(),
