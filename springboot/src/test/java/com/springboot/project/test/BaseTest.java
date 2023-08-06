@@ -56,7 +56,6 @@ import com.springboot.project.model.UserEmailModel;
 import com.springboot.project.model.UserModel;
 import com.springboot.project.properties.AuthorizationEmailProperties;
 import com.springboot.project.properties.StorageRootPathProperties;
-import com.springboot.project.scheduled.StorageSpaceScheduled;
 import com.springboot.project.service.EncryptDecryptService;
 import com.springboot.project.service.FriendshipService;
 import com.springboot.project.service.LoggerService;
@@ -88,9 +87,6 @@ public class BaseTest {
 
     @Autowired
     protected StorageSpaceService storageSpaceService;
-
-    @Autowired
-    protected StorageSpaceScheduled storageSpaceScheduled;
 
     @Autowired
     protected Storage storage;

@@ -5,6 +5,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import com.springboot.project.common.storage.Storage;
+import com.springboot.project.properties.StorageRootPathProperties;
 import com.springboot.project.service.StorageSpaceService;
 import io.reactivex.rxjava3.core.Observable;
 import lombok.extern.slf4j.Slf4j;
@@ -19,10 +20,17 @@ public class StorageSpaceScheduled {
     @Autowired
     private Storage storage;
 
+    @Autowired
+    private StorageRootPathProperties storageRootPathProperties;
+
     private Long pageSize = 1L;
 
     @Scheduled(initialDelay = 1000, fixedDelay = 60 * 60 * 1000)
     public void scheduled() {
+        if (this.storageRootPathProperties.isTestEnviroment()) {
+            return;
+        }
+
         {
             try {
                 long totalPage = this.storageSpaceService.getStorageSpaceListByPagination(1L, pageSize).getTotalPage();
