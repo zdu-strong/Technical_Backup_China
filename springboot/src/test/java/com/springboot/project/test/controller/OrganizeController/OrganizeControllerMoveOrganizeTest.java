@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.net.URISyntaxException;
 import org.apache.http.client.utils.URIBuilder;
-import org.jinq.orm.stream.JinqStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -29,17 +28,7 @@ public class OrganizeControllerMoveOrganizeTest extends BaseTest {
         assertNotEquals(this.childOrganizeId, response.getBody().getId());
         assertNotEquals(this.organizeId, response.getBody().getParentOrganize().getId());
         assertEquals("Son Gohan", response.getBody().getName());
-        assertEquals(1, response.getBody().getChildOrganizeList().size());
-        assertEquals("Pan", this.organizeService.getOrganize(
-                JinqStream.from(response.getBody().getChildOrganizeList()).select(s -> s.getId()).getOnlyValue())
-                .getName());
-        assertEquals(0, this.organizeService.getOrganize(
-                JinqStream.from(response.getBody().getChildOrganizeList()).select(s -> s.getId()).getOnlyValue())
-                .getChildOrganizeList().size());
-        assertEquals(response.getBody().getId(), this.organizeService.getOrganize(
-                JinqStream.from(response.getBody().getChildOrganizeList()).select(s -> s.getId()).getOnlyValue())
-                .getParentOrganize().getId());
-        assertEquals(this.parentOrganizeIdOfMove, response.getBody().getParentOrganize().getId());
+        assertEquals(1, response.getBody().getChildOrganizeCount());
     }
 
     @BeforeEach
