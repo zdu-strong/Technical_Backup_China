@@ -2,7 +2,6 @@ package com.springboot.project.service;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.hibernate.Session;
 import org.jinq.jpa.JPAJinqStream;
 import org.jinq.jpa.JinqJPAStreamProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,15 +56,15 @@ public abstract class BaseService {
     private JinqJPAStreamProvider jinqJPAStreamProvider;
 
     protected void persist(Object entity) {
-        this.entityManager.unwrap(Session.class).persist(entity);
+        this.entityManager.persist(entity);
     }
 
     protected void merge(Object entity) {
-        this.entityManager.unwrap(Session.class).merge(entity);
+        this.entityManager.merge(entity);
     }
 
     protected void remove(Object entity) {
-        this.entityManager.unwrap(Session.class).remove(entity);
+        this.entityManager.remove(entity);
     }
 
     protected JPAJinqStream<StorageSpaceEntity> StorageSpaceEntity() {
