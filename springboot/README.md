@@ -183,7 +183,9 @@ Sort by username first, then by id
     this.OrganizeEntity().select((s, t) ->
         new Pair<>(
             s,
-            t.stream(OrganizeEntity.class).where(m -> m.getName().contains(s -> s.getName())).count()
+            t.stream(OrganizeEntity.class)
+                .where(m -> m.getOrganizeShadow().getName().contains(s.getOrganizeShadow().getName()))
+                .count()
         )
     )
     .sortedBy(s -> s.getOne().getId())
