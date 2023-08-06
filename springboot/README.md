@@ -65,7 +65,7 @@ Repeat this steps until the test list is displayed - "Restart, expand current pr
 
 Some experience in use, if you already know it, you can skip it.
 1. Before the new JPA entity, query all the required data and save the previous entity.
-2. Always get data from the database, never use getList of jpa entities, avoid memory overflow, data expiration, etc.
+2. Never use getList of jpa entity, always query data from the database, avoid memory overflow and data expiration.
 3. Jinq does not support nested select statements(select * from (select * from user)). This doesn't matter because it doesn't need to be used.
 4. Jinq does not support union and union all. It doesn't matter, we can add database association table for query.
 5. Jinq doest not support right join. This does not matter, we can use left join.
