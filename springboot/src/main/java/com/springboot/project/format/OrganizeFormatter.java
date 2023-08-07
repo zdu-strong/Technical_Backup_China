@@ -29,7 +29,6 @@ public class OrganizeFormatter extends BaseService {
                 .where(s -> s.getAncestor().getId().equals(id))
                 .where(s -> s.getGap() == 1)
                 .where(s -> !s.getDescendant().getIsDeleted())
-                .map(s -> new OrganizeModel().setId(s.getDescendant().getId()))
                 .count();
         organizeModel.setChildOrganizeList(Lists.newArrayList());
         organizeModel.setChildOrganizeCount(childOrganizeCount);

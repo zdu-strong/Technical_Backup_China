@@ -122,6 +122,8 @@ public abstract class BaseService {
                     JinqJPAStreamProvider jinqJPAStreamProvider = new JinqJPAStreamProvider(
                             entityManager.getMetamodel());
                     JPQLFunction.registerCustomSqlFunction(jinqJPAStreamProvider);
+                    jinqJPAStreamProvider.setHint("automaticPageSize", 100);
+                    jinqJPAStreamProvider.setHint("exceptionOnTranslationFail", true);
                     this.jinqJPAStreamProvider = jinqJPAStreamProvider;
                 }
             }
