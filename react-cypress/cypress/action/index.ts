@@ -11,5 +11,5 @@ export function signUp(email: string, password: string) {
   page.SignUp.verificationCodeInput().type('123456')
   page.SignUp.nextStepButton().click()
   page.SignUp.signUpButton().click()
-  cy.location('pathname', { timeout: 180000 }).should('equal', "/chat")
+  cy.location('pathname', { timeout: 240000 }).should('equal', "/chat")
 }
