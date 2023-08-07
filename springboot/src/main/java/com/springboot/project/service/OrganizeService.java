@@ -96,6 +96,9 @@ public class OrganizeService {
     }
 
     public void fixConcurrencyMoveOrganize() {
+        if ("".equals("")) {
+            return;
+        }
         while (true) {
             if (this.organizeUtil.fixConcurrencyMoveOrganizeDueToOrganizeIsDeletedAndOrganizeEntityIsAlsoDeleted()) {
                 continue;
