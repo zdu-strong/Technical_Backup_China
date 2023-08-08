@@ -15,10 +15,13 @@ public class UserMessageService extends BaseService {
     public UserMessageModel sendMessage(UserMessageModel userMessageModel) {
         var userId = userMessageModel.getUser().getId();
         var userEntity = this.UserEntity().where(s -> s.getId().equals(userId)).getOnlyValue();
-        var userMessageEntity = new UserMessageEntity().setId(Generators.timeBasedGenerator().generate().toString())
-                .setCreateDate(new Date())
-                .setUpdateDate(new Date()).setContent(userMessageModel.getContent()).setIsRecall(false)
-                .setUser(userEntity);
+        var userMessageEntity = new UserMessageEntity();
+        userMessageEntity.setId(Generators.timeBasedGenerator().generate().toString());
+        userMessageEntity.setCreateDate(new Date());
+        userMessageEntity.setUpdateDate(new Date());
+        userMessageEntity.setContent(userMessageModel.getContent());
+        userMessageEntity.setIsRecall(false);
+        userMessageEntity.setUser(userEntity);
 
         if (StringUtils.isNotBlank(userMessageModel.getUrl())) {
             var storageFileModel = this.storage.storageUrl(userMessageModel.getUrl());

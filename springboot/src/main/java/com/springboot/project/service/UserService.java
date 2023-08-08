@@ -5,8 +5,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Date;
 import com.fasterxml.uuid.Generators;
-import com.google.common.collect.Lists;
-
 import org.jinq.orm.stream.JinqStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,11 +25,6 @@ public class UserService extends BaseService {
         user.setUsername("");
         user.setCreateDate(new Date());
         user.setUpdateDate(new Date());
-        user.setUserEmailList(Lists.newArrayList());
-        user.setUserMessageList(Lists.newArrayList());
-        user.setFridendList(Lists.newArrayList());
-        user.setReverseFridendList(Lists.newArrayList());
-        user.setTokenList(Lists.newArrayList());
         user.setHasRegistered(false);
         user.setIsDeleted(false);
         try {

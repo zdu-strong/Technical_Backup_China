@@ -1,7 +1,6 @@
 package com.springboot.project.service;
 
 import com.fasterxml.uuid.Generators;
-import com.google.common.collect.Lists;
 import java.util.Date;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -26,8 +25,6 @@ public class OrganizeShadowService extends BaseService {
         organizeShadowEntity.setCreateDate(new Date());
         organizeShadowEntity.setUpdateDate(new Date());
         organizeShadowEntity.setParent(parentOrganizeShadow);
-        organizeShadowEntity.setChildList(Lists.newArrayList());
-        organizeShadowEntity.setOrganizeList(Lists.newArrayList());
         this.persist(organizeShadowEntity);
 
         return organizeShadowEntity.getId();

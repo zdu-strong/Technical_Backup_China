@@ -1,7 +1,6 @@
 package com.springboot.project.common.OrganizeUtil;
 
 import com.fasterxml.uuid.Generators;
-import com.google.common.collect.Lists;
 import java.util.Date;
 import org.apache.commons.lang3.StringUtils;
 import org.jinq.orm.stream.JinqStream;
@@ -45,8 +44,6 @@ public class OrganizeUtil extends BaseService {
         organizeEntity.setLevel(parentOrganize == null ? 0 : parentOrganize.getLevel() + 1);
         organizeEntity.setIsDeleted(true);
         organizeEntity.setOrganizeShadow(organizeShadow);
-        organizeEntity.setAncestorList(Lists.newArrayList());
-        organizeEntity.setDescendantList(Lists.newArrayList());
         this.persist(organizeEntity);
 
         this.organizeClosureService.createOrganizeClosure(organizeEntity.getId(), organizeEntity.getId());
@@ -125,8 +122,6 @@ public class OrganizeUtil extends BaseService {
         targetOrganizeEntity.setLevel(targetParentOrganize == null ? 0 : targetParentOrganize.getLevel() + 1);
         targetOrganizeEntity.setIsDeleted(true);
         targetOrganizeEntity.setOrganizeShadow(organizeEntity.getOrganizeShadow());
-        targetOrganizeEntity.setAncestorList(Lists.newArrayList());
-        targetOrganizeEntity.setDescendantList(Lists.newArrayList());
         this.persist(targetOrganizeEntity);
 
         this.organizeClosureService.createOrganizeClosure(targetOrganizeEntity.getId(), targetOrganizeEntity.getId());
@@ -216,8 +211,6 @@ public class OrganizeUtil extends BaseService {
             childTargetOrganizeEntity.setLevel(targetParentOrganizeEntity.getLevel() + 1);
             childTargetOrganizeEntity.setIsDeleted(false);
             childTargetOrganizeEntity.setOrganizeShadow(sourceChildOrganizeGroup.getDescendant().getOrganizeShadow());
-            childTargetOrganizeEntity.setAncestorList(Lists.newArrayList());
-            childTargetOrganizeEntity.setDescendantList(Lists.newArrayList());
             this.persist(childTargetOrganizeEntity);
 
             this.organizeClosureService.createOrganizeClosure(childTargetOrganizeEntity.getId(),
@@ -295,8 +288,6 @@ public class OrganizeUtil extends BaseService {
                     organizeEntity.setLevel(parentOrganize.getLevel() + 1);
                     organizeEntity.setIsDeleted(true);
                     organizeEntity.setOrganizeShadow(organizeShadowEntity);
-                    organizeEntity.setAncestorList(Lists.newArrayList());
-                    organizeEntity.setDescendantList(Lists.newArrayList());
                     this.persist(organizeEntity);
 
                     this.organizeClosureService.createOrganizeClosure(organizeEntity.getId(), organizeEntity.getId());
