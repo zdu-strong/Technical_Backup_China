@@ -41,7 +41,7 @@ spring:
   task:
     scheduling:
       pool:
-        size: 1000
+        size: 50
 logging:
   level:
     org:
