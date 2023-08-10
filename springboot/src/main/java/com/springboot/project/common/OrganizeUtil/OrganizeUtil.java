@@ -231,10 +231,10 @@ public class OrganizeUtil extends BaseService {
     public Boolean fixConcurrencyMoveOrganizeDueToOrganizeIsDeletedAndOrganizeEntityIsAlsoDeleted() {
         // 1. OrganizeShadow is deleted, and OrganizeEntity is also deleted
         var organizeEntity = this.OrganizeEntity()
+                .where(s -> s.getOrganizeShadow().getIsDeleted())
                 .where(s -> !JinqStream.from(s.getAncestorList())
                         .where(m -> m.getAncestor().getIsDeleted())
                         .exists())
-                .where(s -> s.getOrganizeShadow().getIsDeleted())
                 .findFirst()
                 .orElse(null);
         if (organizeEntity != null) {
@@ -311,7 +311,6 @@ public class OrganizeUtil extends BaseService {
      */
     public void fixConcurrencyMoveOrganizeDueToOrganizeHasSubOrganizationsAndOrganizeEntityAlsoHasToEnd(
             String organizeId) {
-
         var organizeEntity = this.OrganizeEntity()
                 .where(s -> s.getId().equals(organizeId))
                 .getOnlyValue();
