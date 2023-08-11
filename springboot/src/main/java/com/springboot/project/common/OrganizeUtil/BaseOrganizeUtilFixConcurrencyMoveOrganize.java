@@ -40,45 +40,43 @@ public class BaseOrganizeUtilFixConcurrencyMoveOrganize extends BaseOrganizeUtil
      */
     public FixConcurrencyMoveOrganizeResultModel fixConcurrencyMoveOrganizeDueToOrganizeHasSubOrganizationsAndOrganizeEntityAlsoHasToStart() {
         // 2. OrganizeShadow has sub-organizations, and OrganizeEntity also has
-        {
-            var parentOrganize = this.OrganizeEntity()
-                    .where(s -> !JinqStream.from(s.getAncestorList())
-                            .where(m -> m.getAncestor().getIsDeleted())
-                            .exists())
-                    .where((s) -> JinqStream.from(s.getDescendantList())
+        var parentOrganize = this.OrganizeEntity()
+                .where(s -> !JinqStream.from(s.getAncestorList())
+                        .where(m -> m.getAncestor().getIsDeleted())
+                        .exists())
+                .where((s) -> JinqStream.from(s.getDescendantList())
+                        .where(m -> m.getGap() == 1)
+                        .where(m -> !m.getDescendant().getIsDeleted())
+                        .count() < JinqStream.from(s.getOrganizeShadow().getChildList())
+                                .where(m -> !m.getIsDeleted())
+                                .count())
+                .findFirst()
+                .orElse(null);
+        if (parentOrganize != null) {
+            var parentOrganizeId = parentOrganize.getId();
+            var parentOrganizeShadowId = parentOrganize.getOrganizeShadow().getId();
+            var organizeShadowEntity = this.OrganizeShadowEntity()
+                    .where(s -> s.getParent().getId().equals(parentOrganizeShadowId))
+                    .where(s -> !s.getIsDeleted())
+                    .where((s, t) -> !t.stream(OrganizeClosureEntity.class)
+                            .where(m -> m.getAncestor().getId().equals(parentOrganizeId))
                             .where(m -> m.getGap() == 1)
                             .where(m -> !m.getDescendant().getIsDeleted())
-                            .count() < JinqStream.from(s.getOrganizeShadow().getChildList())
-                                    .where(m -> !m.getIsDeleted())
-                                    .count())
+                            .where(m -> m.getDescendant().getOrganizeShadow().getId().equals(s.getId()))
+                            .exists())
                     .findFirst()
                     .orElse(null);
-            if (parentOrganize != null) {
-                var parentOrganizeId = parentOrganize.getId();
-                var parentOrganizeShadowId = parentOrganize.getOrganizeShadow().getId();
-                var organizeShadowEntity = this.OrganizeShadowEntity()
-                        .where(s -> s.getParent().getId().equals(parentOrganizeShadowId))
-                        .where(s -> !s.getIsDeleted())
-                        .where((s, t) -> !t.stream(OrganizeClosureEntity.class)
-                                .where(m -> m.getAncestor().getId().equals(parentOrganizeId))
-                                .where(m -> m.getGap() == 1)
-                                .where(m -> !m.getDescendant().getIsDeleted())
-                                .where(m -> m.getDescendant().getOrganizeShadow().getId().equals(s.getId()))
-                                .exists())
-                        .findFirst()
-                        .orElse(null);
-                if (organizeShadowEntity != null) {
-                    var organizeEntity = this.createOrganizeEntity(organizeShadowEntity, parentOrganize.getLevel() + 1);
-                    this.organizeClosureService.createOrganizeClosure(organizeEntity.getId(), organizeEntity.getId());
+            if (organizeShadowEntity != null) {
+                var organizeEntity = this.createOrganizeEntity(organizeShadowEntity, parentOrganize.getLevel() + 1);
+                this.organizeClosureService.createOrganizeClosure(organizeEntity.getId(), organizeEntity.getId());
 
-                    return new FixConcurrencyMoveOrganizeResultModel().setHasNext(true)
-                            .setParentOrganizeId(parentOrganizeId)
-                            .setOrganizeId(organizeEntity.getId());
+                return new FixConcurrencyMoveOrganizeResultModel().setHasNext(true)
+                        .setParentOrganizeId(parentOrganizeId)
+                        .setOrganizeId(organizeEntity.getId());
 
-                }
-
-                return new FixConcurrencyMoveOrganizeResultModel().setHasNext(true);
             }
+
+            return new FixConcurrencyMoveOrganizeResultModel().setHasNext(true);
         }
 
         return new FixConcurrencyMoveOrganizeResultModel().setHasNext(false);
