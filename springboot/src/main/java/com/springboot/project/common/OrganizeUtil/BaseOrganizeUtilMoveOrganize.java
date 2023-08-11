@@ -70,7 +70,7 @@ public class BaseOrganizeUtilMoveOrganize extends BaseOrganizeUtilCreateOrganize
                 .where(s -> s.getId().equals(targetOrganizeId))
                 .select(s -> s.getLevel())
                 .getOnlyValue();
-        var sourceChildOrganizeGroup = this.OrganizeClosureEntity()
+        var sourceChildOrganizeAndSourceParentOrganizeClosureEntity = this.OrganizeClosureEntity()
                 .where(s -> s.getGap() == 1)
                 .where(s -> s.getDescendant().getLevel() > levelOfSourceOrganize)
                 .where(s -> JinqStream.from(s.getDescendant().getAncestorList())
@@ -96,9 +96,9 @@ public class BaseOrganizeUtilMoveOrganize extends BaseOrganizeUtilCreateOrganize
                         .exists())
                 .findFirst()
                 .orElse(null);
-        if (sourceChildOrganizeGroup != null) {
-            var sourceParentOrganizeShadowId = sourceChildOrganizeGroup.getAncestor().getOrganizeShadow().getId();
-            var levelOfSourceParentOrganize = sourceChildOrganizeGroup.getAncestor().getLevel();
+        if (sourceChildOrganizeAndSourceParentOrganizeClosureEntity != null) {
+            var sourceParentOrganizeShadowId = sourceChildOrganizeAndSourceParentOrganizeClosureEntity.getAncestor().getOrganizeShadow().getId();
+            var levelOfSourceParentOrganize = sourceChildOrganizeAndSourceParentOrganizeClosureEntity.getAncestor().getLevel();
             var targetParentOrganizeEntity = this.OrganizeEntity()
                     .where(s -> s.getOrganizeShadow().getId().equals(sourceParentOrganizeShadowId))
                     .where(s -> JinqStream.from(s.getAncestorList())
@@ -110,7 +110,7 @@ public class BaseOrganizeUtilMoveOrganize extends BaseOrganizeUtilCreateOrganize
                     .get();
 
             var childTargetOrganizeEntity = this.createOrganizeEntity(
-                    sourceChildOrganizeGroup.getDescendant().getOrganizeShadow(),
+                    sourceChildOrganizeAndSourceParentOrganizeClosureEntity.getDescendant().getOrganizeShadow(),
                     targetParentOrganizeEntity.getLevel() + 1);
             childTargetOrganizeEntity.setIsDeleted(false);
             this.merge(childTargetOrganizeEntity);
