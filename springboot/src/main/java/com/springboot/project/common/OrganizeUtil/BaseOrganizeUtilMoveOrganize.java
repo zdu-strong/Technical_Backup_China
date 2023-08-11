@@ -5,12 +5,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.jinq.orm.stream.JinqStream;
 import org.springframework.stereotype.Service;
 import com.springboot.project.entity.OrganizeClosureEntity;
+import com.springboot.project.model.MoveOrganizeResultModel;
 import com.springboot.project.model.OrganizeModel;
 
 @Service
 public class BaseOrganizeUtilMoveOrganize extends BaseOrganizeUtilCreateOrganize {
 
-    public MoveOrganizeMode moveOrganizeToStart(String organizeId, String targetParentOrganizeId) {
+    public MoveOrganizeResultModel moveOrganizeToStart(String organizeId, String targetParentOrganizeId) {
         var organizeEntity = this.OrganizeEntity().where(s -> s.getId().equals(organizeId))
                 .where(s -> !JinqStream.from(s.getAncestorList())
                         .where(m -> m.getAncestor().getIsDeleted())
@@ -29,7 +30,7 @@ public class BaseOrganizeUtilMoveOrganize extends BaseOrganizeUtilCreateOrganize
 
         this.organizeClosureService.createOrganizeClosure(targetOrganizeEntity.getId(), targetOrganizeEntity.getId());
 
-        return new MoveOrganizeMode().setOrganizeId(organizeEntity.getId())
+        return new MoveOrganizeResultModel().setOrganizeId(organizeEntity.getId())
                 .setTargetOrganizeId(targetOrganizeEntity.getId())
                 .setTargetParentOrganizeId(targetParentOrganizeId);
     }
@@ -60,7 +61,7 @@ public class BaseOrganizeUtilMoveOrganize extends BaseOrganizeUtilCreateOrganize
         return this.organizeFormatter.format(targetOrganizeEntity);
     }
 
-    public MoveOrganizeMode moveChildOrganizeList(String sourceOrganizeId, String targetOrganizeId) {
+    public MoveOrganizeResultModel moveChildOrganizeList(String sourceOrganizeId, String targetOrganizeId) {
         var levelOfSourceOrganize = this.OrganizeEntity()
                 .where(s -> s.getId().equals(sourceOrganizeId))
                 .select(s -> s.getLevel())
@@ -117,11 +118,11 @@ public class BaseOrganizeUtilMoveOrganize extends BaseOrganizeUtilCreateOrganize
             this.organizeClosureService.createOrganizeClosure(childTargetOrganizeEntity.getId(),
                     childTargetOrganizeEntity.getId());
 
-            return new MoveOrganizeMode().setHasNext(true).setTargetOrganizeId(childTargetOrganizeEntity.getId())
+            return new MoveOrganizeResultModel().setHasNext(true).setTargetOrganizeId(childTargetOrganizeEntity.getId())
                     .setTargetParentOrganizeId(targetParentOrganizeEntity.getId());
         }
 
-        return new MoveOrganizeMode().setHasNext(false);
+        return new MoveOrganizeResultModel().setHasNext(false);
     }
 
 }

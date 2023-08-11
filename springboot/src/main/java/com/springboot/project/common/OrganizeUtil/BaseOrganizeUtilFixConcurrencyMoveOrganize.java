@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jinq.orm.stream.JinqStream;
 import org.springframework.stereotype.Service;
 import com.springboot.project.entity.OrganizeClosureEntity;
+import com.springboot.project.model.FixConcurrencyMoveOrganizeResultModel;
 
 @Service
 public class BaseOrganizeUtilFixConcurrencyMoveOrganize extends BaseOrganizeUtilMoveOrganize {
@@ -37,7 +38,7 @@ public class BaseOrganizeUtilFixConcurrencyMoveOrganize extends BaseOrganizeUtil
      * 
      * @return
      */
-    public FixConcurrencyMoveOrganizeModel fixConcurrencyMoveOrganizeDueToOrganizeHasSubOrganizationsAndOrganizeEntityAlsoHasToStart() {
+    public FixConcurrencyMoveOrganizeResultModel fixConcurrencyMoveOrganizeDueToOrganizeHasSubOrganizationsAndOrganizeEntityAlsoHasToStart() {
         // 2. OrganizeShadow has sub-organizations, and OrganizeEntity also has
         {
             var parentOrganize = this.OrganizeEntity()
@@ -70,17 +71,17 @@ public class BaseOrganizeUtilFixConcurrencyMoveOrganize extends BaseOrganizeUtil
                     var organizeEntity = this.createOrganizeEntity(organizeShadowEntity, parentOrganize.getLevel() + 1);
                     this.organizeClosureService.createOrganizeClosure(organizeEntity.getId(), organizeEntity.getId());
 
-                    return new FixConcurrencyMoveOrganizeModel().setHasNext(true)
+                    return new FixConcurrencyMoveOrganizeResultModel().setHasNext(true)
                             .setParentOrganizeId(parentOrganizeId)
                             .setOrganizeId(organizeEntity.getId());
 
                 }
 
-                return new FixConcurrencyMoveOrganizeModel().setHasNext(true);
+                return new FixConcurrencyMoveOrganizeResultModel().setHasNext(true);
             }
         }
 
-        return new FixConcurrencyMoveOrganizeModel().setHasNext(false);
+        return new FixConcurrencyMoveOrganizeResultModel().setHasNext(false);
     }
 
     /**
