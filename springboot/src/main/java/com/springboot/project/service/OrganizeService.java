@@ -31,13 +31,11 @@ public class OrganizeService {
             }
         }
         organize = this.organizeUtil.createOrganizeToEnd(organize.getId());
-        this.fixConcurrencyMoveOrganize();
         return organize;
     }
 
     public void deleteOrganize(String id) {
         this.organizeUtil.deleteOrganize(id);
-        this.fixConcurrencyMoveOrganize();
     }
 
     public OrganizeModel getOrganize(String id) {
@@ -91,14 +89,10 @@ public class OrganizeService {
         }
         var organize = this.organizeUtil.moveOrganizeToEnd(moveOrganizeMode.getOrganizeId(),
                 moveOrganizeMode.getTargetOrganizeId(), moveOrganizeMode.getTargetParentOrganizeId());
-        this.fixConcurrencyMoveOrganize();
         return organize;
     }
 
     public void fixConcurrencyMoveOrganize() {
-        if ("".equals("")) {
-            return;
-        }
         while (true) {
             if (this.organizeUtil.fixConcurrencyMoveOrganizeDueToOrganizeIsDeletedAndOrganizeEntityIsAlsoDeleted()) {
                 continue;
