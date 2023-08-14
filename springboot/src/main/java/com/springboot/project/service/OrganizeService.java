@@ -47,24 +47,23 @@ public class OrganizeService {
     }
 
     public OrganizeModel moveOrganize(String organizeId, String targetParentOrganizeId) {
-        var moveOrganizeMode = this.organizeUtil.moveOrganizeToStart(organizeId, targetParentOrganizeId);
-        if (StringUtils.isNotBlank(moveOrganizeMode.getTargetOrganizeId())
-                && StringUtils.isNotBlank(moveOrganizeMode.getTargetParentOrganizeId())) {
+        var targetOrganizeId = this.organizeUtil.moveOrganizeToStart(organizeId, targetParentOrganizeId);
+        {
             var paginationModel = this.organizeClosureService.getAncestorOfOrganizeByPagination(1L, 1L,
-                    moveOrganizeMode.getTargetParentOrganizeId());
+                    targetParentOrganizeId);
             for (var i = paginationModel.getTotalPage(); i > 0; i--) {
                 var ancestorId = JinqStream.from(this.organizeClosureService
                         .getAncestorOfOrganizeByPagination(i, 1L,
-                                moveOrganizeMode.getTargetParentOrganizeId())
+                                targetParentOrganizeId)
                         .getList())
                         .getOnlyValue();
-                this.organizeClosureService.createOrganizeClosure(ancestorId,
-                        moveOrganizeMode.getTargetOrganizeId());
+                this.organizeClosureService.createOrganizeClosure(ancestorId, targetOrganizeId);
             }
         }
+
         while (true) {
-            var moveModel = this.organizeUtil.moveChildOrganizeList(moveOrganizeMode.getOrganizeId(),
-                    moveOrganizeMode.getTargetOrganizeId());
+            var moveModel = this.organizeUtil.moveChildOrganizeList(organizeId,
+                    targetOrganizeId);
 
             if (!moveModel.getHasNext()) {
                 break;
@@ -81,8 +80,8 @@ public class OrganizeService {
                         moveModel.getTargetOrganizeId());
             }
         }
-        var organize = this.organizeUtil.moveOrganizeToEnd(moveOrganizeMode.getOrganizeId(),
-                moveOrganizeMode.getTargetOrganizeId(), moveOrganizeMode.getTargetParentOrganizeId());
+        var organize = this.organizeUtil.moveOrganizeToEnd(organizeId,
+                targetOrganizeId, targetParentOrganizeId);
         return organize;
     }
 

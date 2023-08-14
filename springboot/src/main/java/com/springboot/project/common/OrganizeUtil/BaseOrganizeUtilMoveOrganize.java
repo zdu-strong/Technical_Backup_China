@@ -11,7 +11,7 @@ import com.springboot.project.model.OrganizeModel;
 @Service
 public class BaseOrganizeUtilMoveOrganize extends BaseOrganizeUtilCreateOrganize {
 
-    public MoveOrganizeResultModel moveOrganizeToStart(String organizeId, String targetParentOrganizeId) {
+    public String moveOrganizeToStart(String organizeId, String targetParentOrganizeId) {
         var organizeEntity = this.OrganizeEntity().where(s -> s.getId().equals(organizeId))
                 .where(s -> !JinqStream.from(s.getAncestorList())
                         .where(m -> m.getAncestor().getIsDeleted())
@@ -30,9 +30,7 @@ public class BaseOrganizeUtilMoveOrganize extends BaseOrganizeUtilCreateOrganize
 
         this.organizeClosureService.createOrganizeClosure(targetOrganizeEntity.getId(), targetOrganizeEntity.getId());
 
-        return new MoveOrganizeResultModel().setOrganizeId(organizeEntity.getId())
-                .setTargetOrganizeId(targetOrganizeEntity.getId())
-                .setTargetParentOrganizeId(targetParentOrganizeId);
+        return targetOrganizeEntity.getId();
     }
 
     public OrganizeModel moveOrganizeToEnd(String organizeId, String targetOrganizeId, String targetParentOrganizeId) {
@@ -97,8 +95,10 @@ public class BaseOrganizeUtilMoveOrganize extends BaseOrganizeUtilCreateOrganize
                 .findFirst()
                 .orElse(null);
         if (sourceChildOrganizeAndSourceParentOrganizeClosureGroup != null) {
-            var sourceParentOrganizeShadowId = sourceChildOrganizeAndSourceParentOrganizeClosureGroup.getAncestor().getOrganizeShadow().getId();
-            var levelOfSourceParentOrganize = sourceChildOrganizeAndSourceParentOrganizeClosureGroup.getAncestor().getLevel();
+            var sourceParentOrganizeShadowId = sourceChildOrganizeAndSourceParentOrganizeClosureGroup.getAncestor()
+                    .getOrganizeShadow().getId();
+            var levelOfSourceParentOrganize = sourceChildOrganizeAndSourceParentOrganizeClosureGroup.getAncestor()
+                    .getLevel();
             var targetParentOrganizeEntity = this.OrganizeEntity()
                     .where(s -> s.getOrganizeShadow().getId().equals(sourceParentOrganizeShadowId))
                     .where(s -> JinqStream.from(s.getAncestorList())
