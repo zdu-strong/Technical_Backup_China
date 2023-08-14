@@ -70,7 +70,7 @@ public class BaseOrganizeUtilMoveOrganize extends BaseOrganizeUtilCreateOrganize
                 .where(s -> s.getId().equals(targetOrganizeId))
                 .select(s -> s.getLevel())
                 .getOnlyValue();
-        var sourceChildOrganizeAndSourceParentOrganizeClosureEntity = this.OrganizeClosureEntity()
+        var sourceChildOrganizeAndSourceParentOrganizeClosureGroup = this.OrganizeClosureEntity()
                 .where(s -> s.getGap() == 1)
                 .where(s -> s.getDescendant().getLevel() > levelOfSourceOrganize)
                 .where(s -> JinqStream.from(s.getDescendant().getAncestorList())
@@ -96,9 +96,9 @@ public class BaseOrganizeUtilMoveOrganize extends BaseOrganizeUtilCreateOrganize
                         .exists())
                 .findFirst()
                 .orElse(null);
-        if (sourceChildOrganizeAndSourceParentOrganizeClosureEntity != null) {
-            var sourceParentOrganizeShadowId = sourceChildOrganizeAndSourceParentOrganizeClosureEntity.getAncestor().getOrganizeShadow().getId();
-            var levelOfSourceParentOrganize = sourceChildOrganizeAndSourceParentOrganizeClosureEntity.getAncestor().getLevel();
+        if (sourceChildOrganizeAndSourceParentOrganizeClosureGroup != null) {
+            var sourceParentOrganizeShadowId = sourceChildOrganizeAndSourceParentOrganizeClosureGroup.getAncestor().getOrganizeShadow().getId();
+            var levelOfSourceParentOrganize = sourceChildOrganizeAndSourceParentOrganizeClosureGroup.getAncestor().getLevel();
             var targetParentOrganizeEntity = this.OrganizeEntity()
                     .where(s -> s.getOrganizeShadow().getId().equals(sourceParentOrganizeShadowId))
                     .where(s -> JinqStream.from(s.getAncestorList())
@@ -110,7 +110,7 @@ public class BaseOrganizeUtilMoveOrganize extends BaseOrganizeUtilCreateOrganize
                     .get();
 
             var childTargetOrganizeEntity = this.createOrganizeEntity(
-                    sourceChildOrganizeAndSourceParentOrganizeClosureEntity.getDescendant().getOrganizeShadow(),
+                    sourceChildOrganizeAndSourceParentOrganizeClosureGroup.getDescendant().getOrganizeShadow(),
                     targetParentOrganizeEntity.getLevel() + 1);
             childTargetOrganizeEntity.setIsDeleted(false);
             this.merge(childTargetOrganizeEntity);

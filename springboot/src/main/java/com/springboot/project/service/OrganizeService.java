@@ -69,12 +69,6 @@ public class OrganizeService {
             if (!moveModel.getHasNext()) {
                 break;
             }
-            if (StringUtils.isBlank(moveModel.getTargetOrganizeId())) {
-                continue;
-            }
-            if (StringUtils.isBlank(moveModel.getTargetParentOrganizeId())) {
-                continue;
-            }
             var paginationModel = this.organizeClosureService.getAncestorOfOrganizeByPagination(1L, 1L,
                     moveModel.getTargetParentOrganizeId());
             for (var i = paginationModel.getTotalPage(); i > 0; i--) {
