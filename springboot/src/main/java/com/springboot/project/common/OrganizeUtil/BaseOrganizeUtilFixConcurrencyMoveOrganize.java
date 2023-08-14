@@ -4,7 +4,6 @@ import java.util.Date;
 import org.apache.commons.lang3.StringUtils;
 import org.jinq.orm.stream.JinqStream;
 import org.springframework.stereotype.Service;
-import com.springboot.project.entity.OrganizeClosureEntity;
 import com.springboot.project.model.FixConcurrencyMoveOrganizeResultModel;
 
 @Service
@@ -40,43 +39,27 @@ public class BaseOrganizeUtilFixConcurrencyMoveOrganize extends BaseOrganizeUtil
      */
     public FixConcurrencyMoveOrganizeResultModel fixConcurrencyMoveOrganizeDueToOrganizeHasSubOrganizationsAndOrganizeEntityAlsoHasToStart() {
         // 2. OrganizeShadow has sub-organizations, and OrganizeEntity also has
-        var parentOrganize = this.OrganizeEntity()
-                .where(s -> !JinqStream.from(s.getAncestorList())
+        var parentOrganizeAndChildOrganizeShadowGroup = this.OrganizeEntity()
+                .joinList(s -> s.getOrganizeShadow().getChildList())
+                .where(s -> !s.getTwo().getIsDeleted())
+                .where(s -> !JinqStream.from(s.getOne().getAncestorList())
                         .where(m -> m.getAncestor().getIsDeleted())
                         .exists())
-                .where((s) -> JinqStream.from(s.getDescendantList())
-                        .where(m -> m.getGap() == 1)
+                .where(s -> !JinqStream.from(s.getOne().getDescendantList())
+                        .where(m -> m.getDescendant().getOrganizeShadow().getId().equals(s.getTwo().getId()))
                         .where(m -> !m.getDescendant().getIsDeleted())
-                        .count() < JinqStream.from(s.getOrganizeShadow().getChildList())
-                                .where(m -> !m.getIsDeleted())
-                                .count())
+                        .exists())
                 .findFirst()
                 .orElse(null);
-        if (parentOrganize != null) {
-            var parentOrganizeId = parentOrganize.getId();
-            var parentOrganizeShadowId = parentOrganize.getOrganizeShadow().getId();
-            var organizeShadowEntity = this.OrganizeShadowEntity()
-                    .where(s -> s.getParent().getId().equals(parentOrganizeShadowId))
-                    .where(s -> !s.getIsDeleted())
-                    .where((s, t) -> !t.stream(OrganizeClosureEntity.class)
-                            .where(m -> m.getAncestor().getId().equals(parentOrganizeId))
-                            .where(m -> m.getGap() == 1)
-                            .where(m -> !m.getDescendant().getIsDeleted())
-                            .where(m -> m.getDescendant().getOrganizeShadow().getId().equals(s.getId()))
-                            .exists())
-                    .findFirst()
-                    .orElse(null);
-            if (organizeShadowEntity != null) {
-                var organizeEntity = this.createOrganizeEntity(organizeShadowEntity, parentOrganize.getLevel() + 1);
-                this.organizeClosureService.createOrganizeClosure(organizeEntity.getId(), organizeEntity.getId());
+        if (parentOrganizeAndChildOrganizeShadowGroup != null) {
+            var parentOrganize = parentOrganizeAndChildOrganizeShadowGroup.getOne();
+            var childOrganizeShadowEntity = parentOrganizeAndChildOrganizeShadowGroup.getTwo();
+            var organizeEntity = this.createOrganizeEntity(childOrganizeShadowEntity, parentOrganize.getLevel() + 1);
+            this.organizeClosureService.createOrganizeClosure(organizeEntity.getId(), organizeEntity.getId());
 
-                return new FixConcurrencyMoveOrganizeResultModel().setHasNext(true)
-                        .setParentOrganizeId(parentOrganizeId)
-                        .setOrganizeId(organizeEntity.getId());
-
-            }
-
-            return new FixConcurrencyMoveOrganizeResultModel().setHasNext(true);
+            return new FixConcurrencyMoveOrganizeResultModel().setHasNext(true)
+                    .setParentOrganizeId(parentOrganize.getId())
+                    .setOrganizeId(organizeEntity.getId());
         }
 
         return new FixConcurrencyMoveOrganizeResultModel().setHasNext(false);

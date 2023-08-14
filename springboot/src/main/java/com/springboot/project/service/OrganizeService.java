@@ -101,23 +101,20 @@ public class OrganizeService {
             var fixConcurrencyMoveOrganizeModel = this.organizeUtil
                     .fixConcurrencyMoveOrganizeDueToOrganizeHasSubOrganizationsAndOrganizeEntityAlsoHasToStart();
             if (fixConcurrencyMoveOrganizeModel.getHasNext()) {
-                if (StringUtils.isNotBlank(fixConcurrencyMoveOrganizeModel.getParentOrganizeId())
-                        && StringUtils.isNotBlank(fixConcurrencyMoveOrganizeModel.getOrganizeId())) {
-                    var paginationModel = this.organizeClosureService.getAncestorOfOrganizeByPagination(1L, 1L,
-                            fixConcurrencyMoveOrganizeModel.getParentOrganizeId());
-                    for (var i = paginationModel.getTotalPage(); i > 0; i--) {
-                        var ancestorId = JinqStream.from(this.organizeClosureService
-                                .getAncestorOfOrganizeByPagination(i, 1L,
-                                        fixConcurrencyMoveOrganizeModel.getParentOrganizeId())
-                                .getList())
-                                .getOnlyValue();
-                        this.organizeClosureService.createOrganizeClosure(ancestorId,
-                                fixConcurrencyMoveOrganizeModel.getOrganizeId());
-                    }
-                    this.organizeUtil
-                            .fixConcurrencyMoveOrganizeDueToOrganizeHasSubOrganizationsAndOrganizeEntityAlsoHasToEnd(
-                                    fixConcurrencyMoveOrganizeModel.getOrganizeId());
+                var paginationModel = this.organizeClosureService.getAncestorOfOrganizeByPagination(1L, 1L,
+                        fixConcurrencyMoveOrganizeModel.getParentOrganizeId());
+                for (var i = paginationModel.getTotalPage(); i > 0; i--) {
+                    var ancestorId = JinqStream.from(this.organizeClosureService
+                            .getAncestorOfOrganizeByPagination(i, 1L,
+                                    fixConcurrencyMoveOrganizeModel.getParentOrganizeId())
+                            .getList())
+                            .getOnlyValue();
+                    this.organizeClosureService.createOrganizeClosure(ancestorId,
+                            fixConcurrencyMoveOrganizeModel.getOrganizeId());
                 }
+                this.organizeUtil
+                        .fixConcurrencyMoveOrganizeDueToOrganizeHasSubOrganizationsAndOrganizeEntityAlsoHasToEnd(
+                                fixConcurrencyMoveOrganizeModel.getOrganizeId());
                 continue;
             }
 
