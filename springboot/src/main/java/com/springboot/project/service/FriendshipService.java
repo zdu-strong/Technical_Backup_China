@@ -1,6 +1,7 @@
 package com.springboot.project.service;
 
 import java.util.Date;
+import org.jinq.orm.stream.JinqStream;
 import org.springframework.stereotype.Service;
 import com.fasterxml.uuid.Generators;
 import com.springboot.project.entity.FriendshipEntity;
@@ -147,14 +148,12 @@ public class FriendshipService extends BaseService {
                 .getOnlyValue();
         var stream = this.UserEntity()
                 .where(s -> !s.getIsDeleted())
-                .where((s, t) -> !t.stream(FriendshipEntity.class)
+                .where((s, t) -> !JinqStream.from(s.getReverseFridendList())
                         .where(m -> m.getUser().getId().equals(userId))
-                        .where(m -> m.getFriend().getId().equals(s.getId()))
                         .where(m -> m.getIsInBlacklist() || m.getIsFriend())
                         .exists())
-                .leftOuterJoin((s, t) -> t.stream(FriendshipEntity.class),
-                        (s, t) -> t.getUser().getId().equals(userId)
-                                && t.getFriend().getId().equals(s.getId()));
+                .leftOuterJoin((s, t) -> JinqStream.from(s.getReverseFridendList()),
+                        (s, t) -> t.getUser().getId().equals(userId));
         return new PaginationModel<>(pageNum, pageSize, stream,
                 (s) -> this.friendshipFormatter.format(s.getTwo(), userEntity, s.getOne()));
     }
