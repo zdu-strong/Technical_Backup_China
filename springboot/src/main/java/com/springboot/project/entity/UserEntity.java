@@ -23,7 +23,9 @@ public class UserEntity {
     @Id
     private String id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1024 * 1024 * 1024)
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
     private String username;
 
     @Column(nullable = false)

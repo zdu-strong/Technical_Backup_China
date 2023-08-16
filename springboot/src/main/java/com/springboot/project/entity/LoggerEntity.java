@@ -20,34 +20,29 @@ public class LoggerEntity {
     @Id
     private String id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1024 * 1024 * 1024)
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
     private String message;
-
-    @Column(nullable = false)
-    private Date createDate;
-
-    @Column(nullable = false)
-    private Date updateDate;
 
     @Column(nullable = false)
     private String level;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1024 * 1024 * 1024)
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
     private String loggerName;
-
-    @Column(nullable = false)
-    private Boolean hasException;
-
-    @Column(nullable = false)
-    private String exceptionClassName;
-
-    @Column(nullable = false)
-    private String exceptionMessage;
 
     @Column(nullable = false, length = 1024 * 1024 * 1024)
     @Lob
     @Basic(fetch = FetchType.LAZY)
-    private String exceptionStackTrace;
+    private String callerClassName;
+
+    @Column(nullable = false)
+    private String callerMethodName;
+
+    @Column(nullable = false)
+    private Integer callerLineNumber;
 
     @Column(nullable = false)
     private String gitCommitId;
@@ -56,12 +51,27 @@ public class LoggerEntity {
     private Date gitCommitDate;
 
     @Column(nullable = false)
-    private String callerClassName;
+    private Date createDate;
 
     @Column(nullable = false)
-    private String callerMethodName;
+    private Date updateDate;
 
     @Column(nullable = false)
-    private Integer callerLineNumber;
+    private Boolean hasException;
+
+    @Column(nullable = false, length = 1024 * 1024 * 1024)
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    private String exceptionClassName;
+
+    @Column(nullable = false, length = 1024 * 1024 * 1024)
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    private String exceptionMessage;
+
+    @Column(nullable = false, length = 1024 * 1024 * 1024)
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    private String exceptionStackTrace;
 
 }
