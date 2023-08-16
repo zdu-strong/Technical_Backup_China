@@ -50,7 +50,7 @@ public class BaseOrganizeUtilCreateOrganize extends BaseOrganizeUtil {
     protected OrganizeEntity createOrganizeEntity(OrganizeShadowEntity organizeShadow, Long level) {
         var organizeEntity = new OrganizeEntity();
         organizeEntity.setId(Generators.timeBasedGenerator().generate().toString());
-        organizeEntity.setCreateDate(new Date());
+        organizeEntity.setCreateDate(organizeShadow.getCreateDate());
         organizeEntity.setUpdateDate(new Date());
         organizeEntity.setLevel(level);
         organizeEntity.setIsDeleted(true);
