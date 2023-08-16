@@ -42,7 +42,7 @@ public class UserMessageEntity {
     @Column(nullable = true)
     private Long folderSize;
 
-    @Column(nullable = false, length = 1024 * 1024 * 1024)
+    @Column(nullable = true, length = 1024 * 1024 * 1024)
     @Lob
     @Basic(fetch = FetchType.LAZY)
     private String fileName;
