@@ -2,13 +2,14 @@ import { observer, useMobxEffect, useMobxState } from "mobx-react-use-autorun";
 import { stylesheet } from "typestyle";
 import api from '@/api'
 import { useMount } from "mobx-react-use-autorun";
-import { concatMap, from, catchError, Observable, switchMap, timer, repeat, ReplaySubject, tap, Subscription } from 'rxjs'
+import { concatMap, from, catchError, switchMap, timer, repeat, ReplaySubject, tap, Subscription } from 'rxjs'
 import { useRef } from "react";
 import MessageUnlimitedListChild from "./MessageUnlimitedListChild";
 import MessageUnlimitedVariableSizeListComponent from "./MessageUnlimitedVariableSizeListComponent";
 import { Alert, CircularProgress } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import { UserMessageModel } from "@/model/UserMessageModel";
+import { GlobalUserInfo } from "@/common/axios-config/AxiosConfig";
 
 const css = stylesheet({
   messsageListContainer: {
@@ -84,13 +85,10 @@ export default observer((props: {
 
   useMobxEffect(() => {
     state.child = child;
-  })
+  }, [state.userId, state.username])
 
   function loadAllMessage(subscription: Subscription) {
-    subscription.add(new Observable<null>((subscriber) => {
-      subscriber.next();
-      subscriber.complete();
-    }).pipe(
+    subscription.add(timer(1).pipe(
       switchMap(() => api.UserMessage.getUserMessageWebsocket(state.websocketInput)),
       concatMap(({ list: messageList, totalPage }) => from((async () => {
         if (typeof totalPage === "number") {
@@ -114,12 +112,12 @@ export default observer((props: {
       tap(() => {
         cleanMessageMap();
       }),
-      repeat(),
+      repeat({ delay: 2000 }),
       catchError((error, caught) => {
         if (!state.ready) {
           state.error = true;
         }
-        return timer(1000).pipe(
+        return timer(2000).pipe(
           switchMap(() => caught),
         );
       }),

@@ -28,10 +28,10 @@ export default observer((props: {
   })
 
   useMount((subscription) => {
-    state.loadMessage();
     subscription.add(new Subscription(() => {
       state.unloadMessage();
     }))
+    state.loadMessage();
   })
 
   async function recall() {
