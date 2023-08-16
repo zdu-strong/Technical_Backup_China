@@ -1,0 +1,347 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="John (generated)" id="1693992758885-1">
+        <createTable tableName="encrypt_decrypt_entity">
+            <column name="id" type="STRING(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PRIMARY_KEY"/>
+            </column>
+            <column name="create_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="private_key_ofrsa" type="STRING(MAX)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="public_key_ofrsa" type="STRING(MAX)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="secret_key_ofaes" type="STRING(MAX)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="John (generated)" id="1693992758885-2">
+        <createTable tableName="friendship_entity">
+            <column name="id" type="STRING(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PRIMARY_KEY"/>
+            </column>
+            <column name="create_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="has_initiative" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_friend" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_in_blacklist" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="secret_key_ofaes" type="STRING(MAX)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="friend_id" type="STRING(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="STRING(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="John (generated)" id="1693992758885-3">
+        <createTable tableName="logger_entity">
+            <column name="id" type="STRING(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PRIMARY_KEY"/>
+            </column>
+            <column name="caller_class_name" type="STRING(MAX)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="caller_line_number" type="INT64">
+                <constraints nullable="false"/>
+            </column>
+            <column name="caller_method_name" type="STRING(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="create_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="exception_class_name" type="STRING(MAX)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="exception_message" type="STRING(MAX)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="exception_stack_trace" type="STRING(MAX)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="git_commit_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="git_commit_id" type="STRING(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="has_exception" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="level" type="STRING(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="logger_name" type="STRING(MAX)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="message" type="STRING(MAX)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="John (generated)" id="1693992758885-4">
+        <createTable tableName="long_term_task_entity">
+            <column name="id" type="STRING(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PRIMARY_KEY"/>
+            </column>
+            <column name="create_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_done" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="result" type="STRING(MAX)"/>
+            <column name="update_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="John (generated)" id="1693992758885-5">
+        <createTable tableName="organize_closure_entity">
+            <column name="id" type="STRING(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PRIMARY_KEY"/>
+            </column>
+            <column name="create_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="gap" type="INT64">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ancestor_id" type="STRING(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="descendant_id" type="STRING(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="John (generated)" id="1693992758885-6">
+        <createTable tableName="organize_entity">
+            <column name="id" type="STRING(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PRIMARY_KEY"/>
+            </column>
+            <column name="create_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="level" type="INT64">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="organize_shadow_id" type="STRING(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="John (generated)" id="1693992758885-7">
+        <createTable tableName="organize_shadow_entity">
+            <column name="id" type="STRING(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PRIMARY_KEY"/>
+            </column>
+            <column name="create_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="STRING(MAX)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="parent_id" type="STRING(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="John (generated)" id="1693992758885-8">
+        <createTable tableName="storage_space_entity">
+            <column name="id" type="STRING(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PRIMARY_KEY"/>
+            </column>
+            <column name="create_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="folder_name" type="STRING(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="John (generated)" id="1693992758885-9">
+        <createTable tableName="token_entity">
+            <column name="id" type="STRING(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PRIMARY_KEY"/>
+            </column>
+            <column name="create_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="jwt_id" type="STRING(255)"/>
+            <column name="private_key_ofrsa" type="STRING(MAX)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="STRING(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="John (generated)" id="1693992758885-10">
+        <createTable tableName="user_email_entity">
+            <column name="id" type="STRING(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PRIMARY_KEY"/>
+            </column>
+            <column name="create_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="delete_key" type="STRING(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="STRING(512)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="STRING(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="John (generated)" id="1693992758885-11">
+        <createTable tableName="user_entity">
+            <column name="id" type="STRING(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PRIMARY_KEY"/>
+            </column>
+            <column name="create_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_deleted" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="STRING(MAX)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="private_key_ofrsa" type="STRING(MAX)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="public_key_ofrsa" type="STRING(MAX)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="username" type="STRING(MAX)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="John (generated)" id="1693992758885-12">
+        <createTable tableName="user_message_entity">
+            <column name="id" type="STRING(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PRIMARY_KEY"/>
+            </column>
+            <column name="content" type="STRING(MAX)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="create_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="file_name" type="STRING(MAX)"/>
+            <column name="folder_name" type="STRING(255)"/>
+            <column name="folder_size" type="INT64"/>
+            <column name="is_recall" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="STRING(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="John (generated)" id="1693992758885-13">
+        <createTable tableName="verification_code_email_entity">
+            <column name="id" type="STRING(255)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="PRIMARY_KEY"/>
+            </column>
+            <column name="create_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="STRING(512)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="has_used" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_passed" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="update_date" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="verification_code" type="STRING(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="John (generated)" id="1693992758885-14">
+        <createIndex indexName="IDX46cw449tt4ikqgeepvj4u4d7a" tableName="storage_space_entity">
+            <column name="folder_name"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="John (generated)" id="1693992758885-15">
+        <createIndex indexName="IDXg4isidkyw8pui6rnpe5ii9fdb" tableName="user_message_entity">
+            <column name="folder_name"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="John (generated)" id="1693992758885-16">
+        <createIndex indexName="IDXh2tw4b9y7sentv7whtxxxnv3o" tableName="user_email_entity">
+            <column name="email"/>
+            <column name="is_deleted"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="John (generated)" id="1693992758885-17">
+        <createIndex indexName="IDXoxeihgs43v794u9lhrh79ugm5" tableName="verification_code_email_entity">
+            <column name="email"/>
+            <column name="create_date"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
