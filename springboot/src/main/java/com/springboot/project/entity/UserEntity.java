@@ -23,7 +23,7 @@ public class UserEntity {
     @Id
     private String id;
 
-    @Column(nullable = false, length = 1024 * 4)
+    @Column(nullable = false)
     private String username;
 
     @Column(nullable = false)

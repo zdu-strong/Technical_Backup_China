@@ -14,7 +14,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @Entity
-@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "deleteKey", "email" }) })
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "email", "deleteKey" }) })
 @Getter
 @Setter
 @Accessors(chain = true)
@@ -23,7 +23,7 @@ public class UserEmailEntity {
     @Id
     private String id;
 
-    @Column(nullable = false, length = 1024 * 4)
+    @Column(nullable = false)
     private String email;
 
     @Column(nullable = false)
