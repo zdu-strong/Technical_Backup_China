@@ -20,7 +20,7 @@
         <storage.root.path>default</storage.root.path>
         <resource.delimiter>${}</resource.delimiter>
         <database.mysql.jdbc.url>localhost:3306</database.mysql.jdbc.url>
-        <database.mysql.name>springboot_test</database.mysql.name>
+        <database.mysql.name>springboot_dev</database.mysql.name>
         <database.mysql.username>root</database.mysql.username>
         <database.mysql.password>123456</database.mysql.password>
         <database.mysql.driver>com.mysql.cj.jdbc.Driver
