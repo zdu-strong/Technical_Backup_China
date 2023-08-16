@@ -1,5 +1,6 @@
 package com.springboot.project.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +18,10 @@ public class OrganizeController extends BaseController {
     public ResponseEntity<?> createOrganize(@RequestBody OrganizeModel organizeModel) {
 
         if (organizeModel.getParentOrganize() != null) {
-            this.organizeService.checkExistOrganize(organizeModel.getParentOrganize().getId());
+            var parentOrganizeId = organizeModel.getParentOrganize().getId();
+            if (StringUtils.isNotBlank(parentOrganizeId)) {
+                this.organizeService.checkExistOrganize(parentOrganizeId);
+            }
         }
 
         var organize = this.organizeService.createOrganize(organizeModel);
