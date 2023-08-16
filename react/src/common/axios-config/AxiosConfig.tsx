@@ -3,7 +3,10 @@ import qs from 'qs';
 import { ServerAddress } from '@/common/Server'
 import { UserModel } from '@/model/UserModel';
 import { observable } from 'mobx-react-use-autorun';
-import { concat, fromEvent, of, retry, tap } from 'rxjs';
+import { concat, from, fromEvent, of, retry, switchMap } from 'rxjs';
+import { decryptByPrivateKeyOfRSA, decryptByPublicKeyOfRSA, encryptByPrivateKeyOfRSA, encryptByPublicKeyOfRSA } from '../RSAUtils';
+import { TypedJSON } from 'typedjson';
+import { runWoker } from '../WebWorkerUtils';
 
 axios.defaults.baseURL = ServerAddress;
 
@@ -24,12 +27,13 @@ axios.interceptors.response.use(undefined, async (error) => {
       error[objectKey] = error.response.data[objectKey];
     }
   }
+
   throw error;
 });
 
 axios.interceptors.request.use((config) => {
   if (config.url?.startsWith("/") || config.url?.startsWith(ServerAddress + "/") || config.url === ServerAddress) {
-    const accessToken = getAccessToken();
+    const accessToken = GlobalUserInfo.accessToken;
     if (accessToken) {
       config.headers!["Authorization"] = 'Bearer ' + accessToken
     }
@@ -44,18 +48,68 @@ export const GlobalUserInfo = observable({
   privateKeyOfRSAOfAccessToken: '',
 } as UserModel);
 
-export function setGlobalUserInfo(userInfo: UserModel): void {
+export async function setGlobalUserInfo(accessToken?: string, privateKeyOfRSAOfAccessToken?: string): Promise<void> {
+  if (!accessToken || !privateKeyOfRSAOfAccessToken) {
+    const jsonStringOfLocalStorage = window.localStorage.getItem(keyOfGlobalUserInfoOfLocalStorage);
+    if (jsonStringOfLocalStorage) {
+      const jsonOfLocalStorage = new TypedJSON(UserModel).parse(jsonStringOfLocalStorage);
+      accessToken = jsonOfLocalStorage?.accessToken;
+      privateKeyOfRSAOfAccessToken = jsonOfLocalStorage?.privateKeyOfRSAOfAccessToken;
+      if (GlobalUserInfo.accessToken === accessToken && GlobalUserInfo.privateKeyOfRSAOfAccessToken === privateKeyOfRSAOfAccessToken) {
+        return;
+      }
+    } else {
+      if (GlobalUserInfo.accessToken) {
+        await removeGlobalUserInfo();
+      }
+      return;
+    }
+  }
+
+  if (!accessToken || !privateKeyOfRSAOfAccessToken) {
+    return;
+  }
+
+  const userInfo = await getUserInfo(accessToken!);
+  const privateKeyOfRSAOfUser = await decryptByPrivateKeyOfRSA(privateKeyOfRSAOfAccessToken!, userInfo.privateKeyOfRSA);
+  const publicKeyOfRSAOfUser = userInfo.publicKeyOfRSA;
   GlobalUserInfo.id = userInfo.id;
   GlobalUserInfo.username = userInfo.username;
-  GlobalUserInfo.encryptByPublicKeyOfRSA = userInfo.encryptByPublicKeyOfRSA;
-  GlobalUserInfo.decryptByPrivateKeyOfRSA = userInfo.decryptByPrivateKeyOfRSA;
-  GlobalUserInfo.encryptByPrivateKeyOfRSA = userInfo.encryptByPrivateKeyOfRSA;
-  GlobalUserInfo.decryptByPublicKeyOfRSA = userInfo.decryptByPublicKeyOfRSA;
+  GlobalUserInfo.accessToken = accessToken;
+  GlobalUserInfo.privateKeyOfRSAOfAccessToken = privateKeyOfRSAOfAccessToken;
+  GlobalUserInfo.encryptByPublicKeyOfRSA = async (data: string) => {
+    return await encryptByPublicKeyOfRSA(publicKeyOfRSAOfUser, data);
+  };
+  GlobalUserInfo.decryptByPrivateKeyOfRSA = async (data: string) => {
+    return await decryptByPrivateKeyOfRSA(privateKeyOfRSAOfUser, data);
+  };
+  GlobalUserInfo.encryptByPrivateKeyOfRSA = async (data: string) => {
+    return await encryptByPrivateKeyOfRSA(privateKeyOfRSAOfUser, data);
+  };
+  GlobalUserInfo.decryptByPublicKeyOfRSA = async (data: string) => {
+    return await decryptByPublicKeyOfRSA(publicKeyOfRSAOfUser!, data);
+  };
+  window.localStorage.setItem(keyOfGlobalUserInfoOfLocalStorage, JSON.stringify({
+    accessToken,
+    privateKeyOfRSAOfAccessToken
+  }))
 }
 
-export async function removeUserIdOfGlobalUserInfo() {
-    GlobalUserInfo.id = '';
+export async function removeGlobalUserInfo() {
+  GlobalUserInfo.id = '';
+  GlobalUserInfo.username = '';
+  GlobalUserInfo.accessToken = '';
+  GlobalUserInfo.privateKeyOfRSAOfAccessToken = '';
+  GlobalUserInfo.encryptByPublicKeyOfRSA = undefined as any;
+  GlobalUserInfo.decryptByPrivateKeyOfRSA = undefined as any;
+  GlobalUserInfo.encryptByPrivateKeyOfRSA = undefined as any;
+  GlobalUserInfo.decryptByPublicKeyOfRSA = undefined as any;
+  if (window.localStorage.getItem(keyOfGlobalUserInfoOfLocalStorage)) {
+    window.localStorage.removeItem(keyOfGlobalUserInfoOfLocalStorage);
+  }
 }
+
+const keyOfGlobalUserInfoOfLocalStorage = 'GlobalUserInfo-c12e6be9-e969-4a54-b5d4-b451755bf49a';
 
 const existWindow = (() => {
   try {
@@ -69,52 +123,25 @@ const existWindow = (() => {
   }
 })();
 
-const keyOfAccessTokenOfLoalStorage = 'token-c12e6be9-e969-4a54-b5d4-b451755bf49a';
-
-export async function setAccessToken(accessToken: string) {
-  GlobalUserInfo.accessToken = accessToken;
-  window.localStorage.setItem(keyOfAccessTokenOfLoalStorage, accessToken);
+function main() {
+  if (existWindow) {
+    concat(of(null), fromEvent(window, "storage")).pipe(
+      switchMap(() => {
+        return from(setGlobalUserInfo());
+      }),
+      retry(),
+    ).subscribe();
+  }
 }
 
-export async function removeAccessToken() {
-  GlobalUserInfo.accessToken = '';
-  window.localStorage.removeItem(keyOfAccessTokenOfLoalStorage);
+async function getUserInfo(accessToken: string) {
+  const userInfo = await runWoker(new Worker(new URL('../../common/WebWorker/GetUserInfo/getUserInfo.worker', import.meta.url), { type: "module" }),
+    {
+      ServerAddress,
+      accessToken
+    }
+  );
+  return new TypedJSON(UserModel).parse(userInfo)!;
 }
 
-const keyOfPrivateKeyOfAccessTokenOfRSAOfLocalStorage = 'privateKeyOfRSA-e3e5a91b-7c4a-4f15-afd7-3917bbc718ba';
-
-export async function setPrivateKeyOfRSA(privateKeyOfRSA: string) {
-  GlobalUserInfo.privateKeyOfRSAOfAccessToken = privateKeyOfRSA;
-  window.localStorage.setItem(keyOfPrivateKeyOfAccessTokenOfRSAOfLocalStorage, privateKeyOfRSA);
-}
-
-export async function removePrivateKeyOfRSA() {
-  GlobalUserInfo.privateKeyOfRSAOfAccessToken = '';
-  window.localStorage.removeItem(keyOfPrivateKeyOfAccessTokenOfRSAOfLocalStorage);
-}
-
-if (existWindow) {
-  concat(of(null), fromEvent(window, "storage")).pipe(
-    tap(() => {
-      if (getAccessToken() && !window.localStorage.getItem(keyOfAccessTokenOfLoalStorage)) {
-        GlobalUserInfo.accessToken = '';
-      } else if (window.localStorage.getItem(keyOfAccessTokenOfLoalStorage) && window.localStorage.getItem(keyOfAccessTokenOfLoalStorage) !== GlobalUserInfo.accessToken) {
-        GlobalUserInfo.accessToken = window.localStorage.getItem(keyOfAccessTokenOfLoalStorage)!;
-      }
-      if (getPrivateKeyOfRSA() && !window.localStorage.getItem(keyOfPrivateKeyOfAccessTokenOfRSAOfLocalStorage)) {
-        GlobalUserInfo.privateKeyOfRSAOfAccessToken = '';
-      } else if (window.localStorage.getItem(keyOfPrivateKeyOfAccessTokenOfRSAOfLocalStorage) && window.localStorage.getItem(keyOfPrivateKeyOfAccessTokenOfRSAOfLocalStorage) !== getPrivateKeyOfRSA()) {
-        GlobalUserInfo.privateKeyOfRSAOfAccessToken = window.localStorage.getItem(keyOfPrivateKeyOfAccessTokenOfRSAOfLocalStorage)!;
-      }
-    }),
-    retry(),
-  ).subscribe();
-}
-
-export function getPrivateKeyOfRSA() {
-  return GlobalUserInfo.privateKeyOfRSAOfAccessToken;
-}
-
-export function getAccessToken(): string {
-  return GlobalUserInfo.accessToken!;
-}
+export default main()

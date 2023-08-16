@@ -1,4 +1,4 @@
-import { observer, useMobxState } from "mobx-react-use-autorun";
+import { observer, useMobxEffect, useMobxState } from "mobx-react-use-autorun";
 import { stylesheet } from "typestyle";
 import api from '@/api'
 import { useMount } from "mobx-react-use-autorun";
@@ -82,7 +82,9 @@ export default observer((props: {
     />
   }
 
-
+  useMobxEffect(() => {
+    state.child = child;
+  })
 
   function loadAllMessage(subscription: Subscription) {
     subscription.add(new Observable<null>((subscriber) => {

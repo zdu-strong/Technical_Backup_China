@@ -1,4 +1,4 @@
-import { getAccessToken } from "@/common/axios-config/AxiosConfig";
+import { GlobalUserInfo } from "@/common/axios-config/AxiosConfig";
 import { ServerAddress, WebSocketServerAddress } from "@/common/Server";
 import { UserMessageModel } from "@/model/UserMessageModel";
 import { UserMessageWebSocketReceiveModel } from "@/model/UserMessageWebSocketReceiveModel";
@@ -22,7 +22,7 @@ export function getUserMessageWebsocket(websocketInput$: Subject<{
   isCancel: boolean,
 }>) {
   const url = `${WebSocketServerAddress}/message?${qs.stringify({
-    accessToken: getAccessToken(),
+    accessToken: GlobalUserInfo.accessToken,
   })}`;
   const websocketOutput$ = makeWebSocketObservable(url).pipe(
     switchMap((getResponses: GetWebSocketResponses) => {
