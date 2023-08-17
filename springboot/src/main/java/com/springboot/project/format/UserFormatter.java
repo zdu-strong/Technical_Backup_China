@@ -9,16 +9,18 @@ import com.springboot.project.service.BaseService;
 public class UserFormatter extends BaseService {
 
     public UserModel format(UserEntity userEntity) {
-        var userModel = new UserModel().setId(userEntity.getId()).setUsername(userEntity.getUsername());
-        userModel.setPublicKeyOfRSA(userEntity.getPublicKeyOfRSA());
-        userModel.setHasRegistered(userEntity.getHasRegistered());
+        var userModel = new UserModel()
+                .setId(userEntity.getId())
+                .setUsername(userEntity.getUsername())
+                .setPublicKeyOfRSA(userEntity.getPublicKeyOfRSA())
+                .setHasRegistered(userEntity.getHasRegistered());
         return userModel;
     }
 
     public UserModel formatWithMoreInformation(UserEntity userEntity) {
-        var userId = userEntity.getId();
         var userModel = this.format(userEntity);
         userModel.setPrivateKeyOfRSA(userEntity.getPrivateKeyOfRSA());
+        var userId = userEntity.getId();
         var userEmailList = this.UserEmailEntity()
                 .where(s -> s.getUser().getId().equals(userId))
                 .where(s -> !s.getIsDeleted())
