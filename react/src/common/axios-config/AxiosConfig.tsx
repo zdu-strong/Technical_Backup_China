@@ -3,7 +3,7 @@ import qs from 'qs';
 import { ServerAddress } from '@/common/Server'
 import { UserModel } from '@/model/UserModel';
 import { observable } from 'mobx-react-use-autorun';
-import { concat, from, fromEvent, of, retry, switchMap } from 'rxjs';
+import { catchError, concat, from, fromEvent, of, retry, switchMap, tap } from 'rxjs';
 import { decryptByPrivateKeyOfRSA, decryptByPublicKeyOfRSA, encryptByPrivateKeyOfRSA, encryptByPublicKeyOfRSA } from '../RSAUtils';
 import { TypedJSON } from 'typedjson';
 import { runWoker } from '../WebWorkerUtils';
@@ -46,6 +46,7 @@ export const GlobalUserInfo = observable({
   username: '',
   accessToken: '',
   privateKeyOfRSAOfAccessToken: '',
+  loading: true,
 } as UserModel);
 
 export async function setGlobalUserInfo(accessToken?: string, privateKeyOfRSAOfAccessToken?: string): Promise<void> {
@@ -127,7 +128,12 @@ function main() {
   if (existWindow) {
     concat(of(null), fromEvent(window, "storage")).pipe(
       switchMap(() => {
-        return from(setGlobalUserInfo());
+        return from(setGlobalUserInfo()).pipe(
+          catchError(() => of(null))
+        );
+      }),
+      tap(() => {
+        GlobalUserInfo.loading = false;
       }),
       retry(),
     ).subscribe();

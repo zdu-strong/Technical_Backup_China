@@ -4,6 +4,7 @@ import { UserEmailModel } from "@/model/UserEmailModel";
 import { GlobalUserInfo, removeGlobalUserInfo, setGlobalUserInfo } from "@/common/axios-config/AxiosConfig";
 import { encryptByPublicKeyOfRSA, encryptByPrivateKeyOfRSA, generateKeyPairOfRSA } from "@/common/RSAUtils";
 import { decryptByAES, encryptByAES, generateSecretKeyOfAES } from '@/common/AESUtils';
+import { EMPTY, concat, concatMap, interval, lastValueFrom, of, take } from "rxjs";
 
 export async function createNewAccountOfSignUp() {
   return await axios.post<UserModel>("/sign_up/create_new_account");
@@ -67,10 +68,15 @@ export async function signOut() {
 }
 
 export async function isSignIn() {
-  await setGlobalUserInfo();
-  if (!GlobalUserInfo.accessToken) {
-    return false;
-  }
-  const { data: isSignIn } = await axios.get("/is_sign_in");
-  return isSignIn;
+  await lastValueFrom(concat(of(null), interval(100)).pipe(
+    concatMap(() => {
+      if (GlobalUserInfo.loading) {
+        return EMPTY;
+      } else {
+        return of(null);
+      }
+    }),
+    take(1),
+  ));
+  return !!GlobalUserInfo.accessToken;
 }

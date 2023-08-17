@@ -33,7 +33,6 @@ export default observer(() => {
       state.readyForMessageList = readyForMessageList;
     },
     error: null as any,
-    keyOfDiv: v1(),
   }, {
     navigate: useNavigate(),
   })
@@ -43,7 +42,6 @@ export default observer(() => {
       if (!(await api.Authorization.isSignIn())) {
         const { data: newAccount } = await api.Authorization.createNewAccountOfSignUp();
         await api.Authorization.signUp(newAccount.id, v1(), "visitor", [], newAccount.publicKeyOfRSA);
-        state.keyOfDiv = v1();
       }
       state.readyForStart = true;
     } catch (error) {
@@ -53,10 +51,12 @@ export default observer(() => {
 
   return <>
     <LoadingOrErrorComponent ready={state.readyForStart && state.readyForMessageList} error={state.error} />
-    <div key={state.keyOfDiv} className={css.container} style={state.readyForStart && state.readyForMessageList ? {} : { position: "absolute", visibility: "hidden" }} >
-      <MessageMenu userId={GlobalUserInfo.id} username={GlobalUserInfo.username} />
-      <MessageUnlimitedList userId={GlobalUserInfo.id!} username={GlobalUserInfo.username!} setReadyForMessageList={state.setReadyForMessageList} />
-      <MessageChat userId={GlobalUserInfo.id!} username={GlobalUserInfo.username!} />
-    </div>
+    {
+      state.readyForStart && <div className={css.container} style={state.readyForMessageList ? {} : { position: "absolute", visibility: "hidden" }} >
+        <MessageMenu userId={GlobalUserInfo.id} username={GlobalUserInfo.username} />
+        <MessageUnlimitedList userId={GlobalUserInfo.id!} username={GlobalUserInfo.username!} setReadyForMessageList={state.setReadyForMessageList} />
+        <MessageChat userId={GlobalUserInfo.id!} username={GlobalUserInfo.username!} />
+      </div>
+    }
   </>
 })

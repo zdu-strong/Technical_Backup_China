@@ -26,6 +26,9 @@ export class UserModel {
   @jsonArrayMember(UserEmailModel)
   userEmailList!: UserEmailModel[];
 
+  @jsonMember(Boolean)
+  loading!: boolean;
+
   encryptByPublicKeyOfRSA!: (data: string) => Promise<string>;
 
   decryptByPrivateKeyOfRSA!: (data: string) => Promise<string>;
