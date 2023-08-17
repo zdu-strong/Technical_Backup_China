@@ -1,29 +1,21 @@
 package com.springboot.project.entity;
 
 import java.util.Date;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @Entity
-@Table(uniqueConstraints = {
-        @UniqueConstraint(columnNames = { "email", "deleteKey" })
-}, indexes = {
-        @Index(columnList = "email, isDeleted")
-})
+@Table(indexes = @Index(columnList = "email, createDate"))
 @Getter
 @Setter
 @Accessors(chain = true)
-public class UserEmailEntity {
+public class VerificationCodeEmailEntity {
 
     @Id
     private String id;
@@ -32,18 +24,15 @@ public class UserEmailEntity {
     private String email;
 
     @Column(nullable = false)
-    private Date createDate;
-
-    @Column(nullable = false)
-    private Date updateDate;
+    private String verificationCode;
 
     @Column(nullable = false)
     private Boolean isDeleted;
 
     @Column(nullable = false)
-    private String deleteKey;
+    private Date createDate;
 
-    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, optional = false)
-    private UserEntity user;
+    @Column(nullable = false)
+    private Date updateDate;
 
 }

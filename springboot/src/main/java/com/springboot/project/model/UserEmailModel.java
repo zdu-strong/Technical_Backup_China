@@ -14,6 +14,6 @@ public class UserEmailModel {
 
     private UserModel user;
 
-    private String verificationCode;
+    private VerificationCodeEmailModel verificationCodeEmail;
 
 }

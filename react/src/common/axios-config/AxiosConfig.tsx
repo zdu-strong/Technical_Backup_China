@@ -4,9 +4,9 @@ import { ServerAddress } from '@/common/Server'
 import { UserModel } from '@/model/UserModel';
 import { observable } from 'mobx-react-use-autorun';
 import { catchError, concat, from, fromEvent, of, retry, switchMap, tap } from 'rxjs';
-import { decryptByPrivateKeyOfRSA, decryptByPublicKeyOfRSA, encryptByPrivateKeyOfRSA, encryptByPublicKeyOfRSA } from '../RSAUtils';
+import { decryptByPrivateKeyOfRSA, decryptByPublicKeyOfRSA, encryptByPrivateKeyOfRSA, encryptByPublicKeyOfRSA } from '@/common/RSAUtils';
 import { TypedJSON } from 'typedjson';
-import { runWoker } from '../WebWorkerUtils';
+import { runWoker } from '@/common/WebWorkerUtils';
 
 axios.defaults.baseURL = ServerAddress;
 

@@ -1,29 +1,32 @@
 package com.springboot.project.test.service.UserService;
 
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.net.URISyntaxException;
 import org.apache.commons.lang3.StringUtils;
+import org.jinq.orm.stream.JinqStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import com.fasterxml.uuid.Generators;
 import com.springboot.project.model.TokenModel;
 import com.springboot.project.test.BaseTest;
 
-public class UserMessageServiceGetUserByIdTest extends BaseTest {
+public class UserServiceGetAccountForSignInTest extends BaseTest {
     private TokenModel tokenModel;
 
     @Test
     public void test() throws URISyntaxException {
-        var result = this.userService.getUserById(tokenModel.getUserModel().getId());
+        var result = this.userService.getAccountForSignIn(tokenModel.getUserModel().getId());
         assertTrue(StringUtils.isNotBlank(result.getId()));
         assertTrue(StringUtils.isNotBlank(result.getPublicKeyOfRSA()));
         assertTrue(StringUtils.isNotBlank(result.getUsername()));
         assertTrue(StringUtils.isBlank(result.getEmail()));
-        assertTrue(StringUtils.isBlank(result.getPassword()));
-        assertTrue(StringUtils.isBlank(result.getPrivateKeyOfRSA()));
-        assertTrue(result.getHasRegistered());
-        assertNull(result.getUserEmailList());
+        assertTrue(StringUtils.isNotBlank(result.getPrivateKeyOfRSA()));
+        assertEquals(1, result.getUserEmailList().size());
+        assertTrue(StringUtils
+                .isNotBlank(JinqStream.from(result.getUserEmailList()).select(s -> s.getId()).getOnlyValue()));
+        assertTrue(StringUtils
+                .isNotBlank(JinqStream.from(result.getUserEmailList()).select(s -> s.getEmail()).getOnlyValue()));
     }
 
     @BeforeEach
@@ -33,4 +36,3 @@ public class UserMessageServiceGetUserByIdTest extends BaseTest {
     }
 
 }
-

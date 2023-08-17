@@ -3,8 +3,8 @@ import { FriendshipPaginationModel } from "@/model/FriendshipPaginationModel";
 import axios from "axios";
 import { v1 } from "uuid";
 import { GlobalUserInfo } from "@/common/axios-config/AxiosConfig";
-import { getUserById } from "./User";
-import { isSignIn } from "./Authorization";
+import { getUserById } from "@/api/User";
+import { isSignIn } from "@/api/Authorization";
 import { generateSecretKeyOfAES } from "@/common/AESUtils";
 
 export async function getFriendList() {

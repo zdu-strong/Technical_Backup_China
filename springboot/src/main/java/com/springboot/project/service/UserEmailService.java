@@ -1,7 +1,6 @@
 package com.springboot.project.service;
 
 import java.util.Date;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -11,7 +10,7 @@ import com.springboot.project.entity.UserEmailEntity;
 @Service
 public class UserEmailService extends BaseService {
 
-    public void createUserEmailWithVerificationCode(String email, String userId, String verificationCode) {
+    public void createUserEmail(String email, String userId) {
         var userEntity = this.UserEntity().where(s -> !s.getIsDeleted()).where(s -> s.getId().equals(userId))
                 .getOnlyValue();
         UserEmailEntity userEmailEntity = new UserEmailEntity();
@@ -20,31 +19,10 @@ public class UserEmailService extends BaseService {
         userEmailEntity.setUser(userEntity);
         userEmailEntity.setCreateDate(new Date());
         userEmailEntity.setUpdateDate(new Date());
-        userEmailEntity.setIsDeleted(true);
-        userEmailEntity.setDeleteKey(Generators.timeBasedGenerator().generate().toString());
-        userEmailEntity.setVerificationCode(verificationCode);
-
-        this.persist(userEmailEntity);
-    }
-
-    public void updateUserEmailWithVerificationCodePassed(String email, String userId, String verificationCode) {
-        var userEmailEntity = this.UserEmailEntity()
-                .where(s -> s.getUser().getId().equals(userId))
-                .where(s -> !s.getUser().getIsDeleted())
-                .where(s -> s.getEmail().equals(email))
-                .where(s -> s.getIsDeleted())
-                .where(s -> s.getVerificationCode().equals(verificationCode))
-                .sortedDescendingBy(s -> s.getId())
-                .sortedDescendingBy(s -> s.getCreateDate())
-                .findFirst()
-                .get();
-        userEmailEntity.setCreateDate(new Date());
-        userEmailEntity.setUpdateDate(new Date());
         userEmailEntity.setIsDeleted(false);
         userEmailEntity.setDeleteKey("");
-        userEmailEntity.setVerificationCode("");
 
-        this.merge(userEmailEntity);
+        this.persist(userEmailEntity);
     }
 
     public void checkEmailIsNotUsed(String email) {
@@ -54,24 +32,6 @@ public class UserEmailService extends BaseService {
                 .exists();
         if (isPresent) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "E-mail " + email + " has bound account");
-        }
-    }
-
-    public void checkEmailVerificationCodeIsPassed(String email, String userId, String verificationCode) {
-        if (StringUtils.isBlank(verificationCode)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "The verification code of email " + email + " cannot be empty");
-        }
-
-        var stream = this.UserEmailEntity()
-                .where(s -> s.getUser().getId().equals(userId))
-                .where(s -> !s.getUser().getIsDeleted())
-                .where(s -> s.getEmail().equals(email))
-                .where(s -> s.getIsDeleted())
-                .where(s -> s.getVerificationCode().equals(verificationCode));
-        if (!stream.exists()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "The verification code of email " + email + " is wrong");
         }
     }
 }

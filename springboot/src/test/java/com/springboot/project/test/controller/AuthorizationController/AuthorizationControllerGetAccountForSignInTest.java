@@ -27,10 +27,8 @@ public class AuthorizationControllerGetAccountForSignInTest extends BaseTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(this.tokenModel.getUserModel().getId(), response.getBody().getId());
         assertTrue(StringUtils.isNotBlank(response.getBody().getPrivateKeyOfRSA()));
-        assertTrue(response.getBody().getHasRegistered());
         assertTrue(StringUtils.isBlank(response.getBody().getUsername()));
         assertTrue(StringUtils.isBlank(response.getBody().getEmail()));
-        assertTrue(StringUtils.isBlank(response.getBody().getPassword()));
         assertTrue(StringUtils.isBlank(response.getBody().getPublicKeyOfRSA()));
         assertNull(response.getBody().getUserEmailList());
     }

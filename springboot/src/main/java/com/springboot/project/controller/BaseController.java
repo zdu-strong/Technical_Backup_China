@@ -20,6 +20,7 @@ import com.springboot.project.service.TokenService;
 import com.springboot.project.service.UserEmailService;
 import com.springboot.project.service.UserMessageService;
 import com.springboot.project.service.UserService;
+import com.springboot.project.service.VerificationCodeEmailService;
 
 /**
  * Base class for all controllers, providing all service variables
@@ -71,6 +72,9 @@ public class BaseController {
 
     @Autowired
     protected FriendshipService friendshipService;
+
+    @Autowired
+    protected VerificationCodeEmailService verificationCodeEmailService;
 
     @Autowired
     protected AuthorizationEmailProperties authorizationEmailProperties;

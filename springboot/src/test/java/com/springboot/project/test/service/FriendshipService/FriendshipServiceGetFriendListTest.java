@@ -37,11 +37,8 @@ public class FriendshipServiceGetFriendListTest extends BaseTest {
                 .isNotBlank(JinqStream.from(result.getList()).select(s -> s.getFriend().getUsername()).getOnlyValue()));
         assertTrue(StringUtils.isNotBlank(
                 JinqStream.from(result.getList()).select(s -> s.getFriend().getPublicKeyOfRSA()).getOnlyValue()));
-        assertTrue(StringUtils
-                .isBlank(JinqStream.from(result.getList()).select(s -> s.getFriend().getPassword()).getOnlyValue()));
         assertTrue(StringUtils.isBlank(
                 JinqStream.from(result.getList()).select(s -> s.getFriend().getPrivateKeyOfRSA()).getOnlyValue()));
-        assertTrue(JinqStream.from(result.getList()).select(s -> s.getFriend().getHasRegistered()).getOnlyValue());
         assertTrue(JinqStream.from(result.getList()).select(s -> s.getIsFriend()).getOnlyValue());
         assertFalse(JinqStream.from(result.getList()).select(s -> s.getIsInBlacklist()).getOnlyValue());
     }

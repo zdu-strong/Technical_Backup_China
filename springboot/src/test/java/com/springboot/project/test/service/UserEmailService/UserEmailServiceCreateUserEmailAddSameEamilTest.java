@@ -11,15 +11,12 @@ import com.springboot.project.test.BaseTest;
 
 public class UserEmailServiceCreateUserEmailAddSameEamilTest extends BaseTest {
     private TokenModel tokenModel;
-    private String verificationCode;
     private String email;
 
     @Test
     public void test() throws URISyntaxException {
         assertThrows(DataIntegrityViolationException.class, () -> {
-            this.userEmailService.updateUserEmailWithVerificationCodePassed(this.email,
-                    this.tokenModel.getUserModel().getId(),
-                    this.verificationCode);
+            this.userEmailService.createUserEmail(this.email, this.tokenModel.getUserModel().getId());
         });
     }
 
@@ -27,9 +24,6 @@ public class UserEmailServiceCreateUserEmailAddSameEamilTest extends BaseTest {
     public void beforeEach() {
         this.email = Generators.timeBasedGenerator().generate().toString() + "zdu.strong@gmail.com";
         this.tokenModel = this.createAccount(email);
-        this.verificationCode = "123456";
-        this.userEmailService.createUserEmailWithVerificationCode(this.email, this.tokenModel.getUserModel().getId(),
-                this.verificationCode);
     }
 
 }

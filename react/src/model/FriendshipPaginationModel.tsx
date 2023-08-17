@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx-react-use-autorun';
 import { jsonArrayMember, jsonObject } from 'typedjson'
-import { FriendshipModel } from './FriendshipModel';
-import { PaginationModel } from './PaginationModel';
+import { FriendshipModel } from '@/model/FriendshipModel';
+import { PaginationModel } from '@/model/PaginationModel';
 
 @jsonObject
 export class FriendshipPaginationModel extends PaginationModel {

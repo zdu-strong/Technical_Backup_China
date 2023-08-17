@@ -47,9 +47,6 @@ public class UserEntity {
     @Basic(fetch = FetchType.LAZY)
     private String privateKeyOfRSA;
 
-    @Column(nullable = false)
-    private Boolean hasRegistered;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<UserEmailEntity> userEmailList;
 

@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.uuid.Generators;
 import com.springboot.project.test.BaseTest;
 
-public class UserMessageServiceCheckExistAccountTest extends BaseTest {
+public class UserServiceCheckExistAccountTest extends BaseTest {
     private String email;
 
     @Test

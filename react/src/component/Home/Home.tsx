@@ -3,9 +3,9 @@ import { observer, useMobxState } from "mobx-react-use-autorun";
 import RestoreIcon from '@mui/icons-material/Restore';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import FriendList from "../Friend/FriendList";
-import StrangerList from "../Stranger/StrangerList";
-import { NavigationEnum } from "./js/NavigationEnum";
+import FriendList from "@/component/Friend/FriendList";
+import StrangerList from "@/component/Stranger/StrangerList";
+import { NavigationEnum } from "@/component/Home/js/NavigationEnum";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { FormattedMessage } from "react-intl";
 

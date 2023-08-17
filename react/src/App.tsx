@@ -12,7 +12,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import vhCheck from 'vh-check'
 import { stylesheet } from 'typestyle';
 import { observer, useMobxState } from 'mobx-react-use-autorun';
-import { useI18nLocale, I18nEnum } from './common/i18n';
+import { useI18nLocale, I18nEnum } from '@/common/i18n';
 
 vhCheck();
 

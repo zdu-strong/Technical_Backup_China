@@ -3,7 +3,7 @@ import { stylesheet } from "typestyle";
 import { ReactNode, useRef } from "react";
 import { useMount } from "mobx-react-use-autorun";
 import { Subscription, tap, timer } from 'rxjs'
-import { DefaultVariableSizeListChildRowHeight } from "./js/DefaultVariableSizeListChildRowHeight";
+import { DefaultVariableSizeListChildRowHeight } from "@/component/Message/js/DefaultVariableSizeListChildRowHeight";
 
 const css = stylesheet({
   container: {

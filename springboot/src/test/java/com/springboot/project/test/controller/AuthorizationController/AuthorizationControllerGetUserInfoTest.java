@@ -2,6 +2,7 @@ package com.springboot.project.test.controller.AuthorizationController;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.net.URISyntaxException;
 import java.security.NoSuchAlgorithmException;
@@ -29,17 +30,15 @@ public class AuthorizationControllerGetUserInfoTest extends BaseTest {
         assertEquals(this.tokenModel.getUserModel().getId(), response.getBody().getId());
         assertTrue(StringUtils.isNotBlank(response.getBody().getUsername()));
         assertTrue(StringUtils.isBlank(response.getBody().getEmail()));
-        assertTrue(StringUtils.isBlank(response.getBody().getPassword()));
         assertTrue(StringUtils.isNotBlank(response.getBody().getPrivateKeyOfRSA()));
         assertTrue(StringUtils.isNotBlank(response.getBody().getPublicKeyOfRSA()));
-        assertTrue(response.getBody().getHasRegistered());
         assertEquals(1, response.getBody().getUserEmailList().size());
         assertEquals(this.email,
                 JinqStream.from(response.getBody().getUserEmailList()).select(s -> s.getEmail()).getOnlyValue());
         assertTrue(StringUtils.isNotBlank(
                 JinqStream.from(response.getBody().getUserEmailList()).select(s -> s.getId()).getOnlyValue()));
-        assertTrue(StringUtils.isBlank(JinqStream.from(response.getBody().getUserEmailList())
-                .select(s -> s.getVerificationCode()).getOnlyValue()));
+        assertNull(JinqStream.from(response.getBody().getUserEmailList())
+                .select(s -> s.getVerificationCodeEmail()).getOnlyValue());
         assertTrue(StringUtils.isNotBlank(JinqStream.from(response.getBody().getUserEmailList())
                 .select(s -> s.getUser().getId()).getOnlyValue()));
         assertNotEquals(this.tokenModel.getRSA().getPrivateKeyBase64(), response.getBody().getPrivateKeyOfRSA());

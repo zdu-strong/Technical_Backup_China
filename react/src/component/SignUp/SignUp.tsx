@@ -16,9 +16,9 @@ import { MessageService } from "@/common/MessageService";
 import { UserEmailModel } from "@/model/UserEmailModel";
 import SendIcon from '@mui/icons-material/Send';
 import { Link, useNavigate } from "react-router-dom";
-import { encryptByPublicKeyOfRSA } from "@/common/RSAUtils";
 import LoadingOrErrorComponent from "@/common/LoadingOrErrorComponent/LoadingOrErrorComponent";
 import { ReactNode } from "react";
+import { VerificationCodeEmailModel } from "@/model/VerificationCodeEmailModel";
 
 const css = stylesheet({
   container: {
@@ -36,12 +36,10 @@ export default observer(() => {
 
   const state = useMobxState({
     nickname: '',
-    userId: v1(),
     password: '',
     emailList: [] as UserEmailModel[],
     steps: [] as { id: string; text: ReactNode }[],
     activeStep: 0,
-    publicKeyOfRSA: '',
     submitted: false,
     loading: {
       signUp: false,
@@ -100,7 +98,7 @@ export default observer(() => {
         if (!state.submitted) {
           return false;
         }
-        if (!emailInfo.verificationCode) {
+        if (!emailInfo.verificationCodeEmail.verificationCode) {
           return <FormattedMessage id="PleaseFillInTheVerificationCode" defaultMessage="Please fill in the verification code" />
         }
         return false;
@@ -113,7 +111,6 @@ export default observer(() => {
   useMount(async () => {
     try {
       await initSteps();
-      await createNewAccountOfSignUp();
       state.ready = true;
     } catch (e) {
       state.errorOfInit = e;
@@ -140,12 +137,6 @@ export default observer(() => {
     });
   }
 
-  async function createNewAccountOfSignUp() {
-    const { data: user } = await api.Authorization.createNewAccountOfSignUp();
-    state.userId = user.id;
-    state.publicKeyOfRSA = user.publicKeyOfRSA;
-  }
-
   async function signUp() {
     if (state.loading.signUp) {
       return;
@@ -153,11 +144,11 @@ export default observer(() => {
 
     try {
       state.loading.signUp = true
-      const userEmailList = state.emailList.map(s => ({
+      const userEmailList: UserEmailModel[] = state.emailList.map(s => ({
         email: s.email,
-        verificationCode: s.verificationCode,
+        verificationCodeEmail: s.verificationCodeEmail
       }));
-      await api.Authorization.signUp(state.userId, state.password, state.nickname, userEmailList, state.publicKeyOfRSA);
+      await api.Authorization.signUp(state.password, state.nickname, userEmailList);
       state.navigate("/chat")
     } catch (e) {
       MessageService.error(e);
@@ -200,7 +191,7 @@ export default observer(() => {
               {":"}
             </div>
             <div>
-              {state.userId}
+              {"No User ID"}
             </div>
           </div>
           {state.activeStep === 0 && <div>
@@ -326,9 +317,11 @@ export default observer(() => {
                         return;
                       }
                       state.submitted = false;
-
                       state.loading.sendVerificationCode[s.id!] = true;
-                      await api.Authorization.sendVerificationCode(state.userId, s.email!, await encryptByPublicKeyOfRSA(state.publicKeyOfRSA, state.userId));
+                      const { data } = await api.Authorization.sendVerificationCode(s.email);
+                      s.verificationCodeEmail.id = data.id;
+                      s.verificationCodeEmail.email = data.email;
+                      s.verificationCodeEmail.verificationCodeLength = data.verificationCodeLength;
                     } catch (e) {
                       MessageService.error(e);
                     } finally {
@@ -345,12 +338,12 @@ export default observer(() => {
                 variant="outlined"
                 onChange={(e) => {
                   if (e.target.value === '') {
-                    s.verificationCode = e.target.value;
+                    s.verificationCodeEmail.verificationCode = e.target.value;
                   } else if (e.target.value && new RegExp("^[0-9]+$").test(e.target.value)) {
-                    s.verificationCode = e.target.value;
+                    s.verificationCodeEmail.verificationCode = e.target.value;
                   }
                 }}
-                value={s.verificationCode}
+                value={s.verificationCodeEmail.verificationCode}
                 autoComplete="off"
                 className="w-full"
                 error={!!state.error.verificationCode(s)}
@@ -377,10 +370,11 @@ export default observer(() => {
                 aria-label="add"
                 size="small"
                 onClick={() => {
+                  const verificationCodeEmailModel = new VerificationCodeEmailModel();
                   state.emailList.push({
                     id: v1(),
                     email: '',
-                    verificationCode: '',
+                    verificationCodeEmail: verificationCodeEmailModel
                   })
                 }}
               >

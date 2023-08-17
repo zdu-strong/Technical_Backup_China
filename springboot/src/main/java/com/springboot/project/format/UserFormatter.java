@@ -12,13 +12,14 @@ public class UserFormatter extends BaseService {
         var userModel = new UserModel()
                 .setId(userEntity.getId())
                 .setUsername(userEntity.getUsername())
-                .setPublicKeyOfRSA(userEntity.getPublicKeyOfRSA())
-                .setHasRegistered(userEntity.getHasRegistered());
+                .setPublicKeyOfRSA(userEntity.getPublicKeyOfRSA());
         return userModel;
     }
 
     public UserModel formatWithMoreInformation(UserEntity userEntity) {
         var userModel = this.format(userEntity);
+        userModel.setCreateDate(userEntity.getCreateDate());
+        userModel.setUpdateDate(userEntity.getUpdateDate());
         userModel.setPrivateKeyOfRSA(userEntity.getPrivateKeyOfRSA());
         var userId = userEntity.getId();
         var userEmailList = this.UserEmailEntity()

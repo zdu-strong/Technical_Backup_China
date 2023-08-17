@@ -27,9 +27,12 @@ public class AuthorizationControllerSignInTest extends BaseTest {
     @Test
     public void test() throws URISyntaxException, InvalidKeySpecException, NoSuchAlgorithmException,
             JsonMappingException, JsonProcessingException {
-        var password = rsa.encryptBase64(new ObjectMapper().writeValueAsString(new Date()), KeyType.PrivateKey);
-        var url = new URIBuilder("/sign_in").setParameter("userId", user.getId()).setParameter("password", password)
-                .setParameter("privateKeyOfRSA", "privateKeyOfRSA")
+        var passwordParameter = rsa.encryptBase64(
+                new ObjectMapper().writeValueAsString(
+                        new UserModel().setCreateDate(new Date()).setPrivateKeyOfRSA("Private Key")),
+                KeyType.PrivateKey);
+        var url = new URIBuilder("/sign_in").setParameter("userId", user.getId())
+                .setParameter("password", passwordParameter)
                 .build();
         var response = this.testRestTemplate.postForEntity(url, null, String.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());

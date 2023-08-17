@@ -5,32 +5,21 @@ import { GlobalUserInfo, removeGlobalUserInfo, setGlobalUserInfo } from "@/commo
 import { encryptByPublicKeyOfRSA, encryptByPrivateKeyOfRSA, generateKeyPairOfRSA } from "@/common/RSAUtils";
 import { decryptByAES, encryptByAES, generateSecretKeyOfAES } from '@/common/AESUtils';
 import { EMPTY, concat, concatMap, interval, lastValueFrom, of, take } from "rxjs";
+import { VerificationCodeEmailModel } from "@/model/VerificationCodeEmailModel";
 
-export async function createNewAccountOfSignUp() {
-  return await axios.post<UserModel>("/sign_up/create_new_account");
-}
-
-export async function signUp(userId: string, password: string, nickname: string, userEmailList: UserEmailModel[], publicKeyOfRSA: string): Promise<void> {
+export async function signUp(password: string, nickname: string, userEmailList: UserEmailModel[]): Promise<void> {
   const { privateKey, publicKey } = await generateKeyPairOfRSA();
-  await axios.post(`/sign_up`, {
-    id: userId,
+  var { data: user } = await axios.post<UserModel>(`/sign_up`, {
     username: nickname,
     userEmailList: userEmailList,
     publicKeyOfRSA: publicKey,
-    privateKeyOfRSA: await encryptByAES(await generateSecretKeyOfAES(JSON.stringify([userId, password])), privateKey),
-    password: await encryptByPublicKeyOfRSA(publicKeyOfRSA, userId),
+    privateKeyOfRSA: await encryptByAES(await generateSecretKeyOfAES(password), privateKey),
   });
-  await signIn(userId, password);
+  await signIn(user.id, password);
 }
 
-export async function sendVerificationCode(userId: string, email: string, verificationCode: string) {
-  return await axios.post("/sign_up/send_verification_code", {
-    id: userId,
-    userEmailList: [{
-      email,
-      verificationCode,
-    }]
-  });
+export async function sendVerificationCode(email: string) {
+  return await axios.post<VerificationCodeEmailModel>("/email/send_verification_code", null, { params: { email } });
 }
 
 export async function signIn(userIdOrEmail: string, password: string): Promise<void> {
@@ -40,7 +29,7 @@ export async function signIn(userIdOrEmail: string, password: string): Promise<v
   const { privateKey, publicKey } = await generateKeyPairOfRSA();
   let privateKeyOfRSAOfUser: string;
   try {
-    privateKeyOfRSAOfUser = await decryptByAES(await generateSecretKeyOfAES(JSON.stringify([user.id, password])), user.privateKeyOfRSA);
+    privateKeyOfRSAOfUser = await decryptByAES(await generateSecretKeyOfAES(password), user.privateKeyOfRSA);
   } catch (error) {
     throw new Error('Incorrect password');
   }
@@ -48,8 +37,10 @@ export async function signIn(userIdOrEmail: string, password: string): Promise<v
   const { data: accessToken } = await axios.post<string>(`/sign_in`, null, {
     params: {
       userId: user.id,
-      password: await encryptByPrivateKeyOfRSA(privateKeyOfRSAOfUser, JSON.stringify(new Date())),
-      privateKeyOfRSA: await encryptByPublicKeyOfRSA(publicKey, privateKeyOfRSAOfUser),
+      password: await encryptByPrivateKeyOfRSA(privateKeyOfRSAOfUser, JSON.stringify({
+        createDate: new Date(),
+        privateKeyOfRSA: await encryptByPublicKeyOfRSA(publicKey, privateKeyOfRSAOfUser),
+      })),
     }
   });
   await setGlobalUserInfo(accessToken, privateKey);

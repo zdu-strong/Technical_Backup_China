@@ -4,12 +4,11 @@ import api from '@/api'
 import { useMount } from "mobx-react-use-autorun";
 import { concatMap, from, catchError, switchMap, timer, repeat, ReplaySubject, tap, Subscription } from 'rxjs'
 import { useRef } from "react";
-import MessageUnlimitedListChild from "./MessageUnlimitedListChild";
-import MessageUnlimitedVariableSizeListComponent from "./MessageUnlimitedVariableSizeListComponent";
+import MessageUnlimitedListChild from "@/component/Message/MessageUnlimitedListChild";
+import MessageUnlimitedVariableSizeListComponent from "@/component/Message/MessageUnlimitedVariableSizeListComponent";
 import { Alert, CircularProgress } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import { UserMessageModel } from "@/model/UserMessageModel";
-import { GlobalUserInfo } from "@/common/axios-config/AxiosConfig";
 
 const css = stylesheet({
   messsageListContainer: {

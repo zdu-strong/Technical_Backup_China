@@ -15,6 +15,7 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 import java.util.function.Supplier;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.utils.URIBuilder;
@@ -54,6 +55,7 @@ import com.springboot.project.model.LongTermTaskModel;
 import com.springboot.project.model.TokenModel;
 import com.springboot.project.model.UserEmailModel;
 import com.springboot.project.model.UserModel;
+import com.springboot.project.model.VerificationCodeEmailModel;
 import com.springboot.project.properties.AuthorizationEmailProperties;
 import com.springboot.project.properties.StorageRootPathProperties;
 import com.springboot.project.service.EncryptDecryptService;
@@ -152,8 +154,7 @@ public class BaseTest {
         var password = email;
         try {
             if (!hasExistUser(email)) {
-                UserModel userModelOfNewAccount = createNewAccount();
-                signUp(userModelOfNewAccount, email, password);
+                signUp(email, password);
             }
             return signIn(email, password);
         } catch (URISyntaxException | InvalidKeySpecException | NoSuchAlgorithmException | JsonProcessingException e) {
@@ -174,67 +175,41 @@ public class BaseTest {
         }
     }
 
-    private UserModel createNewAccount() {
-        try {
-            var url = new URIBuilder("/sign_up/create_new_account").build();
-            var response = this.testRestTemplate.postForEntity(url, null, UserModel.class);
-            assertEquals(HttpStatus.OK, response.getStatusCode());
-            var userModel = response.getBody();
-            return userModel;
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
-    }
-
-    private String sendVerificationCode(String email, String userId, String publicKeyOfRSAString)
-            throws URISyntaxException, InvalidKeySpecException, NoSuchAlgorithmException {
-        var publicKeyOfRSA = (RSAPublicKey) KeyFactory.getInstance("RSA")
-                .generatePublic(new X509EncodedKeySpec(
-                        Base64.getDecoder().decode(publicKeyOfRSAString)));
-        RSA rsa = new RSA(null, publicKeyOfRSA);
-        var userEmailModel = new UserEmailModel().setEmail(email)
-                .setVerificationCode(rsa.encryptBase64(userId, KeyType.PublicKey));
-        var userModel = new UserModel();
-        userModel.setId(userId);
-        userModel.setUserEmailList(Lists.newArrayList(userEmailModel));
+    private VerificationCodeEmailModel sendVerificationCode(String email) throws URISyntaxException {
+        List<String> verificationCodeList = Lists.newArrayList();
         Mockito.doAnswer(new Answer<Object>() {
             public Object answer(InvocationOnMock invocation) {
                 Object[] args = invocation.getArguments();
                 var verificationCode = String.valueOf(args[1]);
-                userEmailModel.setVerificationCode(verificationCode);
+                verificationCodeList.add(verificationCode);
                 return null;
             }
         }).when(this.authorizationEmailUtil).sendVerificationCode(Mockito.anyString(), Mockito.anyString());
-        var url = new URIBuilder("/sign_up/send_verification_code").build();
-        var response = this.testRestTemplate.postForEntity(url, new HttpEntity<>(userModel), Object.class);
+        var url = new URIBuilder("/email/send_verification_code").setParameter("email", email).build();
+        var response = this.testRestTemplate.postForEntity(url, new HttpEntity<>(null),
+                VerificationCodeEmailModel.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        return userEmailModel.getVerificationCode();
+        response.getBody().setVerificationCode(JinqStream.from(verificationCodeList).getOnlyValue());
+        return response.getBody();
     }
 
-    private void signUp(UserModel userModelOfNewAccount, String email, String password)
+    private void signUp(String email, String password)
             throws InvalidKeySpecException, NoSuchAlgorithmException, URISyntaxException, JsonProcessingException {
-        String verificationCode = sendVerificationCode(email, userModelOfNewAccount.getId(),
-                userModelOfNewAccount.getPublicKeyOfRSA());
-        var publicKeyOfRSA = (RSAPublicKey) KeyFactory.getInstance("RSA")
-                .generatePublic(new X509EncodedKeySpec(
-                        Base64.getDecoder().decode(userModelOfNewAccount.getPublicKeyOfRSA())));
-        RSA rsa = new RSA(null, publicKeyOfRSA);
+        var verificationCodeEmail = sendVerificationCode(email);
         var keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         keyPairGenerator.initialize(2048);
         var keyPair = keyPairGenerator.generateKeyPair();
         var userModelOfSignUp = new UserModel();
-        userModelOfSignUp.setId(userModelOfNewAccount.getId()).setUsername(email)
-                .setPassword(rsa.encryptBase64(userModelOfNewAccount.getId(), KeyType.PublicKey))
+        userModelOfSignUp.setUsername(email)
                 .setUserEmailList(Lists.newArrayList(new UserEmailModel().setEmail(email)
-                        .setVerificationCode(verificationCode)))
+                        .setVerificationCodeEmail(verificationCodeEmail)))
                 .setPublicKeyOfRSA(Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded()));
         userModelOfSignUp
-                .setPrivateKeyOfRSA(new AES(this.encryptDecryptService.generateSecretKeyOfAES(new ObjectMapper()
-                        .writeValueAsString(Lists.newArrayList(userModelOfNewAccount.getId(), password))))
+                .setPrivateKeyOfRSA(new AES(this.encryptDecryptService.generateSecretKeyOfAES(password))
                         .encryptBase64(Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded())));
         var url = new URIBuilder("/sign_up").build();
         var response = this.testRestTemplate.postForEntity(url, new HttpEntity<>(userModelOfSignUp),
-                Object.class);
+                UserModel.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
@@ -269,15 +244,15 @@ public class BaseTest {
             var privateKeyOfRSA = (RSAPrivateKey) KeyFactory.getInstance("RSA")
                     .generatePrivate(new PKCS8EncodedKeySpec(
                             Base64.getDecoder()
-                                    .decode(new AES(this.encryptDecryptService.generateSecretKeyOfAES(new ObjectMapper()
-                                            .writeValueAsString(Lists.newArrayList(user.getId(), password))))
+                                    .decode(new AES(this.encryptDecryptService.generateSecretKeyOfAES(password))
                                             .decryptStr(user.getPrivateKeyOfRSA()))));
             var rsa = new RSA(privateKeyOfRSA, null);
-            var passwordParameter = rsa.encryptBase64(new ObjectMapper().writeValueAsString(new Date()),
+            var passwordParameter = rsa.encryptBase64(
+                    new ObjectMapper().writeValueAsString(
+                            new UserModel().setCreateDate(new Date()).setPrivateKeyOfRSA("Private Key")),
                     KeyType.PrivateKey);
             var url = new URIBuilder("/sign_in").setParameter("userId", user.getId())
                     .setParameter("password", passwordParameter)
-                    .setParameter("privateKeyOfRSA", "privateKeyOfRSA")
                     .build();
             var response = this.testRestTemplate.postForEntity(url, null, String.class);
             assertEquals(HttpStatus.OK, response.getStatusCode());

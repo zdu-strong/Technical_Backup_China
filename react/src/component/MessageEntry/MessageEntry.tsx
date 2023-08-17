@@ -40,8 +40,7 @@ export default observer(() => {
   useMount(async () => {
     try {
       if (!(await api.Authorization.isSignIn())) {
-        const { data: newAccount } = await api.Authorization.createNewAccountOfSignUp();
-        await api.Authorization.signUp(newAccount.id, v1(), "visitor", [], newAccount.publicKeyOfRSA);
+        await api.Authorization.signUp(v1(), "visitor", []);
       }
       state.readyForStart = true;
     } catch (error) {

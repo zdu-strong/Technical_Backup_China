@@ -2,13 +2,13 @@ import { observer, useMobxEffect, useMobxState } from "mobx-react-use-autorun";
 import { VariableSizeList } from 'react-window'
 import { stylesheet } from "typestyle";
 import { useImperativeHandle, forwardRef, useRef, ReactNode, Ref } from "react";
-import MessageUnlimitedVariableSizeListChildComponent from "./MessageUnlimitedVariableSizeListChildComponent";
+import MessageUnlimitedVariableSizeListChildComponent from "@/component/Message/MessageUnlimitedVariableSizeListChildComponent";
 import { v1 } from "uuid";
 import AutoSizer, { Size } from 'react-virtualized-auto-sizer'
 import { concatMap, delay, EMPTY, fromEvent, interval, ReplaySubject, Subscription, switchMap, take, tap, timer } from "rxjs";
 import { useMount } from "mobx-react-use-autorun";
-import { DefaultVariableSizeListChildRowHeight } from "./js/DefaultVariableSizeListChildRowHeight";
-import { DefaultVariableSizeListAdjustDuration } from "./js/DefaultVariableSizeListAdjustDuration";
+import { DefaultVariableSizeListChildRowHeight } from "@/component/Message/js/DefaultVariableSizeListChildRowHeight";
+import { DefaultVariableSizeListAdjustDuration } from "@/component/Message/js/DefaultVariableSizeListAdjustDuration";
 import * as mathjs from 'mathjs'
 
 const css = stylesheet({

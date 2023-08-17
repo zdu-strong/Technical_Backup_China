@@ -1,4 +1,4 @@
-import logo from './image/logo.svg';
+import logo from '@/component/Home/image/logo.svg';
 import { FormattedMessage } from "react-intl";
 import { Link } from "react-router-dom";
 import { Button, Link as LinkAlias, CircularProgress } from "@mui/material";
