@@ -3,11 +3,8 @@ package com.springboot.project.test.controller.UserMessageController;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.net.URISyntaxException;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,7 +30,7 @@ public class UserMessageControllerSendMessageTest extends BaseTest {
         assertEquals(36, response.getBody().getId().length());
         assertEquals("Hello, World!", response.getBody().getContent());
         assertTrue(StringUtils.isNotBlank(response.getBody().getUser().getId()));
-        assertNull(response.getBody().getUser().getUsername());
+        assertEquals("zdu.strong@gmail.com", response.getBody().getUser().getUsername());
         assertFalse(response.getBody().getIsDelete());
         assertFalse(response.getBody().getIsRecall());
     }
