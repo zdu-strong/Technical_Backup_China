@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -249,12 +248,6 @@ public class AuthorizationController extends BaseController {
         }
 
         return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/is_sign_in")
-    public ResponseEntity<?> isSignIn() {
-        var isSignIn = this.permissionUtil.isSignIn(request);
-        return ResponseEntity.ok(isSignIn);
     }
 
     @GetMapping("/sign_in/alipay/generate_qr_code")
