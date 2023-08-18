@@ -45,6 +45,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import com.springboot.project.common.TimeZoneUtil.TimeZoneUtils;
 import com.springboot.project.common.longtermtask.LongTermTaskUtil;
 import com.springboot.project.common.permission.AuthorizationEmailUtil;
 import com.springboot.project.common.permission.PermissionUtil;
@@ -95,6 +96,9 @@ public class BaseTest {
 
     @Autowired
     protected ResourceHttpHeadersUtil resourceHttpHeadersUtil;
+
+    @Autowired
+    protected TimeZoneUtils timeZoneUtils;
 
     @Autowired
     protected StorageRootPathProperties storageRootPathProperties;

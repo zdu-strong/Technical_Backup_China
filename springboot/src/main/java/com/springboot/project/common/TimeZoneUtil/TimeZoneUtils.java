@@ -6,7 +6,7 @@ import java.time.ZonedDateTime;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TimeZoneUtil {
+public class TimeZoneUtils {
 
     /**
      * return value like +08:00
@@ -17,9 +17,9 @@ public class TimeZoneUtil {
     public String getTimeZone(String timeZone) {
         ZoneId zoneId = ZoneId.of(timeZone);
         ZonedDateTime zonedDateTime = Instant.now().atZone(zoneId);
-        var zoneOffset = String.format("%tz", zonedDateTime);
-        zoneOffset = zoneOffset.substring(0, 3) + ":" + zoneOffset.substring(3, 5);
-        return zoneOffset;
+        timeZone = String.format("%tz", zonedDateTime);
+        timeZone = timeZone.substring(0, 3) + ":" + timeZone.substring(3, 5);
+        return timeZone;
     }
 
     /**

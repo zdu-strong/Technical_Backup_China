@@ -5,6 +5,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.GitProperties;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.springboot.project.common.TimeZoneUtil.TimeZoneUtils;
 import com.springboot.project.common.longtermtask.LongTermTaskUtil;
 import com.springboot.project.common.permission.AuthorizationEmailUtil;
 import com.springboot.project.common.permission.PermissionUtil;
@@ -48,6 +50,9 @@ public class BaseController {
 
     @Autowired
     protected AuthorizationEmailUtil authorizationEmailUtil;
+
+    @Autowired
+    protected TimeZoneUtils timeZoneUtils;
 
     @Autowired
     protected UserService userService;

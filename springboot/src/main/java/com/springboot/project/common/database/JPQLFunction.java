@@ -65,70 +65,70 @@ public class JPQLFunction {
     /**
      * format date to string
      * 
-     * @param zoneOffset like +08:00
+     * @param timeZone like +08:00
      * @return like 2022
      */
-    public static String formatDateAsYear(Date date, String zoneOffset) {
+    public static String formatDateAsYear(Date date, String timeZone) {
         throw new RuntimeException();
     }
 
     /**
      * format date to string
      * 
-     * @param zoneOffset like +08:00
+     * @param timeZone like +08:00
      * @return like 2022-08
      */
-    public static String formatDateAsYearMonth(Date date, String zoneOffset) {
+    public static String formatDateAsYearMonth(Date date, String timeZone) {
         throw new RuntimeException();
     }
 
     /**
      * format date to string
      * 
-     * @param zoneOffset like +08:00
+     * @param timeZone like +08:00
      * @return like 2022-08-08
      */
-    public static String formatDateAsYearMonthDay(Date date, String zoneOffset) {
+    public static String formatDateAsYearMonthDay(Date date, String timeZone) {
         throw new RuntimeException();
     }
 
     /**
      * format date to string
      * 
-     * @param zoneOffset like +08:00
+     * @param timeZone like +08:00
      * @return like 2022-08-08 13
      */
-    public static String formatDateAsYearMonthDayHour(Date date, String zoneOffset) {
+    public static String formatDateAsYearMonthDayHour(Date date, String timeZone) {
         throw new RuntimeException();
     }
 
     /**
      * format date to string
      * 
-     * @param zoneOffset like +08:00
+     * @param timeZone like +08:00
      * @return like 2022-08-08 13:05
      */
-    public static String formatDateAsYearMonthDayHourMinute(Date date, String zoneOffset) {
+    public static String formatDateAsYearMonthDayHourMinute(Date date, String timeZone) {
         throw new RuntimeException();
     }
 
     /**
      * format date to string
      * 
-     * @param zoneOffset like +08:00
+     * @param timeZone like +08:00
      * @return like 2022-08-08 13:05:06
      */
-    public static String formatDateAsYearMonthDayHourMinuteSecond(Date date, String zoneOffset) {
+    public static String formatDateAsYearMonthDayHourMinuteSecond(Date date, String timeZone) {
         throw new RuntimeException();
     }
 
     /**
      * format date to string
      * 
-     * @param zoneOffset like +08:00
+     * @param timeZone like +08:00
      * @return like 2022-08-08 13:05:06.008
      */
-    public static String formatDateAsYearMonthDayHourMinuteSecondMillisecond(Date date, String zoneOffset) {
+    public static String formatDateAsYearMonthDayHourMinuteSecondMillisecond(Date date, String timeZone) {
         throw new RuntimeException();
     }
 

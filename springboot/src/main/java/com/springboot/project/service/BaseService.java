@@ -7,8 +7,7 @@ import org.jinq.jpa.JinqJPAStreamProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.springboot.project.common.TimeZoneUtil.TimeZoneUtil;
+import com.springboot.project.common.TimeZoneUtil.TimeZoneUtils;
 import com.springboot.project.common.database.JPQLFunction;
 import com.springboot.project.common.storage.Storage;
 import com.springboot.project.entity.*;
@@ -26,11 +25,16 @@ import com.springboot.project.format.VerificationCodeEmailFormatter;
 @Transactional(rollbackFor = Throwable.class)
 public abstract class BaseService {
 
+    private JinqJPAStreamProvider jinqJPAStreamProvider;
+
     @PersistenceContext
     private EntityManager entityManager;
 
     @Autowired
     protected Storage storage;
+
+    @Autowired
+    protected TimeZoneUtils timeZoneUtils;
 
     @Autowired
     protected StorageSpaceFormatter storageSpaceFormatter;
@@ -58,11 +62,6 @@ public abstract class BaseService {
 
     @Autowired
     protected VerificationCodeEmailFormatter verificationCodeEmailFormatter;
-
-    @Autowired
-    private TimeZoneUtil timeZoneUtil;
-
-    private JinqJPAStreamProvider jinqJPAStreamProvider;
 
     protected void persist(Object entity) {
         this.entityManager.persist(entity);
@@ -142,14 +141,6 @@ public abstract class BaseService {
             }
         }
         return this.jinqJPAStreamProvider.streamAll(entityManager, entity);
-    }
-
-    protected String getTimeZone(String timeZone) {
-        return this.timeZoneUtil.getTimeZone(timeZone);
-    }
-
-    protected String getTimeZoneOfUTC() {
-        return this.timeZoneUtil.getTimeZoneOfUTC();
     }
 
 }
