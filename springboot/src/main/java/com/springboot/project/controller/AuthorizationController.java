@@ -11,6 +11,7 @@ import java.util.Calendar;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,11 +29,15 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.springboot.project.model.UserModel;
 import com.springboot.project.model.VerificationCodeEmailModel;
+import com.springboot.project.properties.StorageRootPathProperties;
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
 
 @RestController
 public class AuthorizationController extends BaseController {
+
+    @Autowired
+    private StorageRootPathProperties storageRootPathProperties;
 
     @PostMapping("/sign_up")
     public ResponseEntity<?> signUp(@RequestBody UserModel userModel)
@@ -176,14 +181,15 @@ public class AuthorizationController extends BaseController {
         for (var i = 10; i > 0; i--) {
             var verificationCodeEmailModelTwo = this.verificationCodeEmailService.createVerificationCodeEmail(email);
 
-            Thread.sleep(1000);
+            if (!this.storageRootPathProperties.isTestEnviroment()) {
+                Thread.sleep(1000);
+            }
 
             if (this.verificationCodeEmailService
-                    .isFirstOnTheSecondOfVerificationCodeEmail(verificationCodeEmailModelTwo.getId())) {
+                    .isFirstOnTheDurationOfVerificationCodeEmail(verificationCodeEmailModelTwo.getId())) {
                 verificationCodeEmailModel = verificationCodeEmailModelTwo;
                 break;
             }
-
         }
 
         if (verificationCodeEmailModel == null) {
@@ -193,7 +199,10 @@ public class AuthorizationController extends BaseController {
 
         this.authorizationEmailUtil.sendVerificationCode(email, verificationCodeEmailModel.getVerificationCode());
 
-        verificationCodeEmailModel.setVerificationCode(null);
+        if (!this.storageRootPathProperties.isTestEnviroment()) {
+            verificationCodeEmailModel.setVerificationCode(null);
+        }
+
         return ResponseEntity.ok(verificationCodeEmailModel);
     }
 

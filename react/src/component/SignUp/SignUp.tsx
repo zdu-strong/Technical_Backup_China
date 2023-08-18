@@ -320,6 +320,9 @@ export default observer(() => {
                       state.loading.sendVerificationCode[s.id!] = true;
                       const { data } = await api.Authorization.sendVerificationCode(s.email);
                       s.verificationCodeEmail.id = data.id;
+                      if (data.verificationCode && !s.verificationCodeEmail.verificationCode) {
+                        s.verificationCodeEmail.verificationCode = data.verificationCode;
+                      }
                       s.verificationCodeEmail.verificationCodeLength = data.verificationCodeLength;
                     } catch (e) {
                       MessageService.error(e);
@@ -369,11 +372,10 @@ export default observer(() => {
                 aria-label="add"
                 size="small"
                 onClick={() => {
-                  const verificationCodeEmailModel = new VerificationCodeEmailModel();
                   state.emailList.push({
                     id: v1(),
                     email: '',
-                    verificationCodeEmail: verificationCodeEmailModel
+                    verificationCodeEmail: new VerificationCodeEmailModel()
                   })
                 }}
               >
