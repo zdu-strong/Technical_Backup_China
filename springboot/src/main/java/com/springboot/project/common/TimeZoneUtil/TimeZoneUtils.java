@@ -38,7 +38,7 @@ public class TimeZoneUtils {
      * @param timeZone
      * @return
      */
-    public String getTimeZoneOfUTC() {
+    public String getTimeZoneFromUTC() {
         return this.getTimeZone("UTC");
     }
 

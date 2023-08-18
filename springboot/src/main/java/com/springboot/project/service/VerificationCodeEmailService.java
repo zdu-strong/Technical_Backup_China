@@ -31,7 +31,7 @@ public class VerificationCodeEmailService extends BaseService {
 
         {
             var now = new Date();
-            var timeZone = this.timeZoneUtils.getTimeZoneOfUTC();
+            var timeZone = this.timeZoneUtils.getTimeZoneFromUTC();
             Duration tempDuration = Duration.ofDays(31);
             var simpleDateFormat = new SimpleDateFormat("yyyy-MM");
             simpleDateFormat.setTimeZone(TimeZone.getTimeZone(timeZone));
@@ -63,7 +63,7 @@ public class VerificationCodeEmailService extends BaseService {
         {
 
             var now = new Date();
-            var timeZone = this.timeZoneUtils.getTimeZoneOfUTC();
+            var timeZone = this.timeZoneUtils.getTimeZoneFromUTC();
             Duration tempDuration = Duration.ofDays(1);
             var simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
             simpleDateFormat.setTimeZone(TimeZone.getTimeZone(timeZone));
@@ -123,7 +123,7 @@ public class VerificationCodeEmailService extends BaseService {
         var email = verificationCodeEmailEntity.getEmail();
         var createDate = verificationCodeEmailEntity.getCreateDate();
 
-        var timeZone = this.timeZoneUtils.getTimeZoneOfUTC();
+        var timeZone = this.timeZoneUtils.getTimeZoneFromUTC();
         Duration tempDuration = Duration.ofSeconds(1);
         var simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone(timeZone));
