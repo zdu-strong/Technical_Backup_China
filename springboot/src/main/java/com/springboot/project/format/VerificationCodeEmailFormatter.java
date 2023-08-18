@@ -14,7 +14,8 @@ public class VerificationCodeEmailFormatter extends BaseService {
                 .setEmail(verificationCodeEmailEntity.getEmail())
                 .setVerificationCode(verificationCodeEmailEntity.getVerificationCode())
                 .setVerificationCodeLength(verificationCodeEmailEntity.getVerificationCode().length())
-                .setIsDeleted(verificationCodeEmailEntity.getIsDeleted())
+                .setHasUsed(verificationCodeEmailEntity.getHasUsed())
+                .setIsPassed(verificationCodeEmailEntity.getIsPassed())
                 .setCreateDate(verificationCodeEmailEntity.getCreateDate())
                 .setUpdateDate(verificationCodeEmailEntity.getUpdateDate());
         return verificationCodeEmailModel;

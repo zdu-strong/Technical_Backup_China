@@ -64,11 +64,20 @@ public class AuthorizationController extends BaseController {
                     throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is invalid");
                 }
 
+                if (StringUtils.isBlank(userEmail.getVerificationCodeEmail().getVerificationCode())) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                            "The verification code of email " + userEmail.getEmail() + " cannot be empty");
+                }
+
+                userEmail.getVerificationCodeEmail().setEmail(userEmail.getEmail());
+
                 this.userEmailService.checkEmailIsNotUsed(userEmail.getEmail());
+
+                this.verificationCodeEmailService
+                        .checkVerificationCodeEmailHasBeenUsed(userEmail.getVerificationCodeEmail());
+
                 this.verificationCodeEmailService
                         .checkVerificationCodeEmailIsPassed(userEmail.getVerificationCodeEmail());
-                this.verificationCodeEmailService
-                        .checkVerificationCodeEmailIsNotDeleted(userEmail.getVerificationCodeEmail());
             }
         }
 
@@ -166,13 +175,15 @@ public class AuthorizationController extends BaseController {
         VerificationCodeEmailModel verificationCodeEmailModel = null;
         for (var i = 10; i > 0; i--) {
             var verificationCodeEmailModelTwo = this.verificationCodeEmailService.createVerificationCodeEmail(email);
+
+            Thread.sleep(1000);
+
             if (this.verificationCodeEmailService
                     .isFirstOnTheSecondOfVerificationCodeEmail(verificationCodeEmailModelTwo.getId())) {
                 verificationCodeEmailModel = verificationCodeEmailModelTwo;
                 break;
             }
 
-            Thread.sleep(1000);
         }
 
         if (verificationCodeEmailModel == null) {

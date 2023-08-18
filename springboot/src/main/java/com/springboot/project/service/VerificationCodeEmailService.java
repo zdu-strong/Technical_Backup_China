@@ -8,7 +8,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 import com.fasterxml.uuid.Generators;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -30,30 +29,15 @@ public class VerificationCodeEmailService extends BaseService {
         var verificationCodeLength = minVerificationCodeLength;
 
         {
-            var now = new Date();
-            var timeZone = this.timeZoneUtils.getTimeZoneFromUTC();
-            Duration tempDuration = Duration.ofDays(31);
-            var simpleDateFormat = new SimpleDateFormat("yyyy-MM");
-            simpleDateFormat.setTimeZone(TimeZone.getTimeZone(timeZone));
-            var nowString = simpleDateFormat.format(now);
-
             var beforeCalendar = Calendar.getInstance();
-            beforeCalendar.setTime(now);
-            beforeCalendar.add(Calendar.MILLISECOND, Long.valueOf(0 - tempDuration.toMillis()).intValue());
+            beforeCalendar.setTime(new Date());
+            beforeCalendar.add(Calendar.MONTH, -1);
             Date beforeDate = beforeCalendar.getTime();
-
-            var afterCalendar = Calendar.getInstance();
-            afterCalendar.setTime(now);
-            afterCalendar.add(Calendar.MILLISECOND, Long.valueOf(tempDuration.toMillis()).intValue());
-            Date afterDate = afterCalendar.getTime();
 
             var retryCount = this.VerificationCodeEmailEntity()
                     .where(s -> s.getEmail().equals(email))
                     .where(s -> beforeDate.before(s.getCreateDate()))
-                    .where(s -> afterDate.after(s.getCreateDate()))
-                    .where(s -> JPQLFunction
-                            .formatDateAsYearMonth(s.getCreateDate(), timeZone)
-                            .equals(nowString))
+                    .where(s -> !s.getHasUsed() || !s.getIsPassed())
                     .count();
             if (retryCount > 1000 && verificationCodeLength < 12) {
                 verificationCodeLength = 12;
@@ -61,35 +45,22 @@ public class VerificationCodeEmailService extends BaseService {
         }
 
         {
-
-            var now = new Date();
-            var timeZone = this.timeZoneUtils.getTimeZoneFromUTC();
-            Duration tempDuration = Duration.ofDays(1);
-            var simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            simpleDateFormat.setTimeZone(TimeZone.getTimeZone(timeZone));
-            var nowString = simpleDateFormat.format(now);
-
             var beforeCalendar = Calendar.getInstance();
-            beforeCalendar.setTime(now);
-            beforeCalendar.add(Calendar.MILLISECOND, Long.valueOf(0 - tempDuration.toMillis()).intValue());
+            beforeCalendar.setTime(new Date());
+            beforeCalendar.add(Calendar.DAY_OF_YEAR, -1);
             Date beforeDate = beforeCalendar.getTime();
-
-            var afterCalendar = Calendar.getInstance();
-            afterCalendar.setTime(now);
-            afterCalendar.add(Calendar.MILLISECOND, Long.valueOf(tempDuration.toMillis()).intValue());
-            Date afterDate = afterCalendar.getTime();
 
             var retryCount = this.VerificationCodeEmailEntity()
                     .where(s -> s.getEmail().equals(email))
                     .where(s -> beforeDate.before(s.getCreateDate()))
-                    .where(s -> afterDate.after(s.getCreateDate()))
-                    .where(s -> JPQLFunction
-                            .formatDateAsYearMonthDay(s.getCreateDate(), timeZone)
-                            .equals(nowString))
+                    .where(s -> !s.getHasUsed() || !s.getIsPassed())
                     .count();
+
             if (retryCount > 0 && verificationCodeLength < 9) {
                 verificationCodeLength = 9;
-            } else if (retryCount == 0) {
+            }
+
+            if (retryCount == 0) {
                 verificationCodeLength = minVerificationCodeLength;
             }
         }
@@ -109,7 +80,8 @@ public class VerificationCodeEmailService extends BaseService {
         verificationCodeEmailEntity.setId(Generators.timeBasedGenerator().generate().toString());
         verificationCodeEmailEntity.setEmail(email);
         verificationCodeEmailEntity.setVerificationCode(verificationCode);
-        verificationCodeEmailEntity.setIsDeleted(false);
+        verificationCodeEmailEntity.setHasUsed(false);
+        verificationCodeEmailEntity.setIsPassed(false);
         verificationCodeEmailEntity.setCreateDate(new Date());
         verificationCodeEmailEntity.setUpdateDate(new Date());
         this.persist(verificationCodeEmailEntity);
@@ -146,6 +118,15 @@ public class VerificationCodeEmailService extends BaseService {
                 .where(s -> JPQLFunction
                         .formatDateAsYearMonthDayHourMinuteSecond(s.getCreateDate(), timeZone)
                         .equals(createDateString))
+                .where((s, t) -> !t.stream(VerificationCodeEmailEntity.class)
+                        .where(m -> m.getEmail().equals(email))
+                        .where(m -> beforeDate.before(m.getCreateDate()))
+                        .where(m -> afterDate.after(m.getCreateDate()))
+                        .where(m -> JPQLFunction
+                                .formatDateAsYearMonthDayHourMinuteSecond(m.getCreateDate(), timeZone)
+                                .equals(createDateString))
+                        .where(m -> m.getHasUsed())
+                        .exists())
                 .sortedBy(s -> s.getId())
                 .sortedBy(s -> s.getCreateDate())
                 .select(s -> s.getId())
@@ -156,25 +137,7 @@ public class VerificationCodeEmailService extends BaseService {
         return isFirstOnTheSecond;
     }
 
-    public void checkVerificationCodeEmailIsNotDeleted(VerificationCodeEmailModel verificationCodeEmailModel) {
-        var id = verificationCodeEmailModel.getId();
-        var verificationCodeEmailEntity = this.VerificationCodeEmailEntity().where(s -> s.getId().equals(id))
-                .getOnlyValue();
-        if (verificationCodeEmailEntity.getIsDeleted()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "The verification code of email " + verificationCodeEmailModel.getEmail() + " is wrong");
-        }
-
-        verificationCodeEmailEntity.setIsDeleted(true);
-        this.merge(verificationCodeEmailEntity);
-    }
-
-    public void checkVerificationCodeEmailIsPassed(VerificationCodeEmailModel verificationCodeEmailModel) {
-        if (StringUtils.isBlank(verificationCodeEmailModel.getVerificationCode())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "The verification code of email " + verificationCodeEmailModel.getEmail() + " cannot be empty");
-        }
-
+    public void checkVerificationCodeEmailHasBeenUsed(VerificationCodeEmailModel verificationCodeEmailModel) {
         var id = verificationCodeEmailModel.getId();
 
         var verificationCodeEmailEntityOptional = this.VerificationCodeEmailEntity().where(s -> s.getId().equals(id))
@@ -186,10 +149,29 @@ public class VerificationCodeEmailService extends BaseService {
 
         var verificationCodeEmailEntity = verificationCodeEmailEntityOptional.get();
 
+        if (!this.isFirstOnTheSecondOfVerificationCodeEmail(verificationCodeEmailEntity.getId())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "The verification code of email " + verificationCodeEmailEntity.getEmail() + " is wrong");
+        }
+
+        if (verificationCodeEmailEntity.getHasUsed()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "The verification code of email " + verificationCodeEmailEntity.getEmail() + " is wrong");
+        }
+
         if (!verificationCodeEmailEntity.getEmail().equals(verificationCodeEmailModel.getEmail())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "The verification code of email " + verificationCodeEmailModel.getEmail() + " is wrong");
         }
+
+        verificationCodeEmailEntity.setHasUsed(true);
+        this.merge(verificationCodeEmailEntity);
+    }
+
+    public void checkVerificationCodeEmailIsPassed(VerificationCodeEmailModel verificationCodeEmailModel) {
+        var id = verificationCodeEmailModel.getId();
+        var verificationCodeEmailEntity = this.VerificationCodeEmailEntity().where(s -> s.getId().equals(id))
+                .getOnlyValue();
 
         if (!verificationCodeEmailEntity.getVerificationCode()
                 .equals(verificationCodeEmailModel.getVerificationCode())) {
@@ -197,6 +179,8 @@ public class VerificationCodeEmailService extends BaseService {
                     "The verification code of email " + verificationCodeEmailModel.getEmail() + " is wrong");
         }
 
+        verificationCodeEmailEntity.setIsPassed(true);
+        this.merge(verificationCodeEmailEntity);
     }
 
 }

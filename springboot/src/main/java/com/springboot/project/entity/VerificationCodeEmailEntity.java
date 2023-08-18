@@ -27,7 +27,10 @@ public class VerificationCodeEmailEntity {
     private String verificationCode;
 
     @Column(nullable = false)
-    private Boolean isDeleted;
+    private Boolean hasUsed;
+
+    @Column(nullable = false)
+    private Boolean isPassed;
 
     @Column(nullable = false)
     private Date createDate;

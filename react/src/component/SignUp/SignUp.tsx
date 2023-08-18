@@ -320,7 +320,6 @@ export default observer(() => {
                       state.loading.sendVerificationCode[s.id!] = true;
                       const { data } = await api.Authorization.sendVerificationCode(s.email);
                       s.verificationCodeEmail.id = data.id;
-                      s.verificationCodeEmail.email = data.email;
                       s.verificationCodeEmail.verificationCodeLength = data.verificationCodeLength;
                     } catch (e) {
                       MessageService.error(e);

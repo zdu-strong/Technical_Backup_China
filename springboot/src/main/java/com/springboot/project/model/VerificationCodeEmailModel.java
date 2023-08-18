@@ -14,7 +14,8 @@ public class VerificationCodeEmailModel {
     private String email;
     private String verificationCode;
     private Integer verificationCodeLength;
-    private Boolean isDeleted;
+    private Boolean hasUsed;
+    private Boolean isPassed;
     private Date createDate;
     private Date updateDate;
 
