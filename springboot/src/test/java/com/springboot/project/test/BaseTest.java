@@ -69,6 +69,8 @@ import com.springboot.project.service.TokenService;
 import com.springboot.project.service.UserEmailService;
 import com.springboot.project.service.UserMessageService;
 import com.springboot.project.service.UserService;
+import com.springboot.project.service.VerificationCodeEmailService;
+
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
@@ -129,6 +131,9 @@ public class BaseTest {
 
     @Autowired
     protected LoggerService loggerService;
+
+    @Autowired
+    protected VerificationCodeEmailService verificationCodeEmailService;
 
     @Autowired
     protected PermissionUtil permissionUtil;

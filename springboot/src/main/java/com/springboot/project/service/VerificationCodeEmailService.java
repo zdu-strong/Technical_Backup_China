@@ -193,6 +193,19 @@ public class VerificationCodeEmailService extends BaseService {
                     "The verification code of email " + verificationCodeEmailModel.getEmail() + " is wrong");
         }
 
+        {
+            var calendar = Calendar.getInstance();
+            calendar.setTime(verificationCodeEmailEntity.getCreateDate());
+            calendar.add(Calendar.MINUTE, 5);
+            Date expiredDate = calendar.getTime();
+
+            if (!verificationCodeEmailEntity.getCreateDate().before(expiredDate)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "The verification code of email " + verificationCodeEmailModel.getEmail() + " is wrong");
+            }
+
+        }
+
         verificationCodeEmailEntity.setHasUsed(true);
         this.merge(verificationCodeEmailEntity);
     }
