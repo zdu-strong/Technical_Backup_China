@@ -60,20 +60,6 @@ public class VerificationCodeEmailService extends BaseService {
             }
         }
 
-        var verificationCodeEmailEntity = this.createVerificationCodeEmail(email, verificationCodeLength);
-        if (verificationCodeLength == this.minVerificationCodeLength) {
-            if (!this.isFirstOnTheDurationOfVerificationCodeEmail(verificationCodeEmailEntity.getId())) {
-                verificationCodeLength = this.moderateVerificationCodeLength;
-                this.remove(verificationCodeEmailEntity);
-                verificationCodeEmailEntity = this.createVerificationCodeEmail(email, verificationCodeLength);
-            }
-        }
-
-        return this.verificationCodeEmailFormatter.format(verificationCodeEmailEntity);
-    }
-
-    private com.springboot.project.entity.VerificationCodeEmailEntity createVerificationCodeEmail(String email,
-            int verificationCodeLength) {
         String verificationCode = "";
 
         for (var i = verificationCodeLength; i > 0; i--) {
@@ -91,7 +77,7 @@ public class VerificationCodeEmailService extends BaseService {
         verificationCodeEmailEntity.setUpdateDate(new Date());
         this.persist(verificationCodeEmailEntity);
 
-        return verificationCodeEmailEntity;
+        return this.verificationCodeEmailFormatter.format(verificationCodeEmailEntity);
     }
 
     public boolean isFirstOnTheDurationOfVerificationCodeEmail(String id) {
@@ -155,7 +141,7 @@ public class VerificationCodeEmailService extends BaseService {
                         .where(s -> s.getEmail().equals(email))
                         .where(s -> beforeDate.before(s.getCreateDate()))
                         .where(s -> s.getVerificationCode().length() == minVerificationCodeLength)
-                        .where(s-> !s.getHasUsed() || !s.getIsPassed())
+                        .where(s -> !s.getHasUsed() || !s.getIsPassed())
                         .where(s -> JPQLFunction
                                 .formatDateAsYearMonthDay(s.getCreateDate(), timeZone)
                                 .equals(createDateString))
