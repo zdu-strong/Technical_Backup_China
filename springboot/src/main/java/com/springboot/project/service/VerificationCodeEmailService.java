@@ -118,7 +118,7 @@ public class VerificationCodeEmailService extends BaseService {
                     .select(s -> s.getId())
                     .findFirst()
                     .filter(s -> s.equals(id))
-                    .isPresent() || isFirstOnTheSecond;
+                    .isPresent();
         }
 
         if (isFirstOnTheSecond) {
