@@ -140,7 +140,6 @@ public class AuthorizationController extends BaseController {
 
         var userId = this.permissionUtil.getUserId(request);
         var user = this.userService.getAccountForSignIn(userId);
-        user.setEmail(null);
         var jwtId = this.tokenUtil.getDecodedJWTOfAccessToken(this.tokenUtil.getAccessToken(request)).getId();
         var privateKeyOfRSA = this.tokenService.getPrivateKeyOfRSAOfToken(jwtId);
         user.setPrivateKeyOfRSA(privateKeyOfRSA);
@@ -156,11 +155,10 @@ public class AuthorizationController extends BaseController {
 
         this.userService.checkExistAccount(userId);
 
-        var user = this.userService.getAccountForSignIn(userId);
-        user.setUserEmailList(null);
-        user.setEmail(null);
-        user.setUsername(null);
-        user.setPublicKeyOfRSA(null);
+        var userModel = this.userService.getAccountForSignIn(userId);
+        var user = new UserModel();
+        user.setId(userModel.getId());
+        user.setPrivateKeyOfRSA(userModel.getPrivateKeyOfRSA());
 
         return ResponseEntity.ok(user);
     }

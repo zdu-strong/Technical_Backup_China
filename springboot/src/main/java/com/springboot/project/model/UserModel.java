@@ -13,7 +13,6 @@ import lombok.experimental.Accessors;
 public class UserModel {
     private String id;
     private String username;
-    private String email;
     private String publicKeyOfRSA;
     private String privateKeyOfRSA;
     private Date createDate;
