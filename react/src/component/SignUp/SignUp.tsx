@@ -18,7 +18,6 @@ import SendIcon from '@mui/icons-material/Send';
 import { Link, useNavigate } from "react-router-dom";
 import LoadingOrErrorComponent from "@/common/LoadingOrErrorComponent/LoadingOrErrorComponent";
 import { ReactNode } from "react";
-import { VerificationCodeEmailModel } from "@/model/VerificationCodeEmailModel";
 
 const css = stylesheet({
   container: {
