@@ -125,19 +125,20 @@ const existWindow = (() => {
 })();
 
 function main() {
-  if (existWindow) {
-    concat(of(null), fromEvent(window, "storage")).pipe(
-      switchMap(() => {
-        return from(setGlobalUserInfo()).pipe(
-          catchError(() => of(null))
-        );
-      }),
-      tap(() => {
-        GlobalUserInfo.loading = false;
-      }),
-      retry(),
-    ).subscribe();
+  if (!existWindow) {
+    return;
   }
+  concat(of(null), fromEvent(window, "storage")).pipe(
+    switchMap(() => {
+      return from(setGlobalUserInfo()).pipe(
+        catchError(() => of(null))
+      );
+    }),
+    tap(() => {
+      GlobalUserInfo.loading = false;
+    }),
+    retry(),
+  ).subscribe();
 }
 
 async function getUserInfo(accessToken: string) {

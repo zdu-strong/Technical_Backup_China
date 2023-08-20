@@ -375,7 +375,11 @@ export default observer(() => {
                   state.emailList.push({
                     id: v1(),
                     email: '',
-                    verificationCodeEmail: new VerificationCodeEmailModel()
+                    verificationCodeEmail: {
+                      id: '',
+                      verificationCode: '',
+                      verificationCodeLength: 6,
+                    }
                   })
                 }}
               >

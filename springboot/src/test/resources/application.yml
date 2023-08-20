@@ -58,6 +58,7 @@ server:
     include-message: always
   tomcat:
     max-http-form-post-size: -1
+  max-http-header-size: 40KB
 properties:
   storage:
     root:

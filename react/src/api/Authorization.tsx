@@ -47,11 +47,10 @@ export async function signIn(userIdOrEmail: string, password: string): Promise<v
 }
 
 export async function signOut() {
-  await setGlobalUserInfo();
-  if (GlobalUserInfo.accessToken) {
+  if (await isSignIn()) {
     try {
       await axios.post("/sign_out");
-    } catch (e) {
+    } catch {
       // do nothing
     }
   }

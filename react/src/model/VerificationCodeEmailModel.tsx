@@ -8,7 +8,7 @@ export class VerificationCodeEmailModel {
   id?: string;
 
   @jsonMember(String)
-  email!: string;
+  email?: string;
 
   @jsonMember(String)
   verificationCode!: string;
@@ -17,13 +17,13 @@ export class VerificationCodeEmailModel {
   verificationCodeLength!: number;
 
   @jsonMember(Boolean)
-  isDeleted!: boolean;
+  isDeleted?: boolean;
 
   @jsonMember(Date)
-  createDate!: Date;
+  createDate?: Date;
 
   @jsonMember(Date)
-  updateDate!: Date;
+  updateDate?: Date;
 
   constructor() {
     makeAutoObservable(this);
