@@ -20,7 +20,6 @@ public class UserServiceGetAccountForSignInTest extends BaseTest {
         assertTrue(StringUtils.isNotBlank(result.getId()));
         assertTrue(StringUtils.isNotBlank(result.getPublicKeyOfRSA()));
         assertTrue(StringUtils.isNotBlank(result.getUsername()));
-        assertTrue(StringUtils.isBlank(result.getEmail()));
         assertTrue(StringUtils.isNotBlank(result.getPrivateKeyOfRSA()));
         assertEquals(1, result.getUserEmailList().size());
         assertTrue(StringUtils

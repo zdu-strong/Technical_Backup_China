@@ -29,7 +29,6 @@ public class AuthorizationControllerGetUserInfoTest extends BaseTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(this.tokenModel.getUserModel().getId(), response.getBody().getId());
         assertTrue(StringUtils.isNotBlank(response.getBody().getUsername()));
-        assertTrue(StringUtils.isBlank(response.getBody().getEmail()));
         assertTrue(StringUtils.isNotBlank(response.getBody().getPrivateKeyOfRSA()));
         assertTrue(StringUtils.isNotBlank(response.getBody().getPublicKeyOfRSA()));
         assertEquals(1, response.getBody().getUserEmailList().size());

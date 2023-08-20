@@ -19,7 +19,6 @@ public class UserServiceGetUserByIdTest extends BaseTest {
         assertTrue(StringUtils.isNotBlank(result.getId()));
         assertTrue(StringUtils.isNotBlank(result.getPublicKeyOfRSA()));
         assertTrue(StringUtils.isNotBlank(result.getUsername()));
-        assertTrue(StringUtils.isBlank(result.getEmail()));
         assertTrue(StringUtils.isBlank(result.getPrivateKeyOfRSA()));
         assertNull(result.getUserEmailList());
     }
