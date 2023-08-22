@@ -128,7 +128,7 @@ export default observer(() => {
     });
     state.steps.push({
       id: v1(),
-      text: <FormattedMessage id="BindEmailOrMobilePhoneNumber" defaultMessage="Bind email or mobile phone number" />,
+      text: <FormattedMessage id="BindEmail" defaultMessage="Bind email" />,
     });
     state.steps.push({
       id: v1(),
@@ -273,7 +273,7 @@ export default observer(() => {
           </div>}
           {state.activeStep === 2 && <div className="flex flex-col">
             <div>
-              <FormattedMessage id="BindedEmail" defaultMessage="Binded email" />
+              <FormattedMessage id="BindedEmailCanSkip" defaultMessage="Binded email(Can Skip)" />
             </div>
             {state.emailList.map((s) => <div className="flex flex-row items-start" key={s.id} style={{ marginTop: '1em' }}>
               <TextField
