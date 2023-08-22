@@ -76,13 +76,13 @@ public class AuthorizationController extends BaseController {
 
                 userEmail.getVerificationCodeEmail().setEmail(userEmail.getEmail());
 
-                this.userEmailService.checkEmailIsNotUsed(userEmail.getEmail());
-
                 this.verificationCodeEmailService
                         .checkVerificationCodeEmailHasBeenUsed(userEmail.getVerificationCodeEmail());
 
                 this.verificationCodeEmailService
                         .checkVerificationCodeEmailIsPassed(userEmail.getVerificationCodeEmail());
+
+                this.userEmailService.checkEmailIsNotUsed(userEmail.getEmail());
             }
         }
 
