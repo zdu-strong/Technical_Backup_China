@@ -184,19 +184,6 @@ export default observer(() => {
             <FormattedMessage id="SignUp" defaultMessage="SignUp" />
           </div>
           <Divider style={{ marginTop: "1em" }} />
-          <div className="flex flex-row" style={{ marginTop: "1em" }}>
-            <div style={{ marginRight: "1em" }}>
-              <FormattedMessage id="AccountID" defaultMessage="Account ID" />
-              {":"}
-            </div>
-            <div>
-              {"No User ID"}
-            </div>
-          </div>
-          {state.activeStep === 0 && <div>
-            <FormattedMessage id="YouCanSignInWithYourAccountIDEmailOrMobilePhoneNumberAsAnAccount" defaultMessage="You can log in with your account ID, mailbox, mobile phone number as an account" />
-          </div>}
-          <Divider style={{ marginTop: "1em" }} />
           {state.activeStep === 0 && <div className="flex flex-col" style={{ marginTop: "1em" }}>
             <div>
               <FormattedMessage id="NicknameYouCanModifyYourNicknameAtAnyTime" defaultMessage="Nickname, you can modify your nickname at any time" />
@@ -286,9 +273,9 @@ export default observer(() => {
           </div>}
           {state.activeStep === 2 && <div className="flex flex-col">
             <div>
-              <FormattedMessage id="BindedEmailOrMobilePhoneNumber" defaultMessage="Binded email or mobile phone number" />
+              <FormattedMessage id="BindedEmail" defaultMessage="Binded email" />
             </div>
-            {state.emailList.map((s) => <div className="flex flex-row items-center" key={s.id} style={{ marginTop: '1em' }}>
+            {state.emailList.map((s) => <div className="flex flex-row items-start" key={s.id} style={{ marginTop: '1em' }}>
               <TextField
                 label={<FormattedMessage id="Email" defaultMessage="Email" />}
                 variant="outlined"
@@ -302,11 +289,11 @@ export default observer(() => {
                 helperText={state.error.email(s)}
                 autoFocus={true}
               />
-              <div>
+              <div style={{ height: "56px" }} className="flex items-center">
                 <Button
                   style={{
                     marginLeft: "1em",
-                    textTransform: "none"
+                    textTransform: "none",
                   }}
                   variant="contained"
                   onClick={async () => {
@@ -351,19 +338,21 @@ export default observer(() => {
                 helperText={state.error.verificationCode(s)}
                 style={{ marginLeft: "1em" }}
               />
-              <IconButton
-                aria-label="delete"
-                onClick={() => {
-                  const index = state.emailList.findIndex(m => m.id === s.id);
-                  if (index >= 0) {
-                    state.emailList.splice(index, 1)
-                  }
-                }}
-                style={{ marginLeft: "0.2em" }}
-                size="large"
-              >
-                <DeleteIcon />
-              </IconButton>
+              <div style={{ height: "56px" }} className="flex items-center">
+                <IconButton
+                  aria-label="delete"
+                  onClick={() => {
+                    const index = state.emailList.findIndex(m => m.id === s.id);
+                    if (index >= 0) {
+                      state.emailList.splice(index, 1)
+                    }
+                  }}
+                  style={{ marginLeft: "0.2em" }}
+                  size="large"
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </div>
             </div>)}
             <div style={{ marginTop: "0.9em" }}>
               <Fab

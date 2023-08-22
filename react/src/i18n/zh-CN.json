@@ -66,7 +66,7 @@
   "Next": "下一步",
   "VerificationCode": "验证码",
   "IfYouUnfortunatelyForgetYourPasswordPleaseCreateANewAccount": "如果你不幸忘记密码, 请创建新账号, 然后在用户设置界面使用邮箱或手机号找回曾经绑定过的账号的好友关系.",
-  "BindedEmailOrMobilePhoneNumber": "绑定邮箱或手机号",
+  "BindedEmail": "绑定邮箱",
   "YouCanUseTheEmailOrMobilePhoneNumberAsAnAccountToSignIn": "你可以使用邮箱或手机号作为账号进行登陆, 同时也能在登陆页面进行解绑.",
   "NicknameYouCanModifyYourNicknameAtAnyTime": "昵称, 你可以随时修改您的昵称",
   "YouCanSignInWithYourAccountIDEmailOrMobilePhoneNumberAsAnAccount": "你可以使用账号ID, 邮箱或手机号作为账号进行登陆",
