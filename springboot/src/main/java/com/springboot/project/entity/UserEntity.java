@@ -2,7 +2,6 @@ package com.springboot.project.entity;
 
 import java.util.Date;
 import java.util.List;
-import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,7 +24,6 @@ public class UserEntity {
 
     @Column(nullable = false, length = 1024 * 1024 * 1024)
     @Lob
-    @Basic(fetch = FetchType.LAZY)
     private String username;
 
     @Column(nullable = false)
@@ -39,12 +37,10 @@ public class UserEntity {
 
     @Column(nullable = false, length = 1024 * 1024 * 1024)
     @Lob
-    @Basic(fetch = FetchType.LAZY)
     private String publicKeyOfRSA;
 
     @Column(nullable = false, length = 1024 * 1024 * 1024)
     @Lob
-    @Basic(fetch = FetchType.LAZY)
     private String privateKeyOfRSA;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)

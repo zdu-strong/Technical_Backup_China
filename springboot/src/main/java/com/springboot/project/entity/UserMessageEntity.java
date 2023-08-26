@@ -1,7 +1,6 @@
 package com.springboot.project.entity;
 
 import java.util.Date;
-import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,7 +32,6 @@ public class UserMessageEntity {
 
     @Column(nullable = false, length = 1024 * 1024 * 1024)
     @Lob
-    @Basic(fetch = FetchType.LAZY)
     private String content;
 
     @Column(nullable = false)
@@ -47,7 +45,6 @@ public class UserMessageEntity {
 
     @Column(nullable = true, length = 1024 * 1024 * 1024)
     @Lob
-    @Basic(fetch = FetchType.LAZY)
     private String fileName;
 
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.LAZY, optional = false)

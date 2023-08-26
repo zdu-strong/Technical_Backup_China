@@ -2,8 +2,6 @@ package com.springboot.project.entity;
 
 import java.util.Date;
 import java.util.List;
-
-import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,7 +25,6 @@ public class OrganizeShadowEntity {
 
     @Column(nullable = false, length = 1024 * 1024 * 1024)
     @Lob
-    @Basic(fetch = FetchType.LAZY)
     private String name;
 
     @Column(nullable = false)

@@ -1,10 +1,8 @@
 package com.springboot.project.entity;
 
 import java.util.Date;
-import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import lombok.Getter;
@@ -48,7 +46,6 @@ public class LongTermTaskEntity {
      */
     @Column(nullable = true, length = 1024 * 1024 * 1024)
     @Lob
-    @Basic(fetch = FetchType.LAZY)
     private String result;
 
 }
