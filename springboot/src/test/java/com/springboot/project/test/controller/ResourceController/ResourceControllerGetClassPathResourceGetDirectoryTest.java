@@ -10,8 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
-import com.google.gson.Gson;
 import com.springboot.project.test.BaseTest;
 
 public class ResourceControllerGetClassPathResourceGetDirectoryTest extends BaseTest {
@@ -27,7 +27,7 @@ public class ResourceControllerGetClassPathResourceGetDirectoryTest extends Base
         assertEquals(this.pathName, response.getHeaders().getContentDisposition().getFilename());
         assertEquals(1, response.getBody().length);
         assertEquals("email.xml", JinqStream.from(Lists.newArrayList(response.getBody())).getOnlyValue());
-        assertEquals("[\"email.xml\"]", new Gson().toJson(response.getBody()));
+        assertEquals("[\"email.xml\"]", new ObjectMapper().writeValueAsString(response.getBody()));
     }
 
     @BeforeEach

@@ -11,7 +11,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
 import com.springboot.project.entity.LongTermTaskEntity;
 import com.springboot.project.model.LongTermTaskModel;
 import com.springboot.project.service.BaseService;
@@ -36,8 +35,8 @@ public class LongTermTaskFormatter extends BaseService {
 
             if (longTermTaskEntity.getIsDone()) {
                 var result = new ObjectMapper().readTree(longTermTaskEntity.getResult());
-                longTermTaskModel.setResult(
-                        new Gson().fromJson(new ObjectMapper().writeValueAsString(result.get("body")), Object.class));
+                longTermTaskModel.setResult(new ObjectMapper()
+                        .readValue(new ObjectMapper().writeValueAsString(result.get("body")), Object.class));
                 HttpHeaders httpHeaders = new HttpHeaders();
                 result.get("headers").fields().forEachRemaining((s) -> {
                     try {
