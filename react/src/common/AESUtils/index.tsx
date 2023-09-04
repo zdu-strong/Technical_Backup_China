@@ -1,6 +1,6 @@
 import { runWoker } from '@/common/WebWorkerUtils';
 
-export async function generateSecretKeyOfAES(password?: string) {
+export async function generateSecretKeyOfAES(password?: string): Promise<string> {
   return await runWoker(new Worker(new URL('../../common/WebWorker/AESUtils/generateSecretKeyOfAES.worker', import.meta.url), { type: "module" }),
     {
       password
