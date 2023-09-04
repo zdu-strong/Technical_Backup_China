@@ -14,6 +14,7 @@ registerWebworker(async ({
     {
       iv: CryptoJS.enc.Utf8.parse(""),
       padding: CryptoJS.pad.Pkcs7,
+      mode: CryptoJS.mode.ECB,
     }
   ).toString();
 });
