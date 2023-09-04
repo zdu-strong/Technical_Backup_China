@@ -12,9 +12,9 @@ registerWebworker(async ({
     data,
     CryptoJS.enc.Base64.parse(secretKeyOfAES),
     {
-      iv: CryptoJS.enc.Utf8.parse(""),
+      iv: CryptoJS.MD5(CryptoJS.enc.Base64.parse(secretKeyOfAES)),
       padding: CryptoJS.pad.Pkcs7,
-      mode: CryptoJS.mode.ECB,
+      mode: CryptoJS.mode.CBC,
     }
   ).toString(CryptoJS.enc.Utf8);
   return text;

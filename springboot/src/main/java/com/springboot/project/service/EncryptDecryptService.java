@@ -18,6 +18,8 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Service;
 import com.springboot.project.entity.EncryptDecryptEntity;
+import cn.hutool.crypto.Mode;
+import cn.hutool.crypto.Padding;
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
 import cn.hutool.crypto.symmetric.AES;
@@ -63,7 +65,8 @@ public class EncryptDecryptService extends BaseService {
 
     public AES getAES() {
         this.generateKey();
-        var aes = new AES(this.keyOfAESSecretKey);
+        var aes = new AES(Mode.CBC, Padding.PKCS5Padding, this.keyOfAESSecretKey,
+                DigestUtils.md5(this.keyOfAESSecretKey.getEncoded()));
         return aes;
     }
 
