@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import com.springboot.project.test.BaseTest;
-import cn.hutool.crypto.asymmetric.KeyType;
 
 public class EncryptDecryptServiceDecryptByByPrivateKeyOfRSATest extends BaseTest {
     private String text = "Hello, world!";
@@ -18,7 +17,7 @@ public class EncryptDecryptServiceDecryptByByPrivateKeyOfRSATest extends BaseTes
 
     @BeforeEach
     public void beforeEach() {
-        this.textOfEncryptByPublicKeyOfRSA = this.encryptDecryptService.getRSA().encryptBase64(text, KeyType.PublicKey);
+        this.textOfEncryptByPublicKeyOfRSA = this.encryptDecryptService.encryptByPublicKeyOfRSA(text);
     }
 
 }
