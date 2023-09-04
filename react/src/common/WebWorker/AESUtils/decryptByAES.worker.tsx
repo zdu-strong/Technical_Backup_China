@@ -12,11 +12,9 @@ registerWebworker(async ({
     data,
     CryptoJS.enc.Base64.parse(secretKeyOfAES),
     {
-      iv: CryptoJS.enc.Utf8.parse("")
+      iv: CryptoJS.enc.Utf8.parse(""),
+      padding: CryptoJS.pad.Pkcs7,
     }
   ).toString(CryptoJS.enc.Utf8);
-  if (text === "") {
-    throw new Error("Malformed UTF-8 data");
-  }
   return text;
 });

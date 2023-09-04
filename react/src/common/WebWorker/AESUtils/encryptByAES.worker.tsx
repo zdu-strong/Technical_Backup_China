@@ -8,14 +8,12 @@ registerWebworker(async ({
   secretKeyOfAES: string,
   data: string
 }) => {
-  if (!data) {
-    throw new Error("Empty data is not allowed");
-  }
   return CryptoJS.AES.encrypt(
     CryptoJS.enc.Utf8.parse(data),
     CryptoJS.enc.Base64.parse(secretKeyOfAES),
     {
-      iv: CryptoJS.enc.Utf8.parse("")
+      iv: CryptoJS.enc.Utf8.parse(""),
+      padding: CryptoJS.pad.Pkcs7,
     }
   ).toString();
 });

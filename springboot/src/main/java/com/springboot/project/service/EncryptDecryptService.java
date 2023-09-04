@@ -46,6 +46,11 @@ public class EncryptDecryptService extends BaseService {
         return rsa.encryptBase64(text, KeyType.PrivateKey);
     }
 
+    public String encryptByPublicKeyOfRSA(String text) {
+        var rsa = this.getRSA();
+        return rsa.encryptBase64(text, KeyType.PublicKey);
+    }
+
     public String decryptByByPublicKeyOfRSA(String text) {
         var rsa = this.getRSA();
         return rsa.decryptStr(text, KeyType.PublicKey);
