@@ -70,7 +70,6 @@ import com.springboot.project.service.UserMessageService;
 import com.springboot.project.service.UserService;
 import com.springboot.project.service.VerificationCodeEmailService;
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
 import io.reactivex.rxjava3.core.Observable;
 
@@ -247,16 +246,11 @@ public class BaseTest {
             user = response.getBody();
         }
         {
-            var privateKeyOfRSA = (RSAPrivateKey) KeyFactory.getInstance("RSA")
-                    .generatePrivate(new PKCS8EncodedKeySpec(
-                            Base64.getDecoder()
-                                    .decode(this.encryptDecryptService.decryptByAES(user.getPrivateKeyOfRSA(),
-                                            this.encryptDecryptService.generateSecretKeyOfAES(password)))));
-            var rsa = new RSA(privateKeyOfRSA, null);
-            var passwordParameter = rsa.encryptBase64(
+            var passwordParameter = this.encryptDecryptService.encryptByPrivateKeyOfRSA(
                     new ObjectMapper().writeValueAsString(
                             new UserModel().setCreateDate(new Date()).setPrivateKeyOfRSA("Private Key")),
-                    KeyType.PrivateKey);
+                    this.encryptDecryptService.decryptByAES(user.getPrivateKeyOfRSA(),
+                            this.encryptDecryptService.generateSecretKeyOfAES(password)));
             var url = new URIBuilder("/sign_in").setParameter("userId", user.getId())
                     .setParameter("password", passwordParameter)
                     .build();
@@ -269,10 +263,15 @@ public class BaseTest {
             var tokenModel = new TokenModel();
             tokenModel.setUserModel(getUserInfo(accessToken));
             tokenModel.setAccess_token(accessToken);
+            var privateKeyOfRSA = (RSAPrivateKey) KeyFactory.getInstance("RSA")
+                    .generatePrivate(new PKCS8EncodedKeySpec(
+                            Base64.getDecoder()
+                                    .decode(this.encryptDecryptService.decryptByAES(user.getPrivateKeyOfRSA(),
+                                            this.encryptDecryptService.generateSecretKeyOfAES(password)))));
             var publicKeyOfRSA = (RSAPublicKey) KeyFactory.getInstance("RSA")
                     .generatePublic(new X509EncodedKeySpec(
                             Base64.getDecoder().decode(tokenModel.getUserModel().getPublicKeyOfRSA())));
-            tokenModel.setRSA(new RSA(rsa.getPrivateKey(), publicKeyOfRSA));
+            tokenModel.setRSA(new RSA(privateKeyOfRSA, publicKeyOfRSA));
             return tokenModel;
         }
     }

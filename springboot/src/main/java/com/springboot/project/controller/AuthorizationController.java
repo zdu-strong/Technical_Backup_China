@@ -1,11 +1,8 @@
 package com.springboot.project.controller;
 
 import java.io.ByteArrayOutputStream;
-import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
-import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.regex.Pattern;
@@ -30,8 +27,6 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.springboot.project.model.UserModel;
 import com.springboot.project.model.VerificationCodeEmailModel;
 import com.springboot.project.properties.StorageRootPathProperties;
-import cn.hutool.crypto.asymmetric.KeyType;
-import cn.hutool.crypto.asymmetric.RSA;
 
 @RestController
 public class AuthorizationController extends BaseController {
@@ -98,11 +93,8 @@ public class AuthorizationController extends BaseController {
         String privateKeyOfRSA = null;
 
         {
-            var publicKeyOfRSA = (RSAPublicKey) KeyFactory.getInstance("RSA")
-                    .generatePublic(new X509EncodedKeySpec(
-                            Base64.getDecoder().decode(user.getPublicKeyOfRSA())));
-            RSA rsa = new RSA(null, publicKeyOfRSA);
-            var passwordString = rsa.decryptStr(password, KeyType.PublicKey);
+            var passwordString = this.encryptDecryptService.decryptByByPublicKeyOfRSA(password,
+                    user.getPublicKeyOfRSA());
             var userModel = new ObjectMapper().readValue(passwordString, UserModel.class);
             var createDate = userModel.getCreateDate();
             privateKeyOfRSA = userModel.getPrivateKeyOfRSA();

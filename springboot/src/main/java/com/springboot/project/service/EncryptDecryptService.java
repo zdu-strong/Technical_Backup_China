@@ -92,6 +92,54 @@ public class EncryptDecryptService extends BaseService {
         return aes.decryptStr(text).substring(36);
     }
 
+    public String encryptByPrivateKeyOfRSA(String text, String privateKeyOfRSA) {
+        try {
+            var keyOfRSAPrivateKey = (RSAPrivateKey) KeyFactory.getInstance("RSA")
+                    .generatePrivate(new PKCS8EncodedKeySpec(
+                            Base64.getDecoder().decode(privateKeyOfRSA)));
+            var rsa = new RSA(keyOfRSAPrivateKey, null);
+            return rsa.encryptBase64(text, KeyType.PrivateKey);
+        } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    public String encryptByPublicKeyOfRSA(String text, String publicKeyOfRSA) {
+        try {
+            var keyOfRSAPublicKey = (RSAPublicKey) KeyFactory.getInstance("RSA")
+                    .generatePublic(new X509EncodedKeySpec(
+                            Base64.getDecoder().decode(publicKeyOfRSA)));
+            var rsa = new RSA(null, keyOfRSAPublicKey);
+            return rsa.encryptBase64(text, KeyType.PublicKey);
+        } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    public String decryptByByPublicKeyOfRSA(String text, String publicKeyOfRSA) {
+        try {
+            var keyOfRSAPublicKey = (RSAPublicKey) KeyFactory.getInstance("RSA")
+                    .generatePublic(new X509EncodedKeySpec(
+                            Base64.getDecoder().decode(publicKeyOfRSA)));
+            var rsa = new RSA(null, keyOfRSAPublicKey);
+            return rsa.decryptStr(text, KeyType.PublicKey);
+        } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    public String decryptByByPrivateKeyOfRSA(String text, String privateKeyOfRSA) {
+        try {
+            var keyOfRSAPrivateKey = (RSAPrivateKey) KeyFactory.getInstance("RSA")
+                    .generatePrivate(new PKCS8EncodedKeySpec(
+                            Base64.getDecoder().decode(privateKeyOfRSA)));
+            var rsa = new RSA(keyOfRSAPrivateKey, null);
+            return rsa.decryptStr(text, KeyType.PrivateKey);
+        } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
     public String generateSecretKeyOfAES(String password) {
         try {
             var salt = DigestUtils.md5(password);
