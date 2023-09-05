@@ -3,7 +3,6 @@ package com.springboot.project.test.service.UserService;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
@@ -34,19 +33,17 @@ public class UserServiceSignUpTest extends BaseTest {
     public void test() throws URISyntaxException, InvalidKeySpecException, NoSuchAlgorithmException {
         try {
             var verificationCodeEmail = sendVerificationCode(email);
-            var keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-            keyPairGenerator.initialize(2048);
-            var keyPair = keyPairGenerator.generateKeyPair();
+            var keyPairOfRSA = this.encryptDecryptService.generateKeyPairOfRSA();
             var realPassword = Base64.getEncoder().encodeToString(
                     Generators.timeBasedGenerator().generate().toString().getBytes(StandardCharsets.UTF_8));
             var userModelOfSignUp = new UserModel();
             userModelOfSignUp.setUsername(email)
                     .setUserEmailList(Lists.newArrayList(new UserEmailModel().setEmail(email)
                             .setVerificationCodeEmail(verificationCodeEmail)))
-                    .setPublicKeyOfRSA(Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded()));
+                    .setPublicKeyOfRSA(keyPairOfRSA.getPublicKeyOfRSA());
             var map = new HashMap<>();
             map.put("password", realPassword);
-            map.put("privateKeyOfRSA", Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded()));
+            map.put("privateKeyOfRSA", keyPairOfRSA.getPrivateKeyOfRSA());
             userModelOfSignUp
                     .setPrivateKeyOfRSA(this.encryptDecryptService
                             .encryptByAES(new ObjectMapper().writeValueAsString(map)));

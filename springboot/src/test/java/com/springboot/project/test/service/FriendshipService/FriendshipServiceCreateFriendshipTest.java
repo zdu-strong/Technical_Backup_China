@@ -3,12 +3,8 @@ package com.springboot.project.test.service.FriendshipService;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Base64;
-import javax.crypto.KeyGenerator;
-
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,9 +19,7 @@ public class FriendshipServiceCreateFriendshipTest extends BaseTest {
 
     @Test
     public void test() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        var keyGenerator = KeyGenerator.getInstance("AES");
-        keyGenerator.init(256);
-        var keyOfAES = Base64.getEncoder().encodeToString(keyGenerator.generateKey().getEncoded());
+        var keyOfAES = this.encryptDecryptService.generateSecretKeyOfAES();
         var aesOfUser = this.user.getRSA().encryptBase64(this.user.getRSA().encryptBase64(keyOfAES, KeyType.PrivateKey),
                 KeyType.PublicKey);
         var aesOfFriend = this.friend.getRSA()

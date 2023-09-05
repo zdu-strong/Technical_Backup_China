@@ -2,14 +2,11 @@ package com.springboot.project.test.controller.AuthorizationController;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.net.URISyntaxException;
-import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Base64;
 import java.util.List;
 import org.apache.http.client.utils.URIBuilder;
 import org.jinq.orm.stream.JinqStream;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -31,25 +28,19 @@ public class AuthorizationControllerSignUpTest extends BaseTest {
             throws URISyntaxException, InvalidKeySpecException, NoSuchAlgorithmException, JsonProcessingException {
         var email = Generators.timeBasedGenerator().generate().toString() + "zdu.strong@gmail.com";
         var verificationCodeEmail = sendVerificationCode(email);
-        var keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-        keyPairGenerator.initialize(2048);
-        var keyPair = keyPairGenerator.generateKeyPair();
+        var keyPairOfRSA = this.encryptDecryptService.generateKeyPairOfRSA();
         var userModelOfSignUp = new UserModel();
         userModelOfSignUp.setUsername(email)
                 .setUserEmailList(Lists.newArrayList(new UserEmailModel().setEmail(email)
                         .setVerificationCodeEmail(verificationCodeEmail)))
-                .setPublicKeyOfRSA(Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded()));
+                .setPublicKeyOfRSA(keyPairOfRSA.getPublicKeyOfRSA());
         userModelOfSignUp
                 .setPrivateKeyOfRSA(this.encryptDecryptService
-                        .encryptByAES(Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded())));
+                        .encryptByAES(keyPairOfRSA.getPrivateKeyOfRSA()));
         var url = new URIBuilder("/sign_up").build();
         var response = this.testRestTemplate.postForEntity(url, new HttpEntity<>(userModelOfSignUp),
                 Object.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-    }
-
-    @BeforeEach
-    public void beforeEach() {
     }
 
     private VerificationCodeEmailModel sendVerificationCode(String email) throws URISyntaxException {

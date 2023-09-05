@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.security.KeyFactory;
-import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -70,11 +69,9 @@ import com.springboot.project.service.UserEmailService;
 import com.springboot.project.service.UserMessageService;
 import com.springboot.project.service.UserService;
 import com.springboot.project.service.VerificationCodeEmailService;
-
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
-import cn.hutool.crypto.symmetric.AES;
 import io.reactivex.rxjava3.core.Observable;
 
 /**
@@ -205,17 +202,17 @@ public class BaseTest {
     private void signUp(String email, String password)
             throws InvalidKeySpecException, NoSuchAlgorithmException, URISyntaxException, JsonProcessingException {
         var verificationCodeEmail = sendVerificationCode(email);
-        var keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-        keyPairGenerator.initialize(2048);
-        var keyPair = keyPairGenerator.generateKeyPair();
+        var keyPairOfRSA = this.encryptDecryptService.generateKeyPairOfRSA();
         var userModelOfSignUp = new UserModel();
         userModelOfSignUp.setUsername(email)
                 .setUserEmailList(Lists.newArrayList(new UserEmailModel().setEmail(email)
                         .setVerificationCodeEmail(verificationCodeEmail)))
-                .setPublicKeyOfRSA(Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded()));
+                .setPublicKeyOfRSA(keyPairOfRSA.getPublicKeyOfRSA());
         userModelOfSignUp
-                .setPrivateKeyOfRSA(new AES(this.encryptDecryptService.generateSecretKeyOfAES(password))
-                        .encryptBase64(Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded())));
+                .setPrivateKeyOfRSA(
+                        this.encryptDecryptService.encryptByAES(
+                                keyPairOfRSA.getPrivateKeyOfRSA(),
+                                this.encryptDecryptService.generateSecretKeyOfAES(password)));
         var url = new URIBuilder("/sign_up").build();
         var response = this.testRestTemplate.postForEntity(url, new HttpEntity<>(userModelOfSignUp),
                 UserModel.class);
@@ -253,8 +250,8 @@ public class BaseTest {
             var privateKeyOfRSA = (RSAPrivateKey) KeyFactory.getInstance("RSA")
                     .generatePrivate(new PKCS8EncodedKeySpec(
                             Base64.getDecoder()
-                                    .decode(new AES(this.encryptDecryptService.generateSecretKeyOfAES(password))
-                                            .decryptStr(user.getPrivateKeyOfRSA()))));
+                                    .decode(this.encryptDecryptService.decryptByAES(user.getPrivateKeyOfRSA(),
+                                            this.encryptDecryptService.generateSecretKeyOfAES(password)))));
             var rsa = new RSA(privateKeyOfRSA, null);
             var passwordParameter = rsa.encryptBase64(
                     new ObjectMapper().writeValueAsString(
