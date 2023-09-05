@@ -8,7 +8,7 @@ registerWebworker(async ({
   secretKeyOfAES: string,
   data: string
 }) => {
-  const text = CryptoJS.AES.decrypt(
+  let text = CryptoJS.AES.decrypt(
     data,
     CryptoJS.enc.Base64.parse(secretKeyOfAES),
     {
@@ -17,5 +17,9 @@ registerWebworker(async ({
       mode: CryptoJS.mode.CBC,
     }
   ).toString(CryptoJS.enc.Utf8);
+  if (!text) {
+    throw new Error("Malformed UTF-8 data");
+  }
+  text = text.slice(36);
   return text;
 });
