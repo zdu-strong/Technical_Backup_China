@@ -38,7 +38,7 @@ export class UserModel {
   accessToken!: string;
 
   @jsonMember(String)
-  privateKeyOfRSAOfAccessToken!: string;
+  secretKeyOfAESOfAccessToken!: string;
 
   constructor() {
     makeAutoObservable(this);

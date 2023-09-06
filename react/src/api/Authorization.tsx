@@ -26,10 +26,10 @@ export async function signIn(userIdOrEmail: string, password: string): Promise<v
   await signOut();
 
   const { data: user } = await axios.post<UserModel>(`/sign_in/get_account`, null, { params: { userId: userIdOrEmail } });
-  const { privateKey, publicKey } = await generateKeyPairOfRSA();
-  let privateKeyOfRSAOfUser: string;
+  const secretKeyOfAESOfAccessToken = await generateSecretKeyOfAES();
+  let privateKeyOfRSA: string;
   try {
-    privateKeyOfRSAOfUser = await decryptByAES(await generateSecretKeyOfAES(password), user.privateKeyOfRSA);
+    privateKeyOfRSA = await decryptByAES(await generateSecretKeyOfAES(password), user.privateKeyOfRSA);
   } catch (error) {
     throw new Error('Incorrect password');
   }
@@ -37,13 +37,13 @@ export async function signIn(userIdOrEmail: string, password: string): Promise<v
   const { data: accessToken } = await axios.post<string>(`/sign_in`, null, {
     params: {
       userId: user.id,
-      password: await encryptByPrivateKeyOfRSA(privateKeyOfRSAOfUser, JSON.stringify({
+      password: await encryptByPrivateKeyOfRSA(privateKeyOfRSA, JSON.stringify({
         createDate: new Date(),
-        privateKeyOfRSA: await encryptByPublicKeyOfRSA(publicKey, privateKeyOfRSAOfUser),
+        privateKeyOfRSA: await encryptByAES(secretKeyOfAESOfAccessToken, privateKeyOfRSA),
       })),
     }
   });
-  await setGlobalUserInfo(accessToken, privateKey);
+  await setGlobalUserInfo(accessToken, secretKeyOfAESOfAccessToken);
 }
 
 export async function signOut() {

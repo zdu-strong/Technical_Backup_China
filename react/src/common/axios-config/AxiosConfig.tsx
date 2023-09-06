@@ -7,6 +7,7 @@ import { catchError, concat, from, fromEvent, of, retry, switchMap, tap } from '
 import { decryptByPrivateKeyOfRSA, decryptByPublicKeyOfRSA, encryptByPrivateKeyOfRSA, encryptByPublicKeyOfRSA } from '@/common/RSAUtils';
 import { TypedJSON } from 'typedjson';
 import { runWoker } from '@/common/WebWorkerUtils';
+import { decryptByAES } from '../AESUtils';
 
 axios.defaults.baseURL = ServerAddress;
 
@@ -45,18 +46,18 @@ export const GlobalUserInfo = observable({
   id: '',
   username: '',
   accessToken: '',
-  privateKeyOfRSAOfAccessToken: '',
+  secretKeyOfAESOfAccessToken: '',
   loading: true,
 } as UserModel);
 
-export async function setGlobalUserInfo(accessToken?: string, privateKeyOfRSAOfAccessToken?: string): Promise<void> {
-  if (!accessToken || !privateKeyOfRSAOfAccessToken) {
+export async function setGlobalUserInfo(accessToken?: string, secretKeyOfAESOfAccessToken?: string): Promise<void> {
+  if (!accessToken || !secretKeyOfAESOfAccessToken) {
     const jsonStringOfLocalStorage = window.localStorage.getItem(keyOfGlobalUserInfoOfLocalStorage);
     if (jsonStringOfLocalStorage) {
       const jsonOfLocalStorage = new TypedJSON(UserModel).parse(jsonStringOfLocalStorage);
       accessToken = jsonOfLocalStorage?.accessToken;
-      privateKeyOfRSAOfAccessToken = jsonOfLocalStorage?.privateKeyOfRSAOfAccessToken;
-      if (GlobalUserInfo.accessToken === accessToken && GlobalUserInfo.privateKeyOfRSAOfAccessToken === privateKeyOfRSAOfAccessToken) {
+      secretKeyOfAESOfAccessToken = jsonOfLocalStorage?.secretKeyOfAESOfAccessToken;
+      if (GlobalUserInfo.accessToken === accessToken && GlobalUserInfo.secretKeyOfAESOfAccessToken === secretKeyOfAESOfAccessToken) {
         return;
       }
     } else {
@@ -67,17 +68,17 @@ export async function setGlobalUserInfo(accessToken?: string, privateKeyOfRSAOfA
     }
   }
 
-  if (!accessToken || !privateKeyOfRSAOfAccessToken) {
+  if (!accessToken || !secretKeyOfAESOfAccessToken) {
     return;
   }
 
   const userInfo = await getUserInfo(accessToken!);
-  const privateKeyOfRSAOfUser = await decryptByPrivateKeyOfRSA(privateKeyOfRSAOfAccessToken!, userInfo.privateKeyOfRSA);
+  const privateKeyOfRSAOfUser = await decryptByAES(secretKeyOfAESOfAccessToken!, userInfo.privateKeyOfRSA);
   const publicKeyOfRSAOfUser = userInfo.publicKeyOfRSA;
   GlobalUserInfo.id = userInfo.id;
   GlobalUserInfo.username = userInfo.username;
   GlobalUserInfo.accessToken = accessToken;
-  GlobalUserInfo.privateKeyOfRSAOfAccessToken = privateKeyOfRSAOfAccessToken;
+  GlobalUserInfo.secretKeyOfAESOfAccessToken = secretKeyOfAESOfAccessToken;
   GlobalUserInfo.encryptByPublicKeyOfRSA = async (data: string) => {
     return await encryptByPublicKeyOfRSA(publicKeyOfRSAOfUser, data);
   };
@@ -92,7 +93,7 @@ export async function setGlobalUserInfo(accessToken?: string, privateKeyOfRSAOfA
   };
   window.localStorage.setItem(keyOfGlobalUserInfoOfLocalStorage, JSON.stringify({
     accessToken,
-    privateKeyOfRSAOfAccessToken
+    secretKeyOfAESOfAccessToken: secretKeyOfAESOfAccessToken
   }))
 }
 
@@ -100,7 +101,7 @@ export async function removeGlobalUserInfo() {
   GlobalUserInfo.id = '';
   GlobalUserInfo.username = '';
   GlobalUserInfo.accessToken = '';
-  GlobalUserInfo.privateKeyOfRSAOfAccessToken = '';
+  GlobalUserInfo.secretKeyOfAESOfAccessToken = '';
   GlobalUserInfo.encryptByPublicKeyOfRSA = undefined as any;
   GlobalUserInfo.decryptByPrivateKeyOfRSA = undefined as any;
   GlobalUserInfo.encryptByPrivateKeyOfRSA = undefined as any;
