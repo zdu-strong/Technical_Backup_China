@@ -2,7 +2,7 @@ import { UserModel } from "@/model/UserModel";
 import axios from "axios";
 import { UserEmailModel } from "@/model/UserEmailModel";
 import { GlobalUserInfo, removeGlobalUserInfo, setGlobalUserInfo } from "@/common/axios-config/AxiosConfig";
-import { encryptByPublicKeyOfRSA, encryptByPrivateKeyOfRSA, generateKeyPairOfRSA } from "@/common/RSAUtils";
+import { encryptByPrivateKeyOfRSA, generateKeyPairOfRSA } from "@/common/RSAUtils";
 import { decryptByAES, encryptByAES, generateSecretKeyOfAES } from '@/common/AESUtils';
 import { EMPTY, concat, concatMap, interval, lastValueFrom, of, take } from "rxjs";
 import { VerificationCodeEmailModel } from "@/model/VerificationCodeEmailModel";
