@@ -37,6 +37,10 @@ public class UserEntity {
 
     @Column(nullable = false, length = 1024 * 1024 * 1024)
     @Lob
+    private String password;
+
+    @Column(nullable = false, length = 1024 * 1024 * 1024)
+    @Lob
     private String publicKeyOfRSA;
 
     @Column(nullable = false, length = 1024 * 1024 * 1024)

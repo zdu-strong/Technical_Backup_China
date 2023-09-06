@@ -20,6 +20,9 @@ export class UserModel {
   @jsonMember(String)
   privateKeyOfRSA!: string;
 
+  @jsonMember(String)
+  password!: string;
+
   @jsonArrayMember(UserEmailModel)
   userEmailList!: UserEmailModel[];
 

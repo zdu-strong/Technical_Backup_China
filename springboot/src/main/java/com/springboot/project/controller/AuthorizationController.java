@@ -5,9 +5,11 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
 import java.util.Calendar;
+import java.util.List;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
+import org.jinq.orm.stream.JinqStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.zxing.BarcodeFormat;
@@ -89,12 +92,15 @@ public class AuthorizationController extends BaseController {
     @PostMapping("/sign_in")
     public ResponseEntity<?> signIn(@RequestParam String userId, @RequestParam String password)
             throws InvalidKeySpecException, NoSuchAlgorithmException, JsonMappingException, JsonProcessingException {
-        var user = this.userService.getAccountForSignIn(userId);
+        var user = this.userService.getUserWithMoreInformation(userId);
         String privateKeyOfRSA = null;
 
         {
+            var publicKeyOfRSA = JinqStream
+                    .from(new ObjectMapper().readValue(user.getPassword(), new TypeReference<List<String>>() {
+                    })).skip(1).getOnlyValue();
             var passwordString = this.encryptDecryptService.decryptByByPublicKeyOfRSA(password,
-                    user.getPublicKeyOfRSA());
+                    publicKeyOfRSA);
             var userModel = new ObjectMapper().readValue(passwordString, UserModel.class);
             var createDate = userModel.getCreateDate();
             privateKeyOfRSA = userModel.getPrivateKeyOfRSA();
@@ -131,15 +137,17 @@ public class AuthorizationController extends BaseController {
         this.permissionUtil.checkIsSignIn(request);
 
         var userId = this.permissionUtil.getUserId(request);
-        var user = this.userService.getAccountForSignIn(userId);
+        var user = this.userService.getUserWithMoreInformation(userId);
         var jwtId = this.tokenUtil.getDecodedJWTOfAccessToken(this.tokenUtil.getAccessToken(request)).getId();
         var privateKeyOfRSA = this.tokenService.getPrivateKeyOfRSAOfToken(jwtId);
         user.setPrivateKeyOfRSA(privateKeyOfRSA);
+        user.setPassword(null);
         return ResponseEntity.ok(user);
     }
 
     @PostMapping("/sign_in/get_account")
-    public ResponseEntity<?> getAccountForSignIn(@RequestParam String userId) {
+    public ResponseEntity<?> getAccountForSignIn(@RequestParam String userId)
+            throws JsonMappingException, JsonProcessingException {
 
         if (StringUtils.isBlank(userId)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please fill in the account");
@@ -147,10 +155,13 @@ public class AuthorizationController extends BaseController {
 
         this.userService.checkExistAccount(userId);
 
-        var userModel = this.userService.getAccountForSignIn(userId);
+        var userModel = this.userService.getUserWithMoreInformation(userId);
         var user = new UserModel();
         user.setId(userModel.getId());
         user.setPrivateKeyOfRSA(userModel.getPrivateKeyOfRSA());
+        user.setPassword(JinqStream
+                .from(new ObjectMapper().readValue(userModel.getPassword(), new TypeReference<List<String>>() {
+                })).limit(1).getOnlyValue());
 
         return ResponseEntity.ok(user);
     }

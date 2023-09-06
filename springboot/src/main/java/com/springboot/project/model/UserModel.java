@@ -16,6 +16,7 @@ public class UserModel {
     private String privateKeyOfRSA;
     private Date createDate;
     private Date updateDate;
+    private String password;
     private String access_token;
     private List<UserEmailModel> userEmailList;
 }

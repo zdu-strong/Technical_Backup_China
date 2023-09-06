@@ -204,6 +204,12 @@ public class BaseTest {
                         this.encryptDecryptService.encryptByAES(
                                 keyPairOfRSA.getPrivateKeyOfRSA(),
                                 this.encryptDecryptService.generateSecretKeyOfAES(password)));
+        var keyPairOfRSAForPassword = this.encryptDecryptService.generateKeyPairOfRSA();
+        userModelOfSignUp.setPassword(
+                new ObjectMapper().writeValueAsString(Lists.newArrayList(
+                        this.encryptDecryptService.encryptByAES(keyPairOfRSAForPassword.getPrivateKeyOfRSA(),
+                                this.encryptDecryptService.generateSecretKeyOfAES(password)),
+                        keyPairOfRSAForPassword.getPublicKeyOfRSA())));
         var url = new URIBuilder("/sign_up").build();
         var response = this.testRestTemplate.postForEntity(url, new HttpEntity<>(userModelOfSignUp),
                 UserModel.class);
@@ -212,7 +218,7 @@ public class BaseTest {
 
     private boolean hasExistUser(String email) {
         try {
-            this.userService.getAccountForSignIn(email);
+            this.userService.getUserWithMoreInformation(email);
             return true;
         } catch (Throwable e) {
             return false;
@@ -241,7 +247,7 @@ public class BaseTest {
             var passwordParameter = this.encryptDecryptService.encryptByPrivateKeyOfRSA(
                     new ObjectMapper().writeValueAsString(
                             new UserModel().setCreateDate(new Date()).setPrivateKeyOfRSA("Private Key")),
-                    this.encryptDecryptService.decryptByAES(userForSignIn.getPrivateKeyOfRSA(),
+                    this.encryptDecryptService.decryptByAES(userForSignIn.getPassword(),
                             this.encryptDecryptService.generateSecretKeyOfAES(password)));
             var url = new URIBuilder("/sign_in").setParameter("userId", userForSignIn.getId())
                     .setParameter("password", passwordParameter)

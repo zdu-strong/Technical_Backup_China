@@ -22,6 +22,7 @@ public class UserService extends BaseService {
         userEntity.setUsername(userModel.getUsername());
         userEntity.setPrivateKeyOfRSA(userModel.getPrivateKeyOfRSA());
         userEntity.setPublicKeyOfRSA(userModel.getPublicKeyOfRSA());
+        userEntity.setPassword(userModel.getPassword());
         userEntity.setIsDeleted(false);
         userEntity.setCreateDate(new Date());
         userEntity.setUpdateDate(new Date());
@@ -34,7 +35,7 @@ public class UserService extends BaseService {
         return this.userFormatter.format(userEntity);
     }
 
-    public UserModel getAccountForSignIn(String userIdOrEmail) {
+    public UserModel getUserWithMoreInformation(String userIdOrEmail) {
         var user = this.UserEntity().leftOuterJoinList(s -> s.getUserEmailList())
                 .where(s -> s.getOne().getId().equals(userIdOrEmail)
                         || (s.getTwo().getEmail().equals(userIdOrEmail) && !s.getTwo().getIsDeleted()))

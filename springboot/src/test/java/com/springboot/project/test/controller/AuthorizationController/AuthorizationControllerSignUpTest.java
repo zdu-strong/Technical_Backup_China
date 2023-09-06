@@ -14,6 +14,7 @@ import org.mockito.stubbing.Answer;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.uuid.Generators;
 import com.google.common.collect.Lists;
 import com.springboot.project.model.UserEmailModel;
@@ -37,6 +38,11 @@ public class AuthorizationControllerSignUpTest extends BaseTest {
         userModelOfSignUp
                 .setPrivateKeyOfRSA(this.encryptDecryptService
                         .encryptByAES(keyPairOfRSA.getPrivateKeyOfRSA()));
+        var keyPairOfRSAForPassword = this.encryptDecryptService.generateKeyPairOfRSA();
+        userModelOfSignUp.setPassword(
+                new ObjectMapper().writeValueAsString(Lists.newArrayList(
+                        this.encryptDecryptService.encryptByAES(keyPairOfRSAForPassword.getPrivateKeyOfRSA()),
+                        keyPairOfRSAForPassword.getPublicKeyOfRSA())));
         var url = new URIBuilder("/sign_up").build();
         var response = this.testRestTemplate.postForEntity(url, new HttpEntity<>(userModelOfSignUp),
                 Object.class);

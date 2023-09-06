@@ -28,7 +28,7 @@ public class AuthorizationControllerSignInTest extends BaseTest {
         var passwordParameter = this.encryptDecryptService.encryptByPrivateKeyOfRSA(
                 new ObjectMapper().writeValueAsString(
                         new UserModel().setCreateDate(new Date()).setPrivateKeyOfRSA("Private Key")),
-                this.encryptDecryptService.decryptByAES(this.user.getPrivateKeyOfRSA(),
+                this.encryptDecryptService.decryptByAES(this.user.getPassword(),
                         this.encryptDecryptService.generateSecretKeyOfAES(this.email)));
         var url = new URIBuilder("/sign_in").setParameter("userId", user.getId())
                 .setParameter("password", passwordParameter)

@@ -11,12 +11,12 @@ import com.fasterxml.uuid.Generators;
 import com.springboot.project.model.UserModel;
 import com.springboot.project.test.BaseTest;
 
-public class UserServiceGetAccountForSignInTest extends BaseTest {
+public class UserServiceGetUserWithMoreInformationTest extends BaseTest {
     private UserModel user;
 
     @Test
     public void test() throws URISyntaxException {
-        var result = this.userService.getAccountForSignIn(user.getId());
+        var result = this.userService.getUserWithMoreInformation(user.getId());
         assertTrue(StringUtils.isNotBlank(result.getId()));
         assertTrue(StringUtils.isNotBlank(result.getPublicKeyOfRSA()));
         assertTrue(StringUtils.isNotBlank(result.getUsername()));

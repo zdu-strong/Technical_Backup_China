@@ -11,8 +11,6 @@ public class UserController extends BaseController {
 
     @GetMapping("/get_user_by_id")
     public ResponseEntity<?> sendMessage(@RequestParam String userId) throws IOException {
-        this.permissionUtil.checkIsSignIn(request);
-
         var userModel = this.userService.getUserById(userId);
         return ResponseEntity.ok(userModel);
     }

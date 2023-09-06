@@ -9,11 +9,13 @@ import { VerificationCodeEmailModel } from "@/model/VerificationCodeEmailModel";
 
 export async function signUp(password: string, nickname: string, userEmailList: UserEmailModel[]): Promise<void> {
   const { privateKey, publicKey } = await generateKeyPairOfRSA();
+  const keyPairOfRSAForPassword = await generateKeyPairOfRSA();
   var { data: user } = await axios.post<UserModel>(`/sign_up`, {
     username: nickname,
     userEmailList: userEmailList,
     publicKeyOfRSA: publicKey,
     privateKeyOfRSA: await encryptByAES(await generateSecretKeyOfAES(password), privateKey),
+    password: JSON.stringify([await encryptByAES(await generateSecretKeyOfAES(password), keyPairOfRSAForPassword.privateKey), keyPairOfRSAForPassword.publicKey]),
   });
   await signIn(user.id, password);
 }
@@ -37,7 +39,7 @@ export async function signIn(userIdOrEmail: string, password: string): Promise<v
   const { data: accessToken } = await axios.post<string>(`/sign_in`, null, {
     params: {
       userId: user.id,
-      password: await encryptByPrivateKeyOfRSA(privateKeyOfRSA, JSON.stringify({
+      password: await encryptByPrivateKeyOfRSA(await decryptByAES(await generateSecretKeyOfAES(password), user.password), JSON.stringify({
         createDate: new Date(),
         privateKeyOfRSA: await encryptByAES(secretKeyOfAESOfAccessToken, privateKeyOfRSA),
       })),
