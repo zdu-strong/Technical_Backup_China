@@ -4,15 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Supplier;
@@ -52,7 +46,6 @@ import com.springboot.project.common.permission.TokenUtil;
 import com.springboot.project.common.storage.ResourceHttpHeadersUtil;
 import com.springboot.project.common.storage.Storage;
 import com.springboot.project.model.LongTermTaskModel;
-import com.springboot.project.model.TokenModel;
 import com.springboot.project.model.UserEmailModel;
 import com.springboot.project.model.UserModel;
 import com.springboot.project.model.VerificationCodeEmailModel;
@@ -70,7 +63,6 @@ import com.springboot.project.service.UserMessageService;
 import com.springboot.project.service.UserService;
 import com.springboot.project.service.VerificationCodeEmailService;
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.crypto.asymmetric.RSA;
 import io.reactivex.rxjava3.core.Observable;
 
 /**
@@ -155,7 +147,7 @@ public class BaseTest {
                 Mockito.anyString());
     }
 
-    protected TokenModel createAccount(String email) {
+    protected UserModel createAccount(String email) {
         var password = email;
         try {
             if (!hasExistUser(email)) {
@@ -235,23 +227,23 @@ public class BaseTest {
         return user;
     }
 
-    private TokenModel signIn(String email, String password)
+    private UserModel signIn(String email, String password)
             throws URISyntaxException, InvalidKeySpecException, NoSuchAlgorithmException, JsonMappingException,
             JsonProcessingException {
-        UserModel user;
+        UserModel userForSignIn;
         {
             var url = new URIBuilder("/sign_in/get_account").setParameter("userId", email).build();
             var response = this.testRestTemplate.postForEntity(url, null, UserModel.class);
             assertEquals(HttpStatus.OK, response.getStatusCode());
-            user = response.getBody();
+            userForSignIn = response.getBody();
         }
         {
             var passwordParameter = this.encryptDecryptService.encryptByPrivateKeyOfRSA(
                     new ObjectMapper().writeValueAsString(
                             new UserModel().setCreateDate(new Date()).setPrivateKeyOfRSA("Private Key")),
-                    this.encryptDecryptService.decryptByAES(user.getPrivateKeyOfRSA(),
+                    this.encryptDecryptService.decryptByAES(userForSignIn.getPrivateKeyOfRSA(),
                             this.encryptDecryptService.generateSecretKeyOfAES(password)));
-            var url = new URIBuilder("/sign_in").setParameter("userId", user.getId())
+            var url = new URIBuilder("/sign_in").setParameter("userId", userForSignIn.getId())
                     .setParameter("password", passwordParameter)
                     .build();
             var response = this.testRestTemplate.postForEntity(url, null, String.class);
@@ -260,19 +252,11 @@ public class BaseTest {
             this.testRestTemplate.getRestTemplate()
                     .setInterceptors(Lists.newArrayList(new HttpHeaderInterceptor(HttpHeaders.AUTHORIZATION,
                             "Bearer " + accessToken)));
-            var tokenModel = new TokenModel();
-            tokenModel.setUserModel(getUserInfo(accessToken));
-            tokenModel.setAccess_token(accessToken);
-            var privateKeyOfRSA = (RSAPrivateKey) KeyFactory.getInstance("RSA")
-                    .generatePrivate(new PKCS8EncodedKeySpec(
-                            Base64.getDecoder()
-                                    .decode(this.encryptDecryptService.decryptByAES(user.getPrivateKeyOfRSA(),
-                                            this.encryptDecryptService.generateSecretKeyOfAES(password)))));
-            var publicKeyOfRSA = (RSAPublicKey) KeyFactory.getInstance("RSA")
-                    .generatePublic(new X509EncodedKeySpec(
-                            Base64.getDecoder().decode(tokenModel.getUserModel().getPublicKeyOfRSA())));
-            tokenModel.setRSA(new RSA(privateKeyOfRSA, publicKeyOfRSA));
-            return tokenModel;
+            var user = getUserInfo(accessToken);
+            user.setPrivateKeyOfRSA(this.encryptDecryptService.decryptByAES(userForSignIn.getPrivateKeyOfRSA(),
+                    this.encryptDecryptService.generateSecretKeyOfAES(password)));
+            user.setAccess_token(accessToken);
+            return user;
         }
     }
 

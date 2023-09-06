@@ -14,12 +14,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import com.fasterxml.uuid.Generators;
-import com.springboot.project.model.TokenModel;
 import com.springboot.project.model.UserModel;
 import com.springboot.project.test.BaseTest;
 
 public class AuthorizationControllerGetUserInfoTest extends BaseTest {
-    private TokenModel tokenModel;
+    private UserModel user;
     private String email;
 
     @Test
@@ -27,7 +26,7 @@ public class AuthorizationControllerGetUserInfoTest extends BaseTest {
         var url = new URIBuilder("/get_user_info").build();
         var response = this.testRestTemplate.getForEntity(url, UserModel.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(this.tokenModel.getUserModel().getId(), response.getBody().getId());
+        assertEquals(this.user.getId(), response.getBody().getId());
         assertTrue(StringUtils.isNotBlank(response.getBody().getUsername()));
         assertTrue(StringUtils.isNotBlank(response.getBody().getPrivateKeyOfRSA()));
         assertTrue(StringUtils.isNotBlank(response.getBody().getPublicKeyOfRSA()));
@@ -40,13 +39,13 @@ public class AuthorizationControllerGetUserInfoTest extends BaseTest {
                 .select(s -> s.getVerificationCodeEmail()).getOnlyValue());
         assertTrue(StringUtils.isNotBlank(JinqStream.from(response.getBody().getUserEmailList())
                 .select(s -> s.getUser().getId()).getOnlyValue()));
-        assertNotEquals(this.tokenModel.getRSA().getPrivateKeyBase64(), response.getBody().getPrivateKeyOfRSA());
+        assertNotEquals(this.user.getPrivateKeyOfRSA(), response.getBody().getPrivateKeyOfRSA());
     }
 
     @BeforeEach
     public void beforeEach() throws InvalidKeySpecException, NoSuchAlgorithmException, URISyntaxException {
         this.email = Generators.timeBasedGenerator().generate().toString() + "zdu.strong@gmail.com";
-        this.tokenModel = this.createAccount(email);
+        this.user = this.createAccount(email);
     }
 
 }

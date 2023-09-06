@@ -11,21 +11,20 @@ import org.jinq.orm.stream.JinqStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import com.fasterxml.uuid.Generators;
-import com.springboot.project.model.TokenModel;
+import com.springboot.project.model.UserModel;
 import com.springboot.project.test.BaseTest;
-import cn.hutool.crypto.asymmetric.KeyType;
 
 public class FriendshipServiceGetFriendListTest extends BaseTest {
-    private TokenModel user;
-    private TokenModel friend;
+    private UserModel user;
+    private UserModel friend;
 
     @Test
     public void test() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        var result = this.friendshipService.getFriendList(1L, 10L, this.user.getUserModel().getId());
+        var result = this.friendshipService.getFriendList(1L, 10L, this.user.getId());
         assertEquals(1, result.getTotalRecord());
-        assertEquals(user.getUserModel().getId(),
+        assertEquals(this.user.getId(),
                 JinqStream.from(result.getList()).select(s -> s.getUser().getId()).getOnlyValue());
-        assertEquals(friend.getUserModel().getId(),
+        assertEquals(this.friend.getId(),
                 JinqStream.from(result.getList()).select(s -> s.getFriend().getId()).getOnlyValue());
         assertTrue(JinqStream.from(result.getList()).select(s -> s.getIsFriend()).getOnlyValue());
         assertFalse(JinqStream.from(result.getList()).select(s -> s.getIsInBlacklist()).getOnlyValue());
@@ -47,14 +46,16 @@ public class FriendshipServiceGetFriendListTest extends BaseTest {
         var friendEmail = Generators.timeBasedGenerator().generate().toString() + "zdu.strong@gmail.com";
         this.user = this.createAccount(userEmail);
         this.friend = this.createAccount(friendEmail);
+
         var keyOfAES = this.encryptDecryptService.generateSecretKeyOfAES();
-        var aesOfUser = this.user.getRSA().encryptBase64(this.user.getRSA().encryptBase64(keyOfAES, KeyType.PrivateKey),
-                KeyType.PublicKey);
-        var aesOfFriend = this.friend.getRSA()
-                .encryptBase64(this.user.getRSA().encryptBase64(keyOfAES, KeyType.PrivateKey), KeyType.PublicKey);
-        this.friendshipService.createFriendship(this.user.getUserModel().getId(),
-                this.friend.getUserModel().getId(), aesOfUser, aesOfFriend);
-        this.friendshipService.addToFriendList(this.user.getUserModel().getId(), this.friend.getUserModel().getId());
+        var aesOfUser = this.encryptDecryptService.encryptByPublicKeyOfRSA(
+                this.encryptDecryptService.encryptByPrivateKeyOfRSA(keyOfAES, this.user.getPrivateKeyOfRSA()),
+                this.user.getPublicKeyOfRSA());
+        var aesOfFriend = this.encryptDecryptService.encryptByPublicKeyOfRSA(
+                this.encryptDecryptService.encryptByPrivateKeyOfRSA(keyOfAES, this.user.getPrivateKeyOfRSA()),
+                this.friend.getPublicKeyOfRSA());
+        this.friendshipService.createFriendship(this.user.getId(), this.friend.getId(), aesOfUser, aesOfFriend);
+        this.friendshipService.addToFriendList(this.user.getId(), this.friend.getId());
     }
 
 }

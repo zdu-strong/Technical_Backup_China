@@ -2,7 +2,6 @@ package com.springboot.project.model;
 
 import java.util.Date;
 import java.util.List;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -17,5 +16,6 @@ public class UserModel {
     private String privateKeyOfRSA;
     private Date createDate;
     private Date updateDate;
+    private String access_token;
     private List<UserEmailModel> userEmailList;
 }

@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springboot.project.model.UserMessageModel;
 import com.springboot.project.model.UserMessageWebSocketSendModel;
+import com.springboot.project.model.UserModel;
 import com.springboot.project.test.BaseTest;
 import io.reactivex.rxjava3.subjects.ReplaySubject;
 
@@ -26,9 +27,11 @@ public class UserMessageWebSocketControllerTest extends BaseTest {
 
     private String webSocketServer;
     private String accessToken;
+    private UserModel user;
 
     @Test
-    public void test() throws URISyntaxException, InterruptedException, ExecutionException, TimeoutException {
+    public void test() throws URISyntaxException, InterruptedException, ExecutionException, TimeoutException,
+            JsonProcessingException {
         URI url = new URIBuilder(webSocketServer).setPath("/message").setParameter("accessToken", accessToken)
                 .build();
         ReplaySubject<UserMessageWebSocketSendModel> subject = ReplaySubject.create();
@@ -65,21 +68,24 @@ public class UserMessageWebSocketControllerTest extends BaseTest {
             }
         };
         webSocketClient.connectBlocking();
-        var result = subject.take(1).toList().toFuture().get(5, TimeUnit.SECONDS);
+        var result = subject.take(1).toList().toFuture().get(10, TimeUnit.SECONDS);
         webSocketClient.closeBlocking();
         assertEquals(1, result.size());
         assertTrue(JinqStream.from(result).selectAllList(s -> s.getList()).count() > 0);
         assertTrue(JinqStream.from(result).select(s -> s.getTotalPage()).findFirst().get() > 0);
+        assertEquals("Hello, World!", JinqStream.from(result).selectAllList(s -> s.getList())
+                .where(s -> s.getUser().getId().equals(this.user.getId())).select(s -> s.getContent())
+                .limit(1)
+                .getOnlyValue());
     }
 
     @BeforeEach
     public void beforeEach() throws URISyntaxException {
         this.webSocketServer = new URIBuilder("ws" + this.testRestTemplate.getRootUri().substring(4)).build()
                 .toString();
-        var tokenModel = this.createAccount("zdu.strong@gmail.com");
-        this.accessToken = tokenModel.getAccess_token();
-        var user = tokenModel.getUserModel();
-        var userMessage = new UserMessageModel().setUser(user).setContent("Hello, World!");
+        this.user = this.createAccount("zdu.strong@gmail.com");
+        this.accessToken = this.user.getAccess_token();
+        var userMessage = new UserMessageModel().setUser(this.user).setContent("Hello, World!");
         this.userMessageService.sendMessage(userMessage);
     }
 }

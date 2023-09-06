@@ -7,15 +7,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import com.fasterxml.uuid.Generators;
-import com.springboot.project.model.TokenModel;
+import com.springboot.project.model.UserModel;
 import com.springboot.project.test.BaseTest;
 
 public class UserServiceGetUserByIdTest extends BaseTest {
-    private TokenModel tokenModel;
+    private UserModel user;
 
     @Test
     public void test() throws URISyntaxException {
-        var result = this.userService.getUserById(tokenModel.getUserModel().getId());
+        var result = this.userService.getUserById(user.getId());
         assertTrue(StringUtils.isNotBlank(result.getId()));
         assertTrue(StringUtils.isNotBlank(result.getPublicKeyOfRSA()));
         assertTrue(StringUtils.isNotBlank(result.getUsername()));
@@ -26,8 +26,7 @@ public class UserServiceGetUserByIdTest extends BaseTest {
     @BeforeEach
     public void beforeEach() {
         var email = Generators.timeBasedGenerator().generate().toString() + "zdu.strong@gmail.com";
-        this.tokenModel = this.createAccount(email);
+        this.user = this.createAccount(email);
     }
 
 }
-

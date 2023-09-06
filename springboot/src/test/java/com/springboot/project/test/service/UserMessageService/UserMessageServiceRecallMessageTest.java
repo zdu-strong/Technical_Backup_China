@@ -24,7 +24,8 @@ public class UserMessageServiceRecallMessageTest extends BaseTest {
 
     @BeforeEach
     public void beforeEach() {
-        var userId =  this.createAccount(Generators.timeBasedGenerator().generate().toString() + "zdu.strong@gmail.com").getUserModel().getId();
+        var userId = this.createAccount(Generators.timeBasedGenerator().generate().toString() + "zdu.strong@gmail.com")
+                .getId();
         var userMessage = new UserMessageModel().setUser(new UserModel().setId(userId)).setContent("Hello, World!");
         var message = this.userMessageService.sendMessage(userMessage);
         assertEquals(36, message.getId().length());

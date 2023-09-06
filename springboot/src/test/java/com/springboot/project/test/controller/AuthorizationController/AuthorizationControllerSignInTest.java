@@ -16,21 +16,20 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.uuid.Generators;
 import com.springboot.project.model.UserModel;
-import cn.hutool.crypto.asymmetric.KeyType;
-import cn.hutool.crypto.asymmetric.RSA;
 import com.springboot.project.test.BaseTest;
 
 public class AuthorizationControllerSignInTest extends BaseTest {
-    private RSA rsa;
+    private String email;
     private UserModel user;
 
     @Test
     public void test() throws URISyntaxException, InvalidKeySpecException, NoSuchAlgorithmException,
             JsonMappingException, JsonProcessingException {
-        var passwordParameter = rsa.encryptBase64(
+        var passwordParameter = this.encryptDecryptService.encryptByPrivateKeyOfRSA(
                 new ObjectMapper().writeValueAsString(
                         new UserModel().setCreateDate(new Date()).setPrivateKeyOfRSA("Private Key")),
-                KeyType.PrivateKey);
+                this.encryptDecryptService.decryptByAES(this.user.getPrivateKeyOfRSA(),
+                        this.encryptDecryptService.generateSecretKeyOfAES(this.email)));
         var url = new URIBuilder("/sign_in").setParameter("userId", user.getId())
                 .setParameter("password", passwordParameter)
                 .build();
@@ -41,10 +40,9 @@ public class AuthorizationControllerSignInTest extends BaseTest {
 
     @BeforeEach
     public void beforeEach() throws InvalidKeySpecException, NoSuchAlgorithmException, URISyntaxException {
-        var email = Generators.timeBasedGenerator().generate().toString() + "zdu.strong@gmail.com";
-        var tokenModel = this.createAccount(email);
-        this.rsa = tokenModel.getRSA();
-        this.user = getAccount(email);
+        this.email = Generators.timeBasedGenerator().generate().toString() + "zdu.strong@gmail.com";
+        this.createAccount(this.email);
+        this.user = getAccount(this.email);
     }
 
     private UserModel getAccount(String email) throws URISyntaxException {

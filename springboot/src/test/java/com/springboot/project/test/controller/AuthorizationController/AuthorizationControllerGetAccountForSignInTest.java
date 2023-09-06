@@ -12,12 +12,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import com.fasterxml.uuid.Generators;
-import com.springboot.project.model.TokenModel;
 import com.springboot.project.model.UserModel;
 import com.springboot.project.test.BaseTest;
 
 public class AuthorizationControllerGetAccountForSignInTest extends BaseTest {
-    private TokenModel tokenModel;
+    private UserModel user;
     private String email;
 
     @Test
@@ -25,7 +24,7 @@ public class AuthorizationControllerGetAccountForSignInTest extends BaseTest {
         var url = new URIBuilder("/sign_in/get_account").setParameter("userId", email).build();
         var response = this.testRestTemplate.postForEntity(url, null, UserModel.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(this.tokenModel.getUserModel().getId(), response.getBody().getId());
+        assertEquals(this.user.getId(), response.getBody().getId());
         assertTrue(StringUtils.isNotBlank(response.getBody().getPrivateKeyOfRSA()));
         assertTrue(StringUtils.isBlank(response.getBody().getUsername()));
         assertTrue(StringUtils.isBlank(response.getBody().getPublicKeyOfRSA()));
@@ -35,7 +34,7 @@ public class AuthorizationControllerGetAccountForSignInTest extends BaseTest {
     @BeforeEach
     public void beforeEach() throws InvalidKeySpecException, NoSuchAlgorithmException, URISyntaxException {
         this.email = Generators.timeBasedGenerator().generate().toString() + "zdu.strong@gmail.com";
-        this.tokenModel = this.createAccount(email);
+        this.user = this.createAccount(email);
     }
 
 }

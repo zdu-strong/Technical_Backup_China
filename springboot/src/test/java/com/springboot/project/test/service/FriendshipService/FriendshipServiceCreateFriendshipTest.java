@@ -9,27 +9,27 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import com.fasterxml.uuid.Generators;
-import com.springboot.project.model.TokenModel;
+import com.springboot.project.model.UserModel;
 import com.springboot.project.test.BaseTest;
-import cn.hutool.crypto.asymmetric.KeyType;
 
 public class FriendshipServiceCreateFriendshipTest extends BaseTest {
-    private TokenModel user;
-    private TokenModel friend;
+    private UserModel user;
+    private UserModel friend;
 
     @Test
     public void test() throws NoSuchAlgorithmException, InvalidKeySpecException {
         var keyOfAES = this.encryptDecryptService.generateSecretKeyOfAES();
-        var aesOfUser = this.user.getRSA().encryptBase64(this.user.getRSA().encryptBase64(keyOfAES, KeyType.PrivateKey),
-                KeyType.PublicKey);
-        var aesOfFriend = this.friend.getRSA()
-                .encryptBase64(this.user.getRSA().encryptBase64(keyOfAES, KeyType.PrivateKey), KeyType.PublicKey);
-        this.friendshipService.createFriendship(this.user.getUserModel().getId(), this.friend.getUserModel().getId(),
-                aesOfUser, aesOfFriend);
-        var friendshipModel = this.friendshipService.getFriendship(this.user.getUserModel().getId(),
-                this.friend.getUserModel().getId());
-        assertEquals(this.user.getUserModel().getId(), friendshipModel.getUser().getId());
-        assertEquals(this.friend.getUserModel().getId(), friendshipModel.getFriend().getId());
+        var aesOfUser = this.encryptDecryptService.encryptByPublicKeyOfRSA(
+                this.encryptDecryptService.encryptByPrivateKeyOfRSA(keyOfAES, this.user.getPrivateKeyOfRSA()),
+                this.user.getPublicKeyOfRSA());
+        var aesOfFriend = this.encryptDecryptService.encryptByPublicKeyOfRSA(
+                this.encryptDecryptService.encryptByPrivateKeyOfRSA(keyOfAES, this.user.getPrivateKeyOfRSA()),
+                this.friend.getPublicKeyOfRSA());
+        this.friendshipService.createFriendship(this.user.getId(), this.friend.getId(), aesOfUser, aesOfFriend);
+        var friendshipModel = this.friendshipService.getFriendship(this.user.getId(),
+                this.friend.getId());
+        assertEquals(this.user.getId(), friendshipModel.getUser().getId());
+        assertEquals(this.friend.getId(), friendshipModel.getFriend().getId());
         assertTrue(friendshipModel.getHasInitiative());
         assertFalse(friendshipModel.getIsFriend());
         assertFalse(friendshipModel.getIsInBlacklist());
@@ -37,8 +37,10 @@ public class FriendshipServiceCreateFriendshipTest extends BaseTest {
         assertFalse(friendshipModel.getIsInBlacklistOfFriend());
         assertTrue(StringUtils.isNotBlank(friendshipModel.getAesOfUser()));
         assertTrue(StringUtils.isBlank(friendshipModel.getAesOfFriend()));
-        assertEquals(keyOfAES, this.user.getRSA().decryptStr(
-                this.user.getRSA().decryptStr(friendshipModel.getAesOfUser(), KeyType.PrivateKey), KeyType.PublicKey));
+        assertEquals(keyOfAES, this.encryptDecryptService.decryptByByPublicKeyOfRSA(
+                this.encryptDecryptService.decryptByByPrivateKeyOfRSA(
+                        friendshipModel.getAesOfUser(), this.user.getPrivateKeyOfRSA()),
+                this.user.getPublicKeyOfRSA()));
     }
 
     @BeforeEach

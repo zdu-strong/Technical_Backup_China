@@ -14,17 +14,17 @@ public class UserMessageServiceSendMessageTest extends BaseTest {
 
     @Test
     public void test() throws URISyntaxException {
-        var message = this.userMessageService.sendMessage(userMessage);
-        assertEquals(36, message.getId().length());
-        assertEquals("Hello, World!", message.getContent());
-        assertEquals(this.userMessage.getUser().getId(), message.getUser().getId());
-        assertFalse(message.getIsRecall());
-        assertFalse(message.getIsDelete());
+        var result = this.userMessageService.sendMessage(userMessage);
+        assertEquals(36, result.getId().length());
+        assertEquals("Hello, World!", result.getContent());
+        assertEquals(this.userMessage.getUser().getId(), result.getUser().getId());
+        assertFalse(result.getIsRecall());
+        assertFalse(result.getIsDelete());
     }
 
     @BeforeEach
     public void beforeEach() {
-        var userId = this.createAccount("zdu.strong@gmail.com").getUserModel().getId();
+        var userId = this.createAccount("zdu.strong@gmail.com").getId();
         this.userMessage = new UserMessageModel().setUser(new UserModel().setId(userId)).setContent("Hello, World!");
     }
 }

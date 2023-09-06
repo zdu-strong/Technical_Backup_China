@@ -59,6 +59,7 @@ public class UserMessageWebSocketController {
      */
     @Getter
     private String userId;
+    private String accessToken;
     private Session session;
     private CopyOnWriteArrayList<UserMessageModel> lastMessage = new CopyOnWriteArrayList<>();
     private ConcurrentMap<Long, UserMessageModel> onlineMessageMap = new ConcurrentHashMap<>();
@@ -93,6 +94,7 @@ public class UserMessageWebSocketController {
          */
         this.userId = userId;
         this.session = session;
+        this.accessToken = accessToken;
         staticWebSocketList.add(this);
     }
 
@@ -126,10 +128,11 @@ public class UserMessageWebSocketController {
 
     public void sendMessage() {
         try {
+            _permissionUtil.checkIsSignIn(accessToken);
             var messageList = _userMessageService.getMessageListByLastTwentyMessages(userId);
             {
-                var newMessageList = messageList.stream().filter(
-                        s -> !this.lastMessage.stream().anyMatch(t -> {
+                var newMessageList = JinqStream.from(messageList)
+                        .where(s -> !JinqStream.from(this.lastMessage).anyMatch(t -> {
                             try {
                                 var objectOne = new UserMessageModel();
                                 var objectTwo = new UserMessageModel();
@@ -140,17 +143,16 @@ public class UserMessageWebSocketController {
                             } catch (JsonProcessingException e) {
                                 throw new RuntimeException(e.getMessage(), e);
                             }
-                        }))
-                        .toList();
+                        })).toList();
                 if (!this.ready || !newMessageList.isEmpty()
                         || (messageList.size() == 0 && this.lastMessage.size() != 0)) {
-                    this.lastMessage.clear();
-                    this.lastMessage.addAll(messageList);
                     this.session.getBasicRemote()
                             .sendText(new ObjectMapper()
                                     .writeValueAsString(new UserMessageWebSocketSendModel().setList(newMessageList)
                                             .setTotalPage(JinqStream.from(newMessageList).select(s -> s.getTotalPage())
                                                     .findFirst().orElse(0L))));
+                    this.lastMessage.clear();
+                    this.lastMessage.addAll(messageList);
                     this.ready = true;
                 }
             }

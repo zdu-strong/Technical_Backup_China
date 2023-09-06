@@ -7,7 +7,6 @@ import org.apache.http.client.utils.URIBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-
 import com.springboot.project.model.UserMessageModel;
 import com.springboot.project.model.UserModel;
 import com.springboot.project.test.BaseTest;
@@ -27,7 +26,7 @@ public class UserMessageControllerRecallMessageTest extends BaseTest {
 
     @BeforeEach
     public void beforeEach() throws URISyntaxException {
-        this.userId = this.createAccount("zdu.strong@gmail.com").getUserModel().getId();
+        this.userId = this.createAccount("zdu.strong@gmail.com").getId();
         var userMessage = new UserMessageModel().setUser(new UserModel().setId(userId)).setContent("Hello, World!");
         this.id = this.userMessageService.sendMessage(userMessage).getId();
     }

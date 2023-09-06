@@ -20,25 +20,25 @@ public class UserMessageServiceGetUserMessageByIdTest extends BaseTest {
 
     @Test
     public void test() throws URISyntaxException {
-        var message = this.userMessageService.getUserMessageById(this.userMessage.getId(),
+        var result = this.userMessageService.getUserMessageById(this.userMessage.getId(),
                 this.userMessage.getUser().getId());
-        assertEquals(this.userMessage.getId(), message.getId());
-        assertFalse(message.getIsRecall());
-        assertEquals("Hello, World!", message.getContent());
-        assertNotNull(message.getCreateDate());
-        assertFalse(message.getIsDelete());
-        assertFalse(message.getIsRecall());
-        assertNull(message.getPageNum());
-        assertNull(message.getTotalPage());
-        assertNotNull(message.getUpdateDate());
-        assertNull(message.getUrl());
-        assertTrue(StringUtils.isNotBlank(message.getUser().getId()));
+        assertEquals(this.userMessage.getId(), result.getId());
+        assertFalse(result.getIsRecall());
+        assertEquals("Hello, World!", result.getContent());
+        assertNotNull(result.getCreateDate());
+        assertFalse(result.getIsDelete());
+        assertFalse(result.getIsRecall());
+        assertNull(result.getPageNum());
+        assertNull(result.getTotalPage());
+        assertNotNull(result.getUpdateDate());
+        assertNull(result.getUrl());
+        assertTrue(StringUtils.isNotBlank(result.getUser().getId()));
     }
 
     @BeforeEach
     public void beforeEach() {
         var userId = this.createAccount(Generators.timeBasedGenerator().generate().toString() + "zdu.strong@gmail.com")
-                .getUserModel().getId();
+                .getId();
         var userMessage = new UserMessageModel().setUser(new UserModel().setId(userId)).setContent("Hello, World!");
         var message = this.userMessageService.sendMessage(userMessage);
         assertEquals(36, message.getId().length());

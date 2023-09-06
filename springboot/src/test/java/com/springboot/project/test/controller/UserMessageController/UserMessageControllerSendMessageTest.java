@@ -37,7 +37,7 @@ public class UserMessageControllerSendMessageTest extends BaseTest {
 
     @BeforeEach
     public void beforeEach() throws URISyntaxException {
-        this.userId = this.createAccount("zdu.strong@gmail.com").getUserModel().getId();
+        this.userId = this.createAccount("zdu.strong@gmail.com").getId();
     }
 
 }
