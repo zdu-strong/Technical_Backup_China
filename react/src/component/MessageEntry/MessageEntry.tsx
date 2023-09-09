@@ -9,6 +9,7 @@ import LoadingOrErrorComponent from "@/common/LoadingOrErrorComponent/LoadingOrE
 import { v1 } from "uuid";
 import MessageMenu from "@/component/MessageEntry/MessageMenu";
 import MessageUnlimitedList from "@/component/Message/MessageUnlimitedList";
+import { useRef } from "react";
 
 const css = stylesheet({
   container: {
@@ -35,6 +36,11 @@ export default observer(() => {
     error: null as any,
   }, {
     navigate: useNavigate(),
+    variableSizeListRef: useRef<{
+      scrollToItemByPageNum: (pageNum: number) => Promise<void>,
+      isNeedScrollToEnd: () => boolean,
+      scrollToItemByLast: () => Promise<void>,
+    }>(),
   })
 
   useMount(async () => {
@@ -53,8 +59,17 @@ export default observer(() => {
     {
       state.readyForStart && <div className={css.container} style={state.readyForMessageList ? {} : { position: "absolute", visibility: "hidden" }} >
         <MessageMenu userId={GlobalUserInfo.id} username={GlobalUserInfo.username} />
-        <MessageUnlimitedList userId={GlobalUserInfo.id!} username={GlobalUserInfo.username!} setReadyForMessageList={state.setReadyForMessageList} />
-        <MessageChat userId={GlobalUserInfo.id!} username={GlobalUserInfo.username!} />
+        <MessageUnlimitedList
+          userId={GlobalUserInfo.id!}
+          username={GlobalUserInfo.username!}
+          setReadyForMessageList={state.setReadyForMessageList}
+          variableSizeListRef={state.variableSizeListRef}
+        />
+        <MessageChat
+          userId={GlobalUserInfo.id!}
+          username={GlobalUserInfo.username!}
+          variableSizeListRef={state.variableSizeListRef}
+        />
       </div>
     }
   </>

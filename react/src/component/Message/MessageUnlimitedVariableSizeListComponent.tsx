@@ -38,6 +38,7 @@ export default observer(forwardRef((props: {
 }, ref: Ref<{
   scrollToItemByPageNum: (pageNum: number) => void,
   isNeedScrollToEnd: () => boolean,
+  scrollToItemByLast: () => Promise<void>;
 }>) => {
 
   const state = useMobxState({
@@ -132,7 +133,8 @@ export default observer(forwardRef((props: {
   /* Add method for ref */
   useImperativeHandle(state.ref, () => ({
     scrollToItemByPageNum,
-    isNeedScrollToEnd
+    isNeedScrollToEnd,
+    scrollToItemByLast,
   }))
 
   async function scrollToItemByPageNum(pageNum: number) {
@@ -143,6 +145,10 @@ export default observer(forwardRef((props: {
 
   function isNeedScrollToEnd() {
     return state.isNeedScrollToEndByCaluate;
+  }
+
+  async function scrollToItemByLast() {
+    await scrollToItemByPageNum(state.totalPage);
   }
 
   function calcualateIsNeedScrollToEnd(height: number) {

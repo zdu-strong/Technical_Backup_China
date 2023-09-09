@@ -12,7 +12,15 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useRef } from "react";
 import MessageMoreActionDialog from "@/component/MessageMoreAction/MessageMoreActionDialog";
 
-export default observer((props: { username: string, userId: string }) => {
+export default observer((props: {
+  username: string,
+  userId: string,
+  variableSizeListRef: React.MutableRefObject<{
+    scrollToItemByPageNum: (pageNum: number) => Promise<void>;
+    isNeedScrollToEnd: () => boolean;
+    scrollToItemByLast: () => Promise<void>;
+  } | undefined>,
+}) => {
   const state = useMobxState({
     /* Pending send message */
     messageContent: "",
@@ -30,6 +38,7 @@ export default observer((props: { username: string, userId: string }) => {
   })
 
   async function sendMessage() {
+    await state.variableSizeListRef.current?.scrollToItemByLast();
     if (!state.messageContent) {
       return MessageService.error("Please fill in the message content");
     }
@@ -50,6 +59,7 @@ export default observer((props: { username: string, userId: string }) => {
   }
 
   async function sendMessageForFileList(fileList: FileList) {
+    await state.variableSizeListRef.current?.scrollToItemByLast();
     if (isMobilePhone) {
       state.moreActionDialog.open = false;
       await timer(1).toPromise();

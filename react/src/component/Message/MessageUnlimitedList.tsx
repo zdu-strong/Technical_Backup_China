@@ -3,7 +3,6 @@ import { stylesheet } from "typestyle";
 import api from '@/api'
 import { useMount } from "mobx-react-use-autorun";
 import { concatMap, from, catchError, switchMap, timer, repeat, ReplaySubject, tap, Subscription } from 'rxjs'
-import { useRef } from "react";
 import MessageUnlimitedListChild from "@/component/Message/MessageUnlimitedListChild";
 import MessageUnlimitedVariableSizeListComponent from "@/component/Message/MessageUnlimitedVariableSizeListComponent";
 import { Alert, CircularProgress } from "@mui/material";
@@ -26,6 +25,11 @@ export default observer((props: {
   userId: string,
   username: string,
   setReadyForMessageList: (readyForMessageList: boolean) => Promise<void>,
+  variableSizeListRef: React.MutableRefObject<{
+    scrollToItemByPageNum: (pageNum: number) => Promise<void>;
+    isNeedScrollToEnd: () => boolean;
+    scrollToItemByLast: () => Promise<void>;
+  } | undefined>
 }) => {
 
   const state = useMobxState({
@@ -47,10 +51,6 @@ export default observer((props: {
     child,
   }, {
     ...props,
-    variableSizeListRef: useRef<{
-      scrollToItemByPageNum: (pageNum: number) => Promise<void>,
-      isNeedScrollToEnd: () => boolean,
-    }>(),
   })
 
   useMount((subscription) => {
