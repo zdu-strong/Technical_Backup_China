@@ -8,7 +8,7 @@
   },
   "private": true,
   "homepage": ".",
-  "description": "An Ionic project",
+  "description": "An Capacitor project",
   "eslintConfig": {
     "extends": [
       "react-app"
