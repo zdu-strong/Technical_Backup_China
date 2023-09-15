@@ -34,6 +34,10 @@ public class ResourceController extends BaseController {
         this.resourceHttpHeadersUtil.setContentDisposition(httpHeaders, ContentDisposition.inline(), resource, request);
         this.resourceHttpHeadersUtil.setContentRangeIfNeed(httpHeaders, totalContentLength, request);
 
+        if (httpHeaders.getETag().equals(this.request.getHeader(HttpHeaders.IF_NONE_MATCH))) {
+            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).headers(httpHeaders).build();
+        }
+
         if (this.resourceHttpHeadersUtil.getRangeList(request).size() > 0) {
             return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).headers(httpHeaders)
                     .body(this.resourceHttpHeadersUtil.getResourceFromRequest(totalContentLength, request));
@@ -57,6 +61,10 @@ public class ResourceController extends BaseController {
         this.resourceHttpHeadersUtil.setContentDisposition(httpHeaders, ContentDisposition.attachment(), resource,
                 request);
         this.resourceHttpHeadersUtil.setContentRangeIfNeed(httpHeaders, totalContentLength, request);
+
+        if (httpHeaders.getETag().equals(this.request.getHeader(HttpHeaders.IF_NONE_MATCH))) {
+            return ResponseEntity.status(HttpStatus.NOT_MODIFIED).headers(httpHeaders).build();
+        }
 
         if (this.resourceHttpHeadersUtil.getRangeList(request).size() > 0) {
             return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT).headers(httpHeaders)
