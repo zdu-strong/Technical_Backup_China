@@ -58,7 +58,6 @@ After upgrading the dependencies, please make sure that the dependent versions i
 The following dependencies are currently unable to continue to be upgraded:<br/>
 execa <br/>
 linq <br/>
-fraction.js <br/>
 
 # Demonstration of the animation effect of the video
 
