@@ -137,17 +137,17 @@
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-crypto</artifactId>
-            <version>5.8.21</version>
+            <version>5.8.22</version>
         </dependency>
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-extra</artifactId>
-            <version>5.8.21</version>
+            <version>5.8.22</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.uuid</groupId>
             <artifactId>java-uuid-generator</artifactId>
-            <version>4.2.0</version>
+            <version>4.3.0</version>
         </dependency>
         <dependency>
             <groupId>java3d</groupId>
