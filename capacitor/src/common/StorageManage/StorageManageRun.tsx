@@ -18,10 +18,7 @@ async function runManageStorageSpace() {
     }
   }
 
-  const folderNameListOfRootFolder = (await Filesystem.readdir({
-    path: "",
-    directory: Directory.External,
-  })).files.map(s => s.name);
+  const folderNameListOfRootFolder = await StorageSpaceService.listRoots();
   for (const folderName of folderNameListOfRootFolder) {
     try {
       if (!(await StorageSpaceService.isUsed(folderName))) {

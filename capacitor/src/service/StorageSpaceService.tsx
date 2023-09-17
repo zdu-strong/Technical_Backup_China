@@ -57,7 +57,7 @@ export async function deleteFolder(folderName: string): Promise<void> {
   /* Delete from disk */
   await Filesystem.rmdir({
     path: folderNameOfRelative,
-    directory: Directory.External,
+    directory: Directory.Library,
     recursive: true,
   });
 
@@ -65,6 +65,14 @@ export async function deleteFolder(folderName: string): Promise<void> {
   const stream = linq.from(await db.StorageSpaceList.toArray());
   const list = stream.where((s) => s.folderName === folderNameOfRelative).select(s => s.id).toArray();
   db.StorageSpaceList.bulkDelete(list);
+}
+
+export async function listRoots() {
+  const folderNameListOfRootFolder = (await Filesystem.readdir({
+    path: "",
+    directory: Directory.Library,
+  })).files.map(s => s.name);
+  return folderNameListOfRootFolder;
 }
 
 async function isUsedByProgramData(folderName: string) {
@@ -91,14 +99,14 @@ async function getFolderNameBaseOnBaseFolderPath(relativePathOfFile: string) {
   if (!path.isAbsolute(relativePathOfFile)) {
     absolutePath = (await Filesystem.getUri({
       path: relativePathOfFile,
-      directory: Directory.External,
+      directory: Directory.Library,
     })).uri;
   } else {
     throw new Error("Unsupported path");
   }
   const rootPath = (await Filesystem.getUri({
     path: "",
-    directory: Directory.External,
+    directory: Directory.Library,
   })).uri;
   if (!absolutePath.startsWith(rootPath)) {
     throw new Error("Unsupported path");
