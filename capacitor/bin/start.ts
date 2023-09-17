@@ -7,7 +7,6 @@ import os from 'os'
 import inquirer from "inquirer"
 import linq from 'linq'
 import waitOn from 'wait-on'
-import { timer } from 'rxjs'
 import fs from 'fs'
 import axios from 'axios'
 
@@ -17,14 +16,13 @@ async function main() {
     process.exit();
   }
   const avaliablePort = await getPort();
-  const ReactServerAddress = getNetworkAddress(avaliablePort);
   const isRunAndroid = await getIsRunAndroid();
   const androidSdkRootPath = getAndroidSdkRootPath();
   await addPlatformSupport(isRunAndroid);
   const deviceList = await getDeviceList(isRunAndroid);
   await buildReact();
-  const { childProcessOfReact } = await startReact(avaliablePort, ReactServerAddress);
-  const [childProcessOfCapacitor] = await createChildProcessOfCapacitor(isRunAndroid, ReactServerAddress, androidSdkRootPath, deviceList);
+  const { childProcessOfReact } = await startReact(avaliablePort);
+  const [childProcessOfCapacitor] = await createChildProcessOfCapacitor(isRunAndroid, avaliablePort, androidSdkRootPath, deviceList);
   await Promise.race([childProcessOfReact, childProcessOfCapacitor]);
   await util.promisify(treeKill)(childProcessOfReact.pid!).catch(async () => null);
   await util.promisify(treeKill)(childProcessOfCapacitor.pid!).catch(async () => null);
@@ -37,7 +35,7 @@ async function buildReact() {
   await fs.promises.cp(folderPathOfPublic, folderPathOfBuild, { recursive: true, force: true });
 }
 
-async function startReact(avaliablePort: number, ReactServerAddress: string) {
+async function startReact(avaliablePort: number) {
   const childProcessOfReact = execa.command(
     [
       "react-app-rewired start",
@@ -53,9 +51,9 @@ async function startReact(avaliablePort: number, ReactServerAddress: string) {
     }
   );
 
-  await Promise.race([childProcessOfReact, waitOn({ resources: [`${ReactServerAddress}`] })]);
+  await Promise.race([childProcessOfReact, waitOn({ resources: [`http://127.0.0.1:${avaliablePort}`] })]);
   for (let i = 2000; i > 0; i--) {
-    await axios.get(ReactServerAddress);
+    await axios.get(`http://127.0.0.1:${avaliablePort}`);
   }
   return { childProcessOfReact };
 }
@@ -123,7 +121,7 @@ function getAndroidSdkRootPath() {
   return androidSdkRootPath;
 }
 
-async function createChildProcessOfCapacitor(isRunAndroid: boolean, ReactServerAddress: string, androidSdkRootPath: string, deviceList: string[]) {
+async function createChildProcessOfCapacitor(isRunAndroid: boolean, avaliablePort: number, androidSdkRootPath: string, deviceList: string[]) {
   await execa.command(
     [
       `cap sync ${isRunAndroid ? "android" : "ios"}`,
@@ -142,6 +140,7 @@ async function createChildProcessOfCapacitor(isRunAndroid: boolean, ReactServerA
   await updateDownloadAddressOfGradleZipFile(isRunAndroid);
   await updateDownloadAddressOfGrableDependencies(isRunAndroid);
   await addAndroidPermissions(isRunAndroid);
+  await usesCleartextTraffic(isRunAndroid);
   await execa.command(
     [
       `cap run ${isRunAndroid ? "android" : "ios"}`,
@@ -160,8 +159,10 @@ async function createChildProcessOfCapacitor(isRunAndroid: boolean, ReactServerA
   );
   const childProcess = execa.command(
     [
-      `ionic capacitor run ${isRunAndroid ? 'android' : "ios"}`,
-      `--livereload-url=${ReactServerAddress}`,
+      `cap run ${isRunAndroid ? 'android' : "ios"}`,
+      `--no-sync`,
+      `--live-reload`,
+      `--port ${avaliablePort}`,
       `${deviceList.length === 1 ? `--target=${linq.from(deviceList).single()}` : ''}`,
     ].join(" "),
     {
@@ -175,24 +176,6 @@ async function createChildProcessOfCapacitor(isRunAndroid: boolean, ReactServerA
     }
   );
   return [childProcess];
-}
-
-function getNetworkAddress(avaliablePort: number) {
-  const stream = linq.from(Object.keys(os.networkInterfaces())).where(name => !(name.includes("(") && name.includes(")"))).select(name => {
-    const networkInfoList = os.networkInterfaces()[name];
-    const secondNetworkInfoList = [] as any[];
-    for (const networkInfo of networkInfoList!) {
-      (networkInfo as any).name = name;
-      const regex = new RegExp("[0-9]");
-      if (regex.test(name)) {
-        continue;
-      }
-      secondNetworkInfoList.push(networkInfo);
-    }
-    return secondNetworkInfoList;
-  }).selectMany(s => s as os.NetworkInterfaceInfo[]).where(item => !item.internal).where(item => item.family === "IPv4");
-  const networkAddress = stream.select(item => item.address).select(item => `http://${item}:${avaliablePort}`).single()
-  return networkAddress;
 }
 
 async function addPlatformSupport(isRunAndroid: boolean) {
@@ -302,6 +285,24 @@ async function addAndroidPermissions(isRunAndroid: boolean) {
   }
   textList.splice(index, 0, ...permissionList);
   await fs.promises.writeFile(androidManifestFilePath, textList.join("\n"), "utf8");
+}
+
+async function usesCleartextTraffic(isRunAndroid: boolean) {
+  if (!isRunAndroid) {
+    return;
+  }
+  const androidManifestFilePath = path.join(__dirname, "..", "android/app/src/main", "AndroidManifest.xml");
+  const content = await fs.promises.readFile(androidManifestFilePath, { encoding: "utf-8" });
+  const textList = linq.from(content.split("\r\n")).selectMany(s => s.split("\n")).toArray();
+  const applicationAttributeList = [
+    `        android:usesCleartextTraffic="true"`,
+  ];
+  const index = textList.findIndex(s => s.includes("    <application"));
+  if (index < 0) {
+    throw new Error("no application tag found")
+  }
+  textList.splice(index + 1, 0, ...applicationAttributeList);
+  await fs.promises.writeFile(androidManifestFilePath, textList.join("\n"), "utf-8");
 }
 
 export default main()
