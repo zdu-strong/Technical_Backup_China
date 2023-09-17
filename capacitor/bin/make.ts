@@ -22,8 +22,9 @@ async function main() {
 async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string, deviceList: string[]) {
   await execa.command(
     [
-      `cap sync ${isRunAndroid ? "android" : "ios"}`,
+      `cap sync`,
       "--deployment",
+      `${isRunAndroid ? "android" : "ios"}`,
     ].join(" "),
     {
       stdio: "inherit",
@@ -40,9 +41,10 @@ async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string
   await addAndroidPermissions(isRunAndroid);
   await execa.command(
     [
-      `cap run ${isRunAndroid ? "android" : "ios"}`,
+      `cap run`,
       "--no-sync",
       `${deviceList.length === 1 ? `--target=${linq.from(deviceList).single()}` : ''}`,
+      `${isRunAndroid ? "android" : "ios"}`,
     ].join(" "),
     {
       stdio: "inherit",
@@ -54,6 +56,7 @@ async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string
       }) as any,
     }
   );
+  const apkSignerParentFolderPath = await getApkSignerParentFolderPath();
   const childProcess = execa.command(
     [
       `cap build`,
@@ -70,7 +73,13 @@ async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string
       cwd: path.join(__dirname, ".."),
       extendEnv: true,
       env: (isRunAndroid ? {
-        "ANDROID_HOME": `${androidSdkRootPath}`
+        "ANDROID_HOME": `${androidSdkRootPath}`,
+        ...(os.platform() === "win32" ? {
+          Path: `${process.env.Path};${apkSignerParentFolderPath}`
+        } : {}),
+        ...(os.platform() !== "win32" ? {
+          PATH: `${process.env.PATH}:${apkSignerParentFolderPath}`
+        } : {}),
       } : {
       }) as any,
     }
@@ -78,43 +87,6 @@ async function runAndroidOrIOS(isRunAndroid: boolean, androidSdkRootPath: string
   await childProcess;
   await util.promisify(treeKill)(childProcess.pid!).catch(async () => null);
   await Promise.resolve(null);
-  await signWithApksigner(isRunAndroid, androidSdkRootPath);
-}
-
-async function signWithApksigner(isRunAndroid: boolean, androidSdkRootPath: string) {
-  if (!isRunAndroid) {
-    return;
-  }
-  const apkPath = path.join(__dirname, "..", "android/app/build/outputs/apk/release", "app-release-signed.apk");
-  await fs.promises.rm(apkPath, { force: true, recursive: true });
-  const filePathOfUnsignedApk = path.join(apkPath, "..", "app-release-unsigned.apk");
-  await fs.promises.copyFile(filePathOfUnsignedApk, apkPath);
-  const apkSignerParentFolderPath = await getApkSignerParentFolderPath();
-  await execa.command(
-    [
-      "apksigner",
-      "sign",
-      `--ks ${path.relative(path.join(__dirname, "..", "android/app/build/outputs/apk/release"), CapacitorConfig.android!.buildOptions!.keystorePath!)}`,
-      `--ks-pass pass:${CapacitorConfig.android?.buildOptions?.keystorePassword}`,
-      `--ks-key-alias ${CapacitorConfig.android?.buildOptions?.keystoreAlias}`,
-      `--pass-encoding utf-8`,
-      `app-release-signed.apk`,
-    ].join(" "),
-    {
-      stdio: "inherit",
-      cwd: path.join(__dirname, "..", "android/app/build/outputs/apk/release"),
-      extendEnv: true,
-      env: {
-        "ANDROID_HOME": `${androidSdkRootPath}`,
-        ...(os.platform() === "win32" ? {
-          Path: `${process.env.Path};${path.normalize(apkSignerParentFolderPath)}`
-        } : {}),
-        ...(os.platform() !== "win32" ? {
-          PATH: `${process.env.PATH}:${path.normalize(apkSignerParentFolderPath)}`
-        } : {}),
-      } as any,
-    },
-  )
 }
 
 async function buildReact() {
@@ -146,7 +118,7 @@ async function getApkSignerParentFolderPath() {
   const buildToolsPath = path.join(androidSdkRootPath, "build-tools");
   const fileNameList = await fs.promises.readdir(buildToolsPath);
   const fileName = linq.from(fileNameList).select(s => s.split(".")).select(s => linq.from(s).first()).select(s => Number(s)).orderByDescending(s => s).first();
-  const apkSignerParentFolderPath = path.join(buildToolsPath, linq.from(fileNameList).where(s => s.startsWith(String(fileName) + ".")).first());
+  const apkSignerParentFolderPath = path.normalize(path.join(buildToolsPath, linq.from(fileNameList).where(s => s.startsWith(String(fileName) + ".")).first()));
   return apkSignerParentFolderPath;
 }
 
@@ -197,7 +169,10 @@ async function copySignedApk(isRunAndroid: boolean) {
 
 async function addPlatformSupport(isRunAndroid: boolean) {
   await execa.command(
-    `cap add ${isRunAndroid ? 'android' : 'ios'}`,
+    [
+      `cap add`,
+      `${isRunAndroid ? 'android' : 'ios'}`,
+    ].join(" "),
     {
       stdio: "inherit",
       cwd: path.join(__dirname, ".."),
@@ -209,14 +184,22 @@ async function getDeviceList(isRunAndroid: boolean) {
   let deviceList = [] as string[];
   if (isRunAndroid) {
     await execa.command(
-      `cap run ${isRunAndroid ? 'android' : 'ios'} --list`,
+      [
+        `cap run`,
+        `--list`,
+        `${isRunAndroid ? 'android' : 'ios'}`,
+      ].join(" "),
       {
         stdio: "inherit",
         cwd: path.join(__dirname, ".."),
       }
     );
     const { stdout: androidDeviceOutput } = await execa.command(
-      `cap run ${isRunAndroid ? 'android' : 'ios'} --list`,
+      [
+        `cap run`,
+        `--list`,
+        `${isRunAndroid ? 'android' : 'ios'}`,
+      ].join(" "),
       {
         stdio: "pipe",
         cwd: path.join(__dirname, ".."),

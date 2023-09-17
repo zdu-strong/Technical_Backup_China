@@ -124,8 +124,9 @@ function getAndroidSdkRootPath() {
 async function createChildProcessOfCapacitor(isRunAndroid: boolean, avaliablePort: number, androidSdkRootPath: string, deviceList: string[]) {
   await execa.command(
     [
-      `cap sync ${isRunAndroid ? "android" : "ios"}`,
+      `cap sync`,
       "--deployment",
+      `${isRunAndroid ? "android" : "ios"}`,
     ].join(" "),
     {
       stdio: "inherit",
@@ -143,9 +144,10 @@ async function createChildProcessOfCapacitor(isRunAndroid: boolean, avaliablePor
   await usesCleartextTraffic(isRunAndroid);
   await execa.command(
     [
-      `cap run ${isRunAndroid ? "android" : "ios"}`,
+      `cap run`,
       "--no-sync",
       `${deviceList.length === 1 ? `--target=${linq.from(deviceList).single()}` : ''}`,
+      `${isRunAndroid ? "android" : "ios"}`,
     ].join(" "),
     {
       stdio: "inherit",
@@ -159,11 +161,12 @@ async function createChildProcessOfCapacitor(isRunAndroid: boolean, avaliablePor
   );
   const childProcess = execa.command(
     [
-      `cap run ${isRunAndroid ? 'android' : "ios"}`,
+      `cap run`,
       `--no-sync`,
       `--live-reload`,
       `--port ${avaliablePort}`,
-      `${deviceList.length === 1 ? `--target=${linq.from(deviceList).single()}` : ''}`,
+      `${deviceList.length === 1 ? `--target ${linq.from(deviceList).single()}` : ''}`,
+      `${isRunAndroid ? 'android' : "ios"}`,
     ].join(" "),
     {
       stdio: "inherit",
@@ -180,7 +183,10 @@ async function createChildProcessOfCapacitor(isRunAndroid: boolean, avaliablePor
 
 async function addPlatformSupport(isRunAndroid: boolean) {
   await execa.command(
-    `cap add ${isRunAndroid ? 'android' : 'ios'}`,
+    [
+      `cap add`,
+      `${isRunAndroid ? 'android' : 'ios'}`,
+    ].join(" "),
     {
       stdio: "inherit",
       cwd: path.join(__dirname, ".."),
@@ -192,14 +198,22 @@ async function getDeviceList(isRunAndroid: boolean) {
   let deviceList = [] as string[];
   if (isRunAndroid) {
     await execa.command(
-      `cap run ${isRunAndroid ? 'android' : 'ios'} --list`,
+      [
+        `cap run`,
+        `--list`,
+        `${isRunAndroid ? 'android' : 'ios'}`
+      ].join(" "),
       {
         stdio: "inherit",
         cwd: path.join(__dirname, ".."),
       }
     );
     const { stdout: androidDeviceOutput } = await execa.command(
-      `cap run ${isRunAndroid ? 'android' : 'ios'} --list`,
+      [
+        `cap run`,
+        `--list`,
+        `${isRunAndroid ? 'android' : 'ios'}`,
+      ].join(" "),
       {
         stdio: "pipe",
         cwd: path.join(__dirname, ".."),
