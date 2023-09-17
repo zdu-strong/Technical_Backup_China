@@ -1,3 +1,4 @@
+import { Capacitor } from '@capacitor/core';
 import { BatteryInfo, Device } from '@capacitor/device';
 import { useMobxState } from 'mobx-react-use-autorun';
 import { useMount } from "mobx-react-use-autorun"
@@ -15,7 +16,16 @@ export function useBatteryInfo() {
 
   function loadBatteryInfo(subscription: Subscription) {
     subscription.add(of(null).pipe(
-      concatMap(() => from(Device.getBatteryInfo())),
+      concatMap(() => {
+        if (Capacitor.getPlatform() === "web") {
+          return of({
+            batteryLevel: 1,
+            isCharging: false,
+          });
+        } else {
+          return from(Device.getBatteryInfo());
+        }
+      }),
       tap((batteryInfo) => {
         state.batteryInfo = batteryInfo;
       }),
