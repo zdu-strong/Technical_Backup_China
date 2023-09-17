@@ -4,7 +4,8 @@ import { v1 } from "uuid";
 import { addMilliseconds } from "date-fns";
 import { Database } from "@/common/database";
 import path from 'path'
-import { Directory, Filesystem } from '@capacitor/filesystem'
+import { Directory, Encoding, Filesystem } from '@capacitor/filesystem'
+import { Capacitor } from "@capacitor/core";
 
 export async function getStorageSpaceListByPagination(pageNum: number, pageSize: number) {
   const db = new Database();
@@ -73,6 +74,61 @@ export async function listRoots() {
     directory: Directory.Library,
   })).files.map(s => s.name);
   return folderNameListOfRootFolder;
+}
+
+export async function download() {
+  const downloadFolder = await getDownloadFolderPath();
+  const { uri } = await Filesystem.writeFile({
+    path: await getUnusedFileName(downloadFolder, "hello.txt"),
+    data: "Hello, World!",
+    encoding: Encoding.UTF8,
+  });
+  return uri;
+}
+
+async function getUnusedFileName(downloadFolder: string, fileName: string) {
+  for (let i = 0; i < Number.MAX_SAFE_INTEGER; i++) {
+    if (i === 0) {
+      const filePath = path.join(downloadFolder, fileName);
+      try {
+        await Filesystem.stat({
+          path: filePath,
+        });
+        continue;
+      } catch (e) {
+        return filePath;
+      }
+    } else {
+      var extensionName = path.extname(fileName);
+      const filePath = path.join(downloadFolder, `${path.basename(fileName, extensionName)} (${i})${extensionName}`);
+      try {
+        await Filesystem.stat({
+          path: filePath,
+        });
+        continue;
+      } catch (e) {
+        return filePath;
+      }
+    }
+  }
+  throw new Error("Unable to get valid file name");
+}
+
+async function getDownloadFolderPath() {
+  const { uri: uriOfRootPath } = await Filesystem.getUri({
+    path: "",
+    directory: Directory.External,
+  });
+  if (Capacitor.getPlatform() === "android") {
+    const rootPath = path.join(uriOfRootPath, "../../../..");
+    const downloadPathOfAndroid = path.join(rootPath, "Download");
+    return downloadPathOfAndroid;
+  } else if (Capacitor.getPlatform() === "ios") {
+    const rootPath = path.join(uriOfRootPath, "../../../..");
+    const downloadPathForIOS = path.join(rootPath, "Downloads");
+    return downloadPathForIOS;
+  }
+  throw new Error("Unsupported web platform");
 }
 
 async function isUsedByProgramData(folderName: string) {

@@ -1,7 +1,6 @@
 import { StorageSpaceService } from "@/service";
 import { concatMap, lastValueFrom, retry, repeat, timer, of } from "rxjs";
 import { from } from "linq";
-import { Directory, Filesystem } from '@capacitor/filesystem'
 
 async function runManageStorageSpace() {
   const { totalPage } = await StorageSpaceService.getStorageSpaceListByPagination(1, 1);
