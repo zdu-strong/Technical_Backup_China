@@ -2,8 +2,10 @@ package com.springboot.project.test.controller.AuthorizationController;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Base64;
 import java.util.List;
 import org.apache.http.client.utils.URIBuilder;
 import org.jinq.orm.stream.JinqStream;
@@ -40,9 +42,9 @@ public class AuthorizationControllerSignUpTest extends BaseTest {
                         .encryptByAES(keyPairOfRSA.getPrivateKeyOfRSA()));
         var keyPairOfRSAForPassword = this.encryptDecryptService.generateKeyPairOfRSA();
         userModelOfSignUp.setPassword(
-                new ObjectMapper().writeValueAsString(Lists.newArrayList(
+                Base64.getEncoder().encodeToString(new ObjectMapper().writeValueAsString(Lists.newArrayList(
                         this.encryptDecryptService.encryptByAES(keyPairOfRSAForPassword.getPrivateKeyOfRSA()),
-                        keyPairOfRSAForPassword.getPublicKeyOfRSA())));
+                        keyPairOfRSAForPassword.getPublicKeyOfRSA())).getBytes(StandardCharsets.UTF_8)));
         var url = new URIBuilder("/sign_up").build();
         var response = this.testRestTemplate.postForEntity(url, new HttpEntity<>(userModelOfSignUp),
                 Object.class);

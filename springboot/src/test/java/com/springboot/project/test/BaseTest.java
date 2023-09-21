@@ -4,9 +4,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Supplier;
@@ -206,10 +208,10 @@ public class BaseTest {
                                 this.encryptDecryptService.generateSecretKeyOfAES(password)));
         var keyPairOfRSAForPassword = this.encryptDecryptService.generateKeyPairOfRSA();
         userModelOfSignUp.setPassword(
-                new ObjectMapper().writeValueAsString(Lists.newArrayList(
+                Base64.getEncoder().encodeToString(new ObjectMapper().writeValueAsString(Lists.newArrayList(
                         this.encryptDecryptService.encryptByAES(keyPairOfRSAForPassword.getPrivateKeyOfRSA(),
                                 this.encryptDecryptService.generateSecretKeyOfAES(password)),
-                        keyPairOfRSAForPassword.getPublicKeyOfRSA())));
+                        keyPairOfRSAForPassword.getPublicKeyOfRSA())).getBytes(StandardCharsets.UTF_8)));
         var url = new URIBuilder("/sign_up").build();
         var response = this.testRestTemplate.postForEntity(url, new HttpEntity<>(userModelOfSignUp),
                 UserModel.class);

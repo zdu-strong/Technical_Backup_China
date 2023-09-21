@@ -15,7 +15,7 @@ export async function signUp(password: string, nickname: string, userEmailList: 
     userEmailList: userEmailList,
     publicKeyOfRSA: publicKey,
     privateKeyOfRSA: await encryptByAES(await generateSecretKeyOfAES(password), privateKey),
-    password: JSON.stringify([await encryptByAES(await generateSecretKeyOfAES(password), keyPairOfRSAForPassword.privateKey), keyPairOfRSAForPassword.publicKey]),
+    password: Buffer.from(JSON.stringify([await encryptByAES(await generateSecretKeyOfAES(password), keyPairOfRSAForPassword.privateKey), keyPairOfRSAForPassword.publicKey]), "utf8").toString("base64"),
   });
   await signIn(user.id, password);
 }

@@ -1,6 +1,7 @@
 package com.springboot.project.controller;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
@@ -97,8 +98,11 @@ public class AuthorizationController extends BaseController {
 
         {
             var publicKeyOfRSA = JinqStream
-                    .from(new ObjectMapper().readValue(user.getPassword(), new TypeReference<List<String>>() {
-                    })).skip(1).getOnlyValue();
+                    .from(new ObjectMapper().readValue(
+                            new String(Base64.getDecoder().decode(user.getPassword()), StandardCharsets.UTF_8),
+                            new TypeReference<List<String>>() {
+                            }))
+                    .skip(1).getOnlyValue();
             var passwordString = this.encryptDecryptService.decryptByByPublicKeyOfRSA(password,
                     publicKeyOfRSA);
             var userModel = new ObjectMapper().readValue(passwordString, UserModel.class);
@@ -160,8 +164,11 @@ public class AuthorizationController extends BaseController {
         user.setId(userModel.getId());
         user.setPrivateKeyOfRSA(userModel.getPrivateKeyOfRSA());
         user.setPassword(JinqStream
-                .from(new ObjectMapper().readValue(userModel.getPassword(), new TypeReference<List<String>>() {
-                })).limit(1).getOnlyValue());
+                .from(new ObjectMapper().readValue(
+                        new String(Base64.getDecoder().decode(userModel.getPassword()), StandardCharsets.UTF_8),
+                        new TypeReference<List<String>>() {
+                        }))
+                .limit(1).getOnlyValue());
 
         return ResponseEntity.ok(user);
     }
