@@ -29,6 +29,7 @@ RUN npm install --location=global concurrently@8.2.0
 
 # Install java
 RUN dnf install -y java-17-openjdk-devel
+ENV JAVA_HOME /usr/lib/jvm/java-17-openjdk
 
 # compile server code
 FROM first_docker as second_docker

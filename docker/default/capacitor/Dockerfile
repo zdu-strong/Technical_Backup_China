@@ -19,6 +19,7 @@ RUN dnf module install -y nodejs:18
 
 # Install java
 RUN dnf install -y java-17-openjdk-devel
+ENV JAVA_HOME /usr/lib/jvm/java-17-openjdk
 
 # run test
 FROM first_docker as second_docker

@@ -16,6 +16,7 @@ ENV LC_ALL C.UTF-8
 
 # Install java
 RUN dnf install -y java-17-openjdk-devel
+ENV JAVA_HOME /usr/lib/jvm/java-17-openjdk
 
 # compile code
 FROM first_docker as second_docker
