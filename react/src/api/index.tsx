@@ -9,7 +9,7 @@ export default {
   UserMessage,
   Git,
   Friendship,
-  ...Resource,
+  Resource,
 }
 
 
