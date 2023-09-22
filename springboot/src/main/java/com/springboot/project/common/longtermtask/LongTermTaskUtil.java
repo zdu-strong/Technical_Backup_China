@@ -2,7 +2,6 @@ package com.springboot.project.common.longtermtask;
 
 import java.net.URISyntaxException;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import org.apache.http.client.utils.URIBuilder;
@@ -45,27 +44,18 @@ public class LongTermTaskUtil {
                 return Observable.empty();
             }).repeat().retry().subscribe();
             try {
-                var result = CompletableFuture.supplyAsync(() -> supplier.get()).get();
+                var result = supplier.get();
                 subscription.dispose();
-                CompletableFuture.runAsync(() -> {
-                    synchronized (idOfLongTermTask) {
-                        this.longTermTaskService.updateLongTermTaskByResult(idOfLongTermTask, result);
-                    }
-                }).get();
+                synchronized (idOfLongTermTask) {
+                    this.longTermTaskService.updateLongTermTaskByResult(idOfLongTermTask, result);
+                }
             } catch (Throwable e) {
                 subscription.dispose();
                 try {
-                    CompletableFuture.runAsync(() -> {
-                        synchronized (idOfLongTermTask) {
-                            if (e instanceof ExecutionException && e.getCause() != null) {
-                                this.longTermTaskService.updateLongTermTaskByErrorMessage(idOfLongTermTask,
-                                        ((ExecutionException) e).getCause());
-                            } else {
-                                this.longTermTaskService.updateLongTermTaskByErrorMessage(idOfLongTermTask, e);
-                            }
-                        }
-                    }).get();
-                } catch (InterruptedException | ExecutionException e4) {
+                    synchronized (idOfLongTermTask) {
+                        this.longTermTaskService.updateLongTermTaskByErrorMessage(idOfLongTermTask, e);
+                    }
+                } catch (Throwable e4) {
                     log.error("Failed to saving exception message for long term task \"" + idOfLongTermTask + "\"",
                             e4);
                 }
