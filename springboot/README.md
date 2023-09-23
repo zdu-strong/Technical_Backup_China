@@ -57,9 +57,6 @@ The following dependencies are currently unable to continue to be upgraded:<br/>
 
 1. Press "F5" to start.<br/>
 2. In debug mode, "F10" Step over, "F11" Step into, "Shipt+F11" Step out, "F5" Skip breakpoint.<br/>
-3. In Testing.<br/>
-First "Terminal - Run Build Task".<br/>
-Repeat this steps until the test list is displayed - "Restart, expand current project and run tests".<br/>
 
 ## Notes - jinq - Things to note
 
