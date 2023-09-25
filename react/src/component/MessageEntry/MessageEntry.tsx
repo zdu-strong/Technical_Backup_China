@@ -64,6 +64,7 @@ export default observer(() => {
           username={GlobalUserInfo.username!}
           setReadyForMessageList={state.setReadyForMessageList}
           variableSizeListRef={state.variableSizeListRef}
+          key={GlobalUserInfo.accessToken}
         />
         <MessageChat
           userId={GlobalUserInfo.id!}
