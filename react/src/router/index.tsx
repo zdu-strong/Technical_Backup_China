@@ -3,7 +3,7 @@ import GitInfo from '@/component/GitInfo';
 import NotFoundPageComponent from '@/component/NotFoundPageComponent/NotFoundPageComponent';
 import SignIn from '@/component/SignIn/SignIn';
 import SignUp from '@/component/SignUp/SignUp';
-import MessageEntry from '@/component/MessageEntry/MessageEntry';
+import MessageEntry from '@/component/Message/MessageEntry';
 
 export default (
   <BrowserRouter>

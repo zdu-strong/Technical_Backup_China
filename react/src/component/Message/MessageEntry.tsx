@@ -7,7 +7,7 @@ import { useMount } from "mobx-react-use-autorun";
 import api from "@/api";
 import LoadingOrErrorComponent from "@/common/LoadingOrErrorComponent/LoadingOrErrorComponent";
 import { v1 } from "uuid";
-import MessageMenu from "@/component/MessageEntry/MessageMenu";
+import MessageMenu from "@/component/Message/MessageMenu";
 import MessageUnlimitedList from "@/component/Message/MessageUnlimitedList";
 import { useRef } from "react";
 
