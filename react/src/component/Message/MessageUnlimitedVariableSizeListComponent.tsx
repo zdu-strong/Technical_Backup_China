@@ -1,7 +1,7 @@
 import { observer, useMobxEffect, useMobxState } from "mobx-react-use-autorun";
 import { VariableSizeList } from 'react-window'
 import { stylesheet } from "typestyle";
-import { useImperativeHandle, forwardRef, useRef, ReactNode, Ref } from "react";
+import { useImperativeHandle, useRef, ReactNode, Ref } from "react";
 import MessageUnlimitedVariableSizeListChildComponent from "@/component/Message/MessageUnlimitedVariableSizeListChildComponent";
 import { v1 } from "uuid";
 import AutoSizer, { Size } from 'react-virtualized-auto-sizer'
@@ -10,6 +10,7 @@ import { useMount } from "mobx-react-use-autorun";
 import { DefaultVariableSizeListChildRowHeight } from "@/component/Message/js/DefaultVariableSizeListChildRowHeight";
 import { DefaultVariableSizeListAdjustDuration } from "@/component/Message/js/DefaultVariableSizeListAdjustDuration";
 import * as mathjs from 'mathjs'
+import React from 'react'
 
 const css = stylesheet({
   VariableSizeList: {
@@ -31,7 +32,7 @@ const css = stylesheet({
   }
 })
 
-export default observer(forwardRef((props: {
+export default observer(React.forwardRef((props: {
   totalPage: number,
   children: (props: { pageNum: number }) => ReactNode,
   ready: boolean,
