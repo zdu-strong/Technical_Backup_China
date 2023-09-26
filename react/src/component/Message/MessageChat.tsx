@@ -16,8 +16,6 @@ export default observer((props: {
   username: string,
   userId: string,
   variableSizeListRef: React.MutableRefObject<{
-    scrollToItemByPageNum: (pageNum: number) => Promise<void>;
-    isNeedScrollToEnd: () => boolean;
     scrollToItemByLast: () => Promise<void>;
   } | undefined>,
 }) => {

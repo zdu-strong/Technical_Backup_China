@@ -37,8 +37,6 @@ export default observer(() => {
   }, {
     navigate: useNavigate(),
     variableSizeListRef: useRef<{
-      scrollToItemByPageNum: (pageNum: number) => Promise<void>,
-      isNeedScrollToEnd: () => boolean,
       scrollToItemByLast: () => Promise<void>,
     }>(),
   })

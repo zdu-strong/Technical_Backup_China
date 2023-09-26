@@ -1,13 +1,15 @@
+import { Virtuoso, VirtuosoHandle } from 'react-virtuoso'
 import { observer, useMobxEffect, useMobxState } from "mobx-react-use-autorun";
 import { stylesheet } from "typestyle";
 import api from '@/api'
 import { useMount } from "mobx-react-use-autorun";
-import { concatMap, from, catchError, switchMap, timer, repeat, ReplaySubject, tap, Subscription } from 'rxjs'
+import { concatMap, from, catchError, switchMap, timer, repeat, ReplaySubject, tap, Subscription, EMPTY, interval, take, delay } from 'rxjs'
 import MessageUnlimitedListChild from "@/component/Message/MessageUnlimitedListChild";
-import MessageUnlimitedVariableSizeListComponent from "@/component/Message/MessageUnlimitedVariableSizeListComponent";
 import { Alert, CircularProgress } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import { UserMessageModel } from "@/model/UserMessageModel";
+import { useImperativeHandle, useRef } from 'react';
+import { v1 } from 'uuid';
 
 const css = stylesheet({
   messsageListContainer: {
@@ -26,15 +28,11 @@ export default observer((props: {
   username: string,
   setReadyForMessageList: (readyForMessageList: boolean) => Promise<void>,
   variableSizeListRef: React.MutableRefObject<{
-    scrollToItemByPageNum: (pageNum: number) => Promise<void>;
-    isNeedScrollToEnd: () => boolean;
     scrollToItemByLast: () => Promise<void>;
   } | undefined>
 }) => {
 
   const state = useMobxState({
-    /* Which item you want to jump to, the value of the input box */
-    jumpItemOfInput: "",
     /* total number of messages */
     totalPage: 0,
     /* message websocket */
@@ -48,35 +46,45 @@ export default observer((props: {
     error: null as boolean | null,
     messageMap: {} as Record<string, UserMessageModel>,
     listenMessageSet: new Set<number>(),
+    // extraScrollDate: new Date(),
+    // extraScrollItem: 0,
+    extraScrollItemSubject: new ReplaySubject<number>(1),
+    /* The prefix of the child element id */
+    idPrefix: `${v1()}-message-child-`,
     child,
   }, {
     ...props,
+    virtuosoRef: useRef<VirtuosoHandle>(),
+    containerRef: useRef<HTMLDivElement>(),
   })
 
   useMount((subscription) => {
     loadAllMessage(subscription);
+    subscribeToExtraScrollItemSubject(subscription);
   })
 
-  function child(props: { pageNum: number }) {
+  function child(index: number) {
+    const pageNum = index + 1;
     return <MessageUnlimitedListChild
+      idPrefix={state.idPrefix}
       loadMessage={() => {
-        state.listenMessageSet.add(props.pageNum);
+        state.listenMessageSet.add(pageNum);
         state.websocketInput.next({
-          pageNum: props.pageNum,
+          pageNum: pageNum,
           isCancel: false,
         });
       }}
       unloadMessage={() => {
-        state.listenMessageSet.delete(props.pageNum);
+        state.listenMessageSet.delete(pageNum);
         state.websocketInput.next({
-          pageNum: props.pageNum,
+          pageNum: pageNum,
           isCancel: true,
         });
       }}
-      pageNum={props.pageNum}
-      ready={!!state.messageMap[props.pageNum]}
-      loading={!state.messageMap[props.pageNum]}
-      message={state.messageMap[props.pageNum]}
+      pageNum={pageNum}
+      ready={!!state.messageMap[pageNum]}
+      loading={!state.messageMap[pageNum]}
+      message={state.messageMap[pageNum]}
       userId={state.userId}
       username={state.username}
     />
@@ -84,7 +92,9 @@ export default observer((props: {
 
   useMobxEffect(() => {
     state.child = child;
-  }, [state.userId, state.username])
+  }, [state.userId, state.username, state.messageMap])
+
+
 
   function loadAllMessage(subscription: Subscription) {
     subscription.add(timer(1).pipe(
@@ -96,13 +106,13 @@ export default observer((props: {
         for (const message of messageList) {
           state.messageMap[message.pageNum] = message;
         }
-        let isNeedScrollToEnd: boolean | undefined = state.variableSizeListRef.current?.isNeedScrollToEnd();
+        let isNeedScrollToEndResult = await isNeedScrollToEnd();
 
         if (!state.ready) {
-          isNeedScrollToEnd = true;
+          isNeedScrollToEndResult = true;
         }
-        if (isNeedScrollToEnd) {
-          await state.variableSizeListRef.current?.scrollToItemByPageNum(state.totalPage);
+        if (isNeedScrollToEndResult) {
+          await scrollToItemByPageNum(state.totalPage);
         }
         state.ready = true;
         state.error = null;
@@ -140,13 +150,73 @@ export default observer((props: {
     }
   }
 
-  return <div className={css.messsageListContainer}>
+  useImperativeHandle(state.variableSizeListRef, () => ({
+    async scrollToItemByLast() {
+      await scrollToItemByPageNum(state.totalPage);
+    }
+  }))
+
+  async function scrollToItemByPageNum(pageNum: number) {
+    if (pageNum > 0) {
+      state.extraScrollItemSubject.next(pageNum);
+    }
+  }
+
+  async function isNeedScrollToEnd() {
+    const scrollTop: number = await new Promise((resolve, reject) => {
+      try {
+        state.virtuosoRef.current?.getState(({ scrollTop }) => {
+          resolve(scrollTop);
+        })
+      } catch (error) {
+        reject(error)
+      }
+    });
+    const clientHeight = state.containerRef.current!.clientHeight;
+    const totalHeight = state.containerRef.current!.firstElementChild!.firstElementChild!.firstElementChild!.clientHeight;
+    const isNeedScrollToEndResult = scrollTop + clientHeight >= totalHeight - 1;
+    return isNeedScrollToEndResult;
+  }
+
+  function subscribeToExtraScrollItemSubject(subscription: Subscription) {
+    subscription.add(state.extraScrollItemSubject.pipe(
+      switchMap((pageNum) => {
+        return interval(1).pipe(
+          take(200),
+          concatMap(() => {
+            state.virtuosoRef?.current?.scrollToIndex(pageNum - 1);
+            const itemElements = state.containerRef.current?.getElementsByClassName(`${state.idPrefix}${pageNum}`);
+            if (itemElements?.length) {
+              return timer(1).pipe(
+                tap(() => {
+                  state.virtuosoRef?.current?.scrollToIndex(pageNum - 1);
+                }),
+                delay(1),
+                tap(() => {
+                  state.virtuosoRef?.current?.scrollToIndex(pageNum - 1);
+                }),
+              );
+            } else {
+              return EMPTY;
+            }
+          }),
+          take(1),
+        )
+      })
+    ).subscribe());
+  }
+
+  return <div className={css.messsageListContainer} ref={state.containerRef as any}>
     {!state.error && !state.ready && <CircularProgress style={{ width: "40px", height: "40px" }} />}
     {state.error && <Alert severity="error">
       <FormattedMessage id="ServerAccessError" defaultMessage="Server access error" />
     </Alert>}
-    <MessageUnlimitedVariableSizeListComponent totalPage={state.totalPage} ref={state.variableSizeListRef as any} ready={state.ready && !state.error}>
-      {state.child}
-    </MessageUnlimitedVariableSizeListComponent>
+    <Virtuoso
+      className='flex flex-auto w-full'
+      totalCount={state.totalPage}
+      style={(state.ready && !state.error) ? {} : { visibility: "hidden" }}
+      itemContent={state.child}
+      ref={state.virtuosoRef as any}
+    />
   </div>;
 })

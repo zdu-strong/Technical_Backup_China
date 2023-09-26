@@ -9,6 +9,7 @@ import { UserMessageModel } from "@/model/UserMessageModel";
 import path from 'path'
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import { Subscription } from "rxjs";
+import { DefaultVariableSizeListChildRowHeight } from "./js/DefaultVariableSizeListChildRowHeight";
 
 export default observer((props: {
   loadMessage: () => void,
@@ -19,6 +20,7 @@ export default observer((props: {
   message: UserMessageModel,
   userId: string,
   username: string,
+  idPrefix: string,
 }) => {
 
   const state = useMobxState({
@@ -44,7 +46,7 @@ export default observer((props: {
     }
   }
 
-  return <div className="flex flex-col flex-auto w-full justify-between">
+  return <div className="flex flex-col flex-auto w-full justify-between" style={{ minHeight: `${DefaultVariableSizeListChildRowHeight}px` }} id={`${state.idPrefix}${state.pageNum}`}>
     <div className="flex flex-col flex-auto w-full">
       <div className="flex flex-row flex-wrap w-full justify-between" style={{ whiteSpace: "pre-wrap", wordBreak: "break-word", wordWrap: "break-word" }}>
         <div className="flex">
