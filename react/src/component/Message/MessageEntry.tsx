@@ -10,6 +10,7 @@ import { v1 } from "uuid";
 import MessageMenu from "@/component/Message/MessageMenu";
 import MessageUnlimitedList from "@/component/Message/MessageUnlimitedList";
 import { useRef } from "react";
+import { concatMap, from, timer } from "rxjs";
 
 const css = stylesheet({
   container: {
@@ -41,15 +42,19 @@ export default observer(() => {
     }>(),
   })
 
-  useMount(async () => {
-    try {
-      if (!(await api.Authorization.isSignIn())) {
-        await api.Authorization.signUp(v1(), "visitor", []);
-      }
-      state.readyForStart = true;
-    } catch (error) {
-      state.error = error;
-    }
+  useMount(async (subscription) => {
+    subscription.add(timer(1).pipe(
+      concatMap(() => from((async () => {
+        try {
+          if (!(await api.Authorization.isSignIn())) {
+            await api.Authorization.signUp(v1(), "visitor", []);
+          }
+          state.readyForStart = true;
+        } catch (error) {
+          state.error = error;
+        }
+      })()))
+    ).subscribe());
   })
 
   return <>
