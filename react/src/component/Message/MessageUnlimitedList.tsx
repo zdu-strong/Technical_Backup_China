@@ -160,6 +160,9 @@ export default observer((props: {
   }
 
   async function scrollToItemByPageNum(pageNum: number) {
+    if (pageNum > state.totalPage || pageNum === 0) {
+      return;
+    }
     state.extraScrollItemSubject.next(pageNum);
   }
 
