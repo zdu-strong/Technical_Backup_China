@@ -100,19 +100,20 @@ export default observer((props: {
     subscription.add(timer(1).pipe(
       switchMap(() => api.UserMessage.getUserMessageWebsocket(state.websocketInput)),
       concatMap(({ list: messageList, totalPage }) => from((async () => {
+        let isNeedScrollToEndResult = await isNeedScrollToEnd();
+
         if (typeof totalPage === "number") {
           state.totalPage = totalPage;
         }
         for (const message of messageList) {
           state.messageMap[message.pageNum] = message;
         }
-        let isNeedScrollToEndResult = await isNeedScrollToEnd();
 
         if (!state.ready) {
           isNeedScrollToEndResult = true;
         }
         if (isNeedScrollToEndResult) {
-          await scrollToItemByPageNum(state.totalPage);
+          await scrollToItemByLast();
         }
         state.ready = true;
         state.error = null;
@@ -151,15 +152,15 @@ export default observer((props: {
   }
 
   useImperativeHandle(state.variableSizeListRef, () => ({
-    async scrollToItemByLast() {
-      await scrollToItemByPageNum(state.totalPage);
-    }
+    scrollToItemByLast,
   }))
 
+  async function scrollToItemByLast() {
+    await scrollToItemByPageNum(state.totalPage);
+  }
+
   async function scrollToItemByPageNum(pageNum: number) {
-    if (pageNum > 0) {
-      state.extraScrollItemSubject.next(pageNum);
-    }
+    state.extraScrollItemSubject.next(pageNum);
   }
 
   async function isNeedScrollToEnd() {
@@ -174,7 +175,15 @@ export default observer((props: {
     });
     const clientHeight = state.containerRef.current!.clientHeight;
     const totalHeight = state.containerRef.current!.firstElementChild!.firstElementChild!.firstElementChild!.clientHeight;
-    const isNeedScrollToEndResult = scrollTop + clientHeight >= totalHeight - 1;
+    let isNeedScrollToEndResult = scrollTop + clientHeight >= totalHeight - 2;
+    if (!isNeedScrollToEndResult) {
+      const itemElement = window.document.getElementById(`${state.idPrefix}${state.totalPage}`);
+      if (itemElement) {
+        if (scrollTop + itemElement.clientHeight >= totalHeight - 2) {
+          isNeedScrollToEndResult = true;
+        }
+      }
+    }
     return isNeedScrollToEndResult;
   }
 
@@ -185,8 +194,8 @@ export default observer((props: {
           take(200),
           concatMap(() => {
             state.virtuosoRef?.current?.scrollToIndex(pageNum - 1);
-            const itemElements = state.containerRef.current?.getElementsByClassName(`${state.idPrefix}${pageNum}`);
-            if (itemElements?.length) {
+            const itemElement = window.document.getElementById(`${state.idPrefix}${pageNum}`);
+            if (itemElement) {
               return timer(1).pipe(
                 tap(() => {
                   state.virtuosoRef?.current?.scrollToIndex(pageNum - 1);
