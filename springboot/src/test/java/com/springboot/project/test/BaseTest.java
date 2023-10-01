@@ -201,12 +201,10 @@ public class BaseTest {
                 .setUserEmailList(Lists.newArrayList(new UserEmailModel().setEmail(email)
                         .setVerificationCodeEmail(verificationCodeEmail)))
                 .setPublicKeyOfRSA(keyPairOfRSA.getPublicKeyOfRSA());
-        userModelOfSignUp
-                .setPrivateKeyOfRSA(
-                        this.encryptDecryptService.encryptByAES(
-                                keyPairOfRSA.getPrivateKeyOfRSA(),
-                                this.encryptDecryptService.generateSecretKeyOfAES(password)));
         var keyPairOfRSAForPassword = this.encryptDecryptService.generateKeyPairOfRSA();
+        userModelOfSignUp
+                .setPrivateKeyOfRSA(this.encryptDecryptService.encryptByPublicKeyOfRSA(
+                        keyPairOfRSA.getPrivateKeyOfRSA(), keyPairOfRSAForPassword.getPublicKeyOfRSA()));
         userModelOfSignUp.setPassword(
                 Base64.getEncoder().encodeToString(new ObjectMapper().writeValueAsString(Lists.newArrayList(
                         this.encryptDecryptService.encryptByAES(keyPairOfRSAForPassword.getPrivateKeyOfRSA(),
@@ -235,7 +233,7 @@ public class BaseTest {
         return user;
     }
 
-    private UserModel signIn(String email, String password)
+    protected UserModel signIn(String email, String password)
             throws URISyntaxException, InvalidKeySpecException, NoSuchAlgorithmException, JsonMappingException,
             JsonProcessingException {
         UserModel userForSignIn;
@@ -246,9 +244,16 @@ public class BaseTest {
             userForSignIn = response.getBody();
         }
         {
+            var secretKeyOfAESOfAccessToken = this.encryptDecryptService.generateSecretKeyOfAES();
+            var privateKeyOfRSA = this.encryptDecryptService
+                    .decryptByByPrivateKeyOfRSA(userForSignIn.getPrivateKeyOfRSA(),
+                            this.encryptDecryptService.decryptByAES(userForSignIn.getPassword(),
+                                    this.encryptDecryptService.generateSecretKeyOfAES(password)));
             var passwordParameter = this.encryptDecryptService.encryptByPrivateKeyOfRSA(
                     new ObjectMapper().writeValueAsString(
-                            new UserModel().setCreateDate(new Date()).setPrivateKeyOfRSA("Private Key")),
+                            new UserModel().setCreateDate(new Date())
+                                    .setPrivateKeyOfRSA(this.encryptDecryptService.encryptByAES(privateKeyOfRSA,
+                                            secretKeyOfAESOfAccessToken))),
                     this.encryptDecryptService.decryptByAES(userForSignIn.getPassword(),
                             this.encryptDecryptService.generateSecretKeyOfAES(password)));
             var url = new URIBuilder("/sign_in").setParameter("userId", userForSignIn.getId())
@@ -261,8 +266,8 @@ public class BaseTest {
                     .setInterceptors(Lists.newArrayList(new HttpHeaderInterceptor(HttpHeaders.AUTHORIZATION,
                             "Bearer " + accessToken)));
             var user = getUserInfo(accessToken);
-            user.setPrivateKeyOfRSA(this.encryptDecryptService.decryptByAES(userForSignIn.getPrivateKeyOfRSA(),
-                    this.encryptDecryptService.generateSecretKeyOfAES(password)));
+            user.setPrivateKeyOfRSA(
+                    this.encryptDecryptService.decryptByAES(user.getPrivateKeyOfRSA(), secretKeyOfAESOfAccessToken));
             user.setAccess_token(accessToken);
             return user;
         }
