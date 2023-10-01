@@ -18,6 +18,7 @@ async function main() {
     oldDatabaseName,
   );
   await deleteDatabase(newDatabaseName, oldDatabaseName);
+  await clean();
   if (!isCreateChangeLogFile) {
     console.log('\nAn empty changelog file was generated, so delete it.');
   } else {
@@ -111,6 +112,15 @@ async function diffDatabase(
     return false;
   }
   return true;
+}
+
+async function clean() {
+  const command = `./mvn clean compile`;
+  await execa.command(command, {
+    stdio: 'inherit',
+    cwd: getBaseFolderPath(),
+    extendEnv: true,
+  });
 }
 
 async function deleteDatabase(
