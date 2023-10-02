@@ -3,7 +3,6 @@ package com.springboot.project.service;
 import java.util.Date;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.uuid.Generators;
 import com.springboot.project.entity.LoggerEntity;
 import com.springboot.project.model.LoggerModel;
@@ -24,7 +23,7 @@ public class LoggerService extends BaseService {
         loggerEntity.setExceptionMessage(loggerModel.getExceptionMessage());
         try {
             loggerEntity.setExceptionStackTrace(
-                    new ObjectMapper().writeValueAsString(loggerModel.getExceptionStackTrace()));
+                    this.objectMapper.writeValueAsString(loggerModel.getExceptionStackTrace()));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e.getMessage(), e);
         }

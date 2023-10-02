@@ -11,7 +11,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockHttpServletRequest;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springboot.project.test.BaseTest;
 
 public class StorageGetResourceFromRequestByFolderTest extends BaseTest {
@@ -22,7 +21,7 @@ public class StorageGetResourceFromRequestByFolderTest extends BaseTest {
     public void test() throws IOException {
         assertEquals(15, resource.contentLength());
         try (var input = resource.getInputStream()) {
-            assertEquals(new ObjectMapper().writeValueAsString(new String[] { "default.jpg" }),
+            assertEquals(this.objectMapper.writeValueAsString(new String[] { "default.jpg" }),
                     IOUtils.toString(input, StandardCharsets.UTF_8));
         }
     }

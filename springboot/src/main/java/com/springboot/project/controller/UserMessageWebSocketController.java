@@ -49,6 +49,11 @@ public class UserMessageWebSocketController {
     private static PermissionUtil _permissionUtil;
 
     /**
+     * Autowired
+     */
+    private static ObjectMapper _objectMapper;
+
+    /**
      * Public accessible properties
      */
     @Getter
@@ -73,6 +78,11 @@ public class UserMessageWebSocketController {
     @Autowired
     public void setPermissionUtil(PermissionUtil permissionUtil) {
         _permissionUtil = permissionUtil;
+    }
+
+    @Autowired
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        _objectMapper = objectMapper;
     }
 
     /**
@@ -117,7 +127,7 @@ public class UserMessageWebSocketController {
     @OnMessage
     public void OnMessage(String userMessageWebSocketReceiveModelString)
             throws IOException, InterruptedException {
-        var userMessageWebSocketReceiveModel = new ObjectMapper().readValue(userMessageWebSocketReceiveModelString,
+        var userMessageWebSocketReceiveModel = _objectMapper.readValue(userMessageWebSocketReceiveModelString,
                 UserMessageWebSocketReceiveModel.class);
         if (userMessageWebSocketReceiveModel.getIsCancel()) {
             this.onlineMessageMap.remove(userMessageWebSocketReceiveModel.getPageNum());
@@ -138,8 +148,8 @@ public class UserMessageWebSocketController {
                                 var objectTwo = new UserMessageModel();
                                 BeanUtils.copyProperties(s, objectOne, "totalPage");
                                 BeanUtils.copyProperties(t, objectTwo, "totalPage");
-                                return new ObjectMapper().writeValueAsString(objectOne).equals(
-                                        new ObjectMapper().writeValueAsString(objectTwo));
+                                return _objectMapper.writeValueAsString(objectOne).equals(
+                                        _objectMapper.writeValueAsString(objectTwo));
                             } catch (JsonProcessingException e) {
                                 throw new RuntimeException(e.getMessage(), e);
                             }
@@ -147,7 +157,7 @@ public class UserMessageWebSocketController {
                 if (!this.ready || !newMessageList.isEmpty()
                         || (messageList.size() == 0 && this.lastMessage.size() != 0)) {
                     this.session.getBasicRemote()
-                            .sendText(new ObjectMapper()
+                            .sendText(_objectMapper
                                     .writeValueAsString(new UserMessageWebSocketSendModel().setList(newMessageList)
                                             .setTotalPage(JinqStream.from(newMessageList).select(s -> s.getTotalPage())
                                                     .findFirst().orElse(0L))));
@@ -182,8 +192,8 @@ public class UserMessageWebSocketController {
                                             var objectTwo = new UserMessageModel();
                                             BeanUtils.copyProperties(s, objectOne, "totalPage");
                                             BeanUtils.copyProperties(t, objectTwo, "totalPage");
-                                            return new ObjectMapper().writeValueAsString(objectOne)
-                                                    .equals(new ObjectMapper().writeValueAsString(objectTwo));
+                                            return _objectMapper.writeValueAsString(objectOne)
+                                                    .equals(_objectMapper.writeValueAsString(objectTwo));
                                         } catch (JsonProcessingException e) {
                                             throw new RuntimeException(e.getMessage(), e);
                                         }
@@ -194,7 +204,7 @@ public class UserMessageWebSocketController {
                     }
                     this.onlineMessageMap.put(pageNum, JinqStream.from(userMessageList).getOnlyValue());
                     this.session.getBasicRemote()
-                            .sendText(new ObjectMapper().writeValueAsString(new UserMessageWebSocketSendModel()
+                            .sendText(_objectMapper.writeValueAsString(new UserMessageWebSocketSendModel()
                                     .setList(newMessageList).setTotalPage(null)));
                 }
             }

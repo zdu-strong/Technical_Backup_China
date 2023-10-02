@@ -1,9 +1,12 @@
 package com.springboot.project.format;
 
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -11,6 +14,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.springboot.project.entity.LongTermTaskEntity;
 import com.springboot.project.model.LongTermTaskModel;
 import com.springboot.project.service.BaseService;
@@ -18,6 +22,20 @@ import com.springboot.project.service.BaseService;
 @Service
 public class LongTermTaskFormatter extends BaseService {
     private Duration tempTaskSurvivalDuration = Duration.ofMinutes(1);
+
+    public String formatThrowable(Throwable e) {
+        try {
+            var simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+            var text = new ObjectMapper()
+                    .setDateFormat(simpleDateFormat)
+                    .configure(SerializationFeature.WRITE_SELF_REFERENCES_AS_NULL, true)
+                    .configure(SerializationFeature.FAIL_ON_SELF_REFERENCES, false).writeValueAsString(e);
+            return text;
+        } catch (JsonProcessingException e1) {
+            throw new RuntimeException(e1.getMessage(), e1);
+        }
+    }
 
     public ResponseEntity<?> format(LongTermTaskEntity longTermTaskEntity) {
         try {
@@ -34,14 +52,14 @@ public class LongTermTaskFormatter extends BaseService {
                     .setIsDone(longTermTaskEntity.getIsDone());
 
             if (longTermTaskEntity.getIsDone()) {
-                var result = new ObjectMapper().readTree(longTermTaskEntity.getResult());
-                longTermTaskModel.setResult(new ObjectMapper()
-                        .readValue(new ObjectMapper().writeValueAsString(result.get("body")), Object.class));
+                var result = this.objectMapper.readTree(longTermTaskEntity.getResult());
+                longTermTaskModel.setResult(this.objectMapper
+                        .readValue(this.objectMapper.writeValueAsString(result.get("body")), Object.class));
                 HttpHeaders httpHeaders = new HttpHeaders();
                 result.get("headers").fields().forEachRemaining((s) -> {
                     try {
                         httpHeaders.addAll(s.getKey(),
-                                new ObjectMapper().readValue(new ObjectMapper().writeValueAsString(s.getValue()),
+                                this.objectMapper.readValue(this.objectMapper.writeValueAsString(s.getValue()),
                                         new TypeReference<List<String>>() {
                                         }));
                     } catch (JsonMappingException e) {

@@ -6,7 +6,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.List;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.uuid.Generators;
 import com.google.common.collect.Lists;
 import org.apache.commons.io.FileUtils;
@@ -147,7 +146,7 @@ public class BaseStorageSave extends BaseStorageCreateTempFile {
                 if (resource instanceof ByteArrayResource) {
                     try (var input = resource.getInputStream()) {
                         var jsonString = IOUtils.toString(input, StandardCharsets.UTF_8);
-                        var nameListOfChildFileAndChildFolder = new ObjectMapper().readValue(jsonString,
+                        var nameListOfChildFileAndChildFolder = this.objectMapper.readValue(jsonString,
                                 new TypeReference<List<String>>() {
                                 });
                         return JinqStream.from(nameListOfChildFileAndChildFolder)

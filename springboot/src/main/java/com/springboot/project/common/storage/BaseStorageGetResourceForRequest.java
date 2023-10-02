@@ -11,7 +11,6 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 
 @Component
@@ -32,7 +31,7 @@ public class BaseStorageGetResourceForRequest extends BaseStorageDeleteResource 
             }
             var file = new File(this.getRootPath(), relativePath);
             if (file.isDirectory()) {
-                var jsonString = new ObjectMapper().writeValueAsString(getChildFileNameListFromDirectory(file));
+                var jsonString = this.objectMapper.writeValueAsString(getChildFileNameListFromDirectory(file));
                 var jsonBytes = jsonString.getBytes(StandardCharsets.UTF_8);
                 return new ByteArrayResource(jsonBytes);
             }
@@ -57,7 +56,7 @@ public class BaseStorageGetResourceForRequest extends BaseStorageDeleteResource 
             }
             var file = new File(this.getRootPath(), relativePath);
             if (file.isDirectory()) {
-                var jsonString = new ObjectMapper().writeValueAsString(getChildFileNameListFromDirectory(file));
+                var jsonString = this.objectMapper.writeValueAsString(getChildFileNameListFromDirectory(file));
                 var jsonBytes = jsonString.getBytes(StandardCharsets.UTF_8);
                 var bytes = ArrayUtils.toPrimitive(
                         JinqStream.from(Lists.newArrayList(ArrayUtils.toObject(jsonBytes))).skip(startIndex)

@@ -16,7 +16,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springboot.project.model.UserMessageModel;
 import com.springboot.project.model.UserMessageWebSocketSendModel;
 import com.springboot.project.model.UserModel;
@@ -45,7 +44,7 @@ public class UserMessageWebSocketControllerTest extends BaseTest {
             @Override
             public void onMessage(String message) {
                 try {
-                    subject.onNext(new ObjectMapper().readValue(message, UserMessageWebSocketSendModel.class));
+                    subject.onNext(objectMapper.readValue(message, UserMessageWebSocketSendModel.class));
                 } catch (JsonMappingException e) {
                     throw new RuntimeException(e.getMessage(), e);
                 } catch (JsonProcessingException e) {

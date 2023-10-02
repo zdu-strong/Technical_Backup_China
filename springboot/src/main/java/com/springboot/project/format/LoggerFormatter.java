@@ -4,7 +4,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springboot.project.entity.*;
 import com.springboot.project.model.LoggerModel;
 import com.springboot.project.service.BaseService;
@@ -21,7 +20,7 @@ public class LoggerFormatter extends BaseService {
                     .setHasException(loggerEntity.getHasException())
                     .setExceptionClassName(loggerEntity.getExceptionClassName())
                     .setExceptionMessage(loggerEntity.getExceptionMessage())
-                    .setExceptionStackTrace(new ObjectMapper().readValue(loggerEntity.getExceptionStackTrace(),
+                    .setExceptionStackTrace(this.objectMapper.readValue(loggerEntity.getExceptionStackTrace(),
                             new TypeReference<List<String>>() {
                             }))
                     .setGitCommitId(loggerEntity.getGitCommitId())

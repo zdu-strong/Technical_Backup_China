@@ -229,14 +229,16 @@ javascript:
 
 java:
 
+    import org.springframework.format.annotation.DateTimeFormat;
+    import org.springframework.format.annotation.DateTimeFormat.ISO;
     @GetMapping("/abc")
-	public ResponseEntity<?> abc(@RequestParam @DateTimeFormat(iso = ISO.DATE_TIME) Date date) {
-		return ResponseEntity.ok().build();
-	}
+    public ResponseEntity<?> abc(@RequestParam @DateTimeFormat(iso = ISO.DATE_TIME) Date date) {
+        return ResponseEntity.ok().build();
+    }
 
-	URI url = new URIBuilder("/abc").setParameter("date", StdDateFormat.instance.format(new Date())).build();
-	ResponseEntity<Object> response = this.testRestTemplate.getForEntity(url, Object.class);
-	assertEquals(HttpStatus.OK, response.getStatusCode());
+    URI url = new URIBuilder("/abc").setParameter("date", this.objectMapper.writeValueAsString(new Date()).substring(1, 25)).build();
+    ResponseEntity<Object> response = this.testRestTemplate.getForEntity(url, Object.class);
+    assertEquals(HttpStatus.OK, response.getStatusCode());
 
 ## Notes - id - Generate unique ordered uuid of version 1
 

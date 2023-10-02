@@ -21,7 +21,6 @@ import com.aliyun.oss.model.ListObjectsV2Request;
 import com.aliyun.oss.model.ListObjectsV2Result;
 import com.aliyun.oss.model.OSSObjectSummary;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.springboot.project.common.storage.BaseStorage;
 import com.springboot.project.common.storage.CloudStorageUrlResource;
@@ -108,7 +107,7 @@ public class AliyunCloudStorage extends BaseStorage implements CloudStorageInter
         var list = this.getList(key + "/").toList().blockingGet();
         if (!list.isEmpty()) {
             try {
-                var jsonString = new ObjectMapper()
+                var jsonString = this.objectMapper
                         .writeValueAsString(JinqStream.from(list).where(s -> !s.equals(key + "/"))
                                 .select(s -> this.getFileNameFromResource(new FileSystemResource(s))).toList());
                 var jsonBytes = jsonString.getBytes(StandardCharsets.UTF_8);
@@ -141,7 +140,7 @@ public class AliyunCloudStorage extends BaseStorage implements CloudStorageInter
         var list = this.getList(key + "/").toList().blockingGet();
         if (!list.isEmpty()) {
             try {
-                var jsonString = new ObjectMapper()
+                var jsonString = this.objectMapper
                         .writeValueAsString(JinqStream.from(list).where(s -> !s.equals(key + "/"))
                                 .select(s -> this.getFileNameFromResource(new FileSystemResource(s))).toList());
                 var jsonBytes = jsonString.getBytes(StandardCharsets.UTF_8);

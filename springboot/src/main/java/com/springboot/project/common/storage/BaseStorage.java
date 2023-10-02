@@ -37,6 +37,9 @@ public class BaseStorage {
     @Autowired
     protected CloudStorageImplement cloud;
 
+    @Autowired
+    protected ObjectMapper objectMapper;
+
     protected String storageRootPath;
 
     public Observable<String> listRoots() {
@@ -126,7 +129,7 @@ public class BaseStorage {
             } else {
                 throw new RuntimeException("Unsupported resource path");
             }
-            ResourceAccessLegalModel resourceAccessLegalModel = new ObjectMapper().readValue(
+            ResourceAccessLegalModel resourceAccessLegalModel = this.objectMapper.readValue(
                     this.encryptDecryptService.getAES().decryptStr(
                             Base64.getUrlDecoder().decode(JinqStream.from(pathSegmentList).findFirst().get())),
                     ResourceAccessLegalModel.class);
@@ -149,7 +152,7 @@ public class BaseStorage {
             pathSegmentList.add("resource");
             pathSegmentList
                     .add(Base64.getUrlEncoder().encodeToString(this.encryptDecryptService.getAES().encrypt(
-                            new ObjectMapper().writeValueAsString(resourceAccessLegalModel))));
+                            this.objectMapper.writeValueAsString(resourceAccessLegalModel))));
             var pathList = JinqStream.from(Lists.newArrayList(StringUtils.split(relativePath, "/"))).toList();
             if (pathList.size() > 1) {
                 pathSegmentList

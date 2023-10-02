@@ -96,6 +96,9 @@ public class BaseTest {
     protected StorageRootPathProperties storageRootPathProperties;
 
     @Autowired
+    protected ObjectMapper objectMapper;
+
+    @Autowired
     protected EncryptDecryptService encryptDecryptService;
 
     @Autowired
@@ -206,7 +209,7 @@ public class BaseTest {
                 .setPrivateKeyOfRSA(this.encryptDecryptService.encryptByPublicKeyOfRSA(
                         keyPairOfRSA.getPrivateKeyOfRSA(), keyPairOfRSAForPassword.getPublicKeyOfRSA()));
         userModelOfSignUp.setPassword(
-                Base64.getEncoder().encodeToString(new ObjectMapper().writeValueAsString(Lists.newArrayList(
+                Base64.getEncoder().encodeToString(this.objectMapper.writeValueAsString(Lists.newArrayList(
                         this.encryptDecryptService.encryptByAES(keyPairOfRSAForPassword.getPrivateKeyOfRSA(),
                                 this.encryptDecryptService.generateSecretKeyOfAES(password)),
                         keyPairOfRSAForPassword.getPublicKeyOfRSA())).getBytes(StandardCharsets.UTF_8)));
@@ -250,7 +253,7 @@ public class BaseTest {
                             this.encryptDecryptService.decryptByAES(userForSignIn.getPassword(),
                                     this.encryptDecryptService.generateSecretKeyOfAES(password)));
             var passwordParameter = this.encryptDecryptService.encryptByPrivateKeyOfRSA(
-                    new ObjectMapper().writeValueAsString(
+                    this.objectMapper.writeValueAsString(
                             new UserModel().setCreateDate(new Date())
                                     .setPrivateKeyOfRSA(this.encryptDecryptService.encryptByAES(privateKeyOfRSA,
                                             secretKeyOfAESOfAccessToken))),

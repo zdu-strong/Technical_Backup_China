@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.GitProperties;
 import org.springframework.web.bind.annotation.RestController;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springboot.project.common.TimeZoneUtil.TimeZoneUtils;
 import com.springboot.project.common.longtermtask.LongTermTaskUtil;
 import com.springboot.project.common.permission.AuthorizationEmailUtil;
@@ -92,5 +92,8 @@ public class BaseController {
 
     @Autowired
     protected LongTermTaskUtil longTermTaskUtil;
+
+    @Autowired
+    protected ObjectMapper objectMapper;
 
 }

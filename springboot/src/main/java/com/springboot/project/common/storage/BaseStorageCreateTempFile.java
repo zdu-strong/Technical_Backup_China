@@ -16,7 +16,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.uuid.Generators;
 import cn.hutool.core.util.ZipUtil;
 
@@ -53,7 +52,7 @@ public class BaseStorageCreateTempFile extends BaseStorageIsDirectory {
         request.setRequestURI(this.getResoureUrlFromResourcePath(relativePath));
         try (var input = this.getResourceFromRequest(request).getInputStream()) {
             var jsonString = IOUtils.toString(input, StandardCharsets.UTF_8);
-            var nameListOfChildFileAndChildFolder = new ObjectMapper().readValue(jsonString,
+            var nameListOfChildFileAndChildFolder = this.objectMapper.readValue(jsonString,
                     new TypeReference<List<String>>() {
 
                     });

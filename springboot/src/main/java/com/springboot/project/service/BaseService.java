@@ -7,6 +7,7 @@ import org.jinq.jpa.JinqJPAStreamProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springboot.project.common.TimeZoneUtil.TimeZoneUtils;
 import com.springboot.project.common.database.JPQLFunction;
 import com.springboot.project.common.storage.Storage;
@@ -35,6 +36,9 @@ public abstract class BaseService {
 
     @Autowired
     protected TimeZoneUtils timeZoneUtils;
+
+    @Autowired
+    protected ObjectMapper objectMapper;
 
     @Autowired
     protected StorageSpaceFormatter storageSpaceFormatter;

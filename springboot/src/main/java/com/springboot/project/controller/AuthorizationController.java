@@ -23,7 +23,6 @@ import org.springframework.web.server.ResponseStatusException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
@@ -98,14 +97,14 @@ public class AuthorizationController extends BaseController {
 
         {
             var publicKeyOfRSA = JinqStream
-                    .from(new ObjectMapper().readValue(
+                    .from(this.objectMapper.readValue(
                             new String(Base64.getDecoder().decode(user.getPassword()), StandardCharsets.UTF_8),
                             new TypeReference<List<String>>() {
                             }))
                     .skip(1).getOnlyValue();
             var passwordString = this.encryptDecryptService.decryptByByPublicKeyOfRSA(password,
                     publicKeyOfRSA);
-            var userModel = new ObjectMapper().readValue(passwordString, UserModel.class);
+            var userModel = this.objectMapper.readValue(passwordString, UserModel.class);
             var createDate = userModel.getCreateDate();
             privateKeyOfRSA = userModel.getPrivateKeyOfRSA();
 
@@ -164,7 +163,7 @@ public class AuthorizationController extends BaseController {
         user.setId(userModel.getId());
         user.setPrivateKeyOfRSA(userModel.getPrivateKeyOfRSA());
         user.setPassword(JinqStream
-                .from(new ObjectMapper().readValue(
+                .from(this.objectMapper.readValue(
                         new String(Base64.getDecoder().decode(userModel.getPassword()), StandardCharsets.UTF_8),
                         new TypeReference<List<String>>() {
                         }))
