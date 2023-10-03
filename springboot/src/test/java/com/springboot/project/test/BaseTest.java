@@ -236,7 +236,7 @@ public class BaseTest {
         return user;
     }
 
-    protected UserModel signIn(String email, String password)
+    private UserModel signIn(String email, String password)
             throws URISyntaxException, InvalidKeySpecException, NoSuchAlgorithmException, JsonMappingException,
             JsonProcessingException {
         UserModel userForSignIn;
