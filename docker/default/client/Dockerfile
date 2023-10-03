@@ -19,7 +19,7 @@ RUN dnf module install -y nodejs:18
 RUN npm config set registry https://registry.npmmirror.com
 
 # install serve
-RUN npm install --location=global serve@14.2.0
+RUN npm install --location=global serve
 
 # run test
 FROM first_docker as second_docker

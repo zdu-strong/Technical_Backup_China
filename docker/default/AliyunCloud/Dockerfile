@@ -19,13 +19,13 @@ RUN dnf module install -y nodejs:18
 RUN npm config set registry https://registry.npmmirror.com
 
 # install serve
-RUN npm install --location=global serve@14.2.0
+RUN npm install --location=global serve
 
 # install wait-on
-RUN npm install --location=global wait-on@7.0.1
+RUN npm install --location=global wait-on
 
 # install concurrently
-RUN npm install --location=global concurrently@8.2.0
+RUN npm install --location=global concurrently
 
 # Install java
 RUN dnf install -y java-17-openjdk-devel
