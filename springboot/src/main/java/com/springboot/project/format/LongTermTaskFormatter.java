@@ -1,23 +1,25 @@
 package com.springboot.project.format;
 
-import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.TimeZone;
-
+import java.util.regex.Pattern;
+import org.jinq.orm.stream.JinqStream;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.common.collect.Lists;
 import com.springboot.project.entity.LongTermTaskEntity;
 import com.springboot.project.model.LongTermTaskModel;
 import com.springboot.project.service.BaseService;
+import ch.qos.logback.classic.spi.ThrowableProxy;
 
 @Service
 public class LongTermTaskFormatter extends BaseService {
@@ -25,12 +27,28 @@ public class LongTermTaskFormatter extends BaseService {
 
     public String formatThrowable(Throwable e) {
         try {
-            var simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-            var text = new ObjectMapper()
-                    .setDateFormat(simpleDateFormat)
-                    .configure(SerializationFeature.WRITE_SELF_REFERENCES_AS_NULL, true)
-                    .configure(SerializationFeature.FAIL_ON_SELF_REFERENCES, false).writeValueAsString(e);
+            var map = new HashMap<String, Object>();
+            map.put("message", e.getMessage());
+            if (e instanceof ResponseStatusException) {
+                map.put("status", ((ResponseStatusException) e).getStatusCode().value());
+            } else {
+                map.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+            }
+            map.put("error", HttpStatus.valueOf(Integer.valueOf(String.valueOf(map.get("status")))).getReasonPhrase());
+            map.put("timestamp", this.objectMapper.writeValueAsString(new Date()).replaceAll(Pattern.quote("\""), ""));
+            var traceList = Lists.newArrayList();
+            var stackTraceElement = JinqStream.from(Lists.newArrayList(e.getStackTrace()))
+                    .findFirst().get();
+            if (e instanceof ResponseStatusException) {
+                traceList.add(stackTraceElement.getClassName() + ": " + ((ResponseStatusException) e).getReason());
+            } else {
+                traceList.add(stackTraceElement.getClassName() + ": " + map.get("message"));
+            }
+
+            traceList.addAll(JinqStream.from(Lists.newArrayList(new ThrowableProxy(e).getStackTraceElementProxyArray()))
+                    .select(s -> "\t" + s.getSTEAsString()).toList());
+            map.put("stackTrace", String.join("\n", traceList.toArray(new String[] {})));
+            var text = this.objectMapper.writeValueAsString(map);
             return text;
         } catch (JsonProcessingException e1) {
             throw new RuntimeException(e1.getMessage(), e1);
