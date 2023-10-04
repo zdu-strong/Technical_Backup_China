@@ -28,23 +28,19 @@ public class LongTermTaskFormatter extends BaseService {
     public String formatThrowable(Throwable e) {
         try {
             var map = new HashMap<String, Object>();
-            map.put("message", e.getMessage());
             if (e instanceof ResponseStatusException) {
+                map.put("message", ((ResponseStatusException) e).getReason());
                 map.put("status", ((ResponseStatusException) e).getStatusCode().value());
             } else {
+                map.put("message", e.getMessage());
                 map.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
             }
-            map.put("error", HttpStatus.valueOf(Integer.valueOf(String.valueOf(map.get("status")))).getReasonPhrase());
             map.put("timestamp", this.objectMapper.writeValueAsString(new Date()).replaceAll(Pattern.quote("\""), ""));
+            map.put("error", HttpStatus.valueOf(Integer.valueOf(String.valueOf(map.get("status")))).getReasonPhrase());
             var traceList = Lists.newArrayList();
             var stackTraceElement = JinqStream.from(Lists.newArrayList(e.getStackTrace()))
                     .findFirst().get();
-            if (e instanceof ResponseStatusException) {
-                traceList.add(stackTraceElement.getClassName() + ": " + ((ResponseStatusException) e).getReason());
-            } else {
-                traceList.add(stackTraceElement.getClassName() + ": " + map.get("message"));
-            }
-
+            traceList.add(stackTraceElement.getClassName() + ": " + map.get("message"));
             traceList.addAll(JinqStream.from(Lists.newArrayList(new ThrowableProxy(e).getStackTraceElementProxyArray()))
                     .select(s -> "\t" + s.getSTEAsString()).toList());
             map.put("stackTrace", String.join("\n", traceList.toArray(new String[] {})));
