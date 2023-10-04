@@ -236,7 +236,7 @@ java:
         return ResponseEntity.ok().build();
     }
 
-    URI url = new URIBuilder("/abc").setParameter("date", this.objectMapper.writeValueAsString(new Date()).substring(1, 25)).build();
+    URI url = new URIBuilder("/abc").setParameter("date", this.objectMapper.writeValueAsString(new Date()).replaceAll(Pattern.quote("\""), "")).build();
     ResponseEntity<Object> response = this.testRestTemplate.getForEntity(url, Object.class);
     assertEquals(HttpStatus.OK, response.getStatusCode());
 
