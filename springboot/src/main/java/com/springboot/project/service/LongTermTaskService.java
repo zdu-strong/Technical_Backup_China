@@ -52,19 +52,12 @@ public class LongTermTaskService extends BaseService {
                     .getOnlyValue();
             longTermTaskEntity.setIsDone(true);
             longTermTaskEntity.setUpdateDate(new Date());
-            if (e instanceof ResponseStatusException) {
-                var body = this.objectMapper.readTree(this.longTermTaskFormatter.formatThrowable(e));
-                if (((ResponseStatusException) e).getReason() != null) {
-                    body.withObject("").put("message", ((ResponseStatusException) e).getReason());
-                }
-                longTermTaskEntity.setResult(
-                        this.objectMapper
-                                .writeValueAsString(ResponseEntity.status(((ResponseStatusException) e).getStatusCode())
-                                        .body(body)));
-            } else {
-                longTermTaskEntity.setResult(this.objectMapper.writeValueAsString(ResponseEntity.internalServerError()
-                        .body(this.objectMapper.readTree(this.longTermTaskFormatter.formatThrowable(e)))));
-            }
+            var body = this.objectMapper.readValue(this.longTermTaskFormatter.formatThrowable(e), Object.class);
+            var responseEntity = e instanceof ResponseStatusException
+                    ? ResponseEntity.status(((ResponseStatusException) e).getStatusCode())
+                    : ResponseEntity.internalServerError();
+            var text = this.objectMapper.writeValueAsString(responseEntity.body(body));
+            longTermTaskEntity.setResult(text);
             this.merge(longTermTaskEntity);
         } catch (JsonProcessingException e1) {
             throw new RuntimeException(e1.getMessage(), e1);

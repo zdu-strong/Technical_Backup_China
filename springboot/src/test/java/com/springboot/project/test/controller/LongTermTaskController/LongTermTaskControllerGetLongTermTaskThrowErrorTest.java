@@ -6,6 +6,8 @@ import org.apache.http.client.utils.URIBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+
+import com.fasterxml.jackson.databind.JsonNode;
 import com.springboot.project.test.BaseTest;
 
 public class LongTermTaskControllerGetLongTermTaskThrowErrorTest extends BaseTest {
@@ -14,9 +16,9 @@ public class LongTermTaskControllerGetLongTermTaskThrowErrorTest extends BaseTes
     @Test
     public void test() throws URISyntaxException {
         var url = new URIBuilder(relativeUrl).build();
-        var result = this.testRestTemplate.getForEntity(url, Throwable.class);
+        var result = this.testRestTemplate.getForEntity(url, JsonNode.class);
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, result.getStatusCode());
-        assertEquals("Failed due to insufficient funds", result.getBody().getMessage());
+        assertEquals("Failed due to insufficient funds", result.getBody().get("message").asText());
     }
 
     @BeforeEach
