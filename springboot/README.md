@@ -281,8 +281,14 @@ java:
     processBuilder.environment().put("CUSTOM_ENV", "custom value");
     var exitValue = processBuilder.start()
             .waitFor();
+    destroy(processBuilder.toHandle());
     if (exitValue != 0) {
         throw new RuntimeException("Failed!");
+    }
+
+    public static void destroy(ProcessHandle hanlde) {
+        hanlde.descendants().forEach((s) -> destroy(s));
+        hanlde.destroy();
     }
 
 ## Learn More
