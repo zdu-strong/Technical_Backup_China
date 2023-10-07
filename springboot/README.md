@@ -5,7 +5,11 @@ Projects created by start.spring.io contain Spring Boot, a framework that makes 
 ## Development environment setup
 1. From https://adoptium.net install java v17, and choose Entire feature.<br/>
 2. From https://code.visualstudio.com install Visual Studio Code. Next, install extension "Extension Pack for Java" and "XML".<br/>
-3. From https://dev.mysql.com/downloads/installer install MySQL, the password of the root user is set to 123456.
+3. From https://www.docker.com install docker. Next, run the command:
+
+    docker run -d -p 9010:9010 -p 9020:9020 gcr.io/cloud-spanner-emulator/emulator
+
+4. Optional, From https://dbeaver.io install Dbeaver.<br/>
 
 ## Available Scripts
 
@@ -31,10 +35,6 @@ Run unit tests
 Generate database version upgrade sql.<br/>
 
 Its source code is in the ".mvn/diff" folder.<br/>
-
-### `./mvn clean compile sql:execute`
-
-Delete all tables in the development database
 
 ### `./mvn versions:display-dependency-updates`
 

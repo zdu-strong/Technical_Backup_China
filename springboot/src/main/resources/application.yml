@@ -1,8 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://${database.mysql.jdbc.url}/${database.mysql.name}?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC&createDatabaseIfNotExist=true
-    username: ${database.mysql.username}
-    password: ${database.mysql.password}
+    url: jdbc:cloudspanner:/projects/my-project/instances/my-instance/databases/${database.mysql.name};autocommit=false;autoConfigEmulator=true;usePlainText=true
     driver-class-name: ${database.mysql.driver}
   jpa:
     hibernate:

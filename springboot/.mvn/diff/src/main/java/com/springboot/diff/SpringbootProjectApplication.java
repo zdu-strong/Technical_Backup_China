@@ -19,7 +19,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
-import com.fasterxml.uuid.Generators;
 
 @SpringBootApplication
 public class SpringbootProjectApplication {
@@ -34,18 +33,28 @@ public class SpringbootProjectApplication {
             return;
         }
 
-        var newDatabaseName = getANewDatabaseName();
-        var oldDatabaseName = getANewDatabaseName();
+        var newDatabaseName = generateDatabaseName();
+        var oldDatabaseName = generateDatabaseName();
+        if (newDatabaseName.equals(oldDatabaseName)) {
+            throw new RuntimeException("Duplicate database name");
+        }
         buildNewDatabase(newDatabaseName);
         var isCreateChangeLogFile = diffDatabase(newDatabaseName, oldDatabaseName);
-        deleteDatabase(oldDatabaseName);
-        deleteDatabase(newDatabaseName);
         clean();
         if (!isCreateChangeLogFile) {
             System.out.println("\nAn empty changelog file was generated, so delete it.");
         } else {
             System.out.println("\nAn changelog file was generated!");
         }
+    }
+
+    public static String generateDatabaseName() throws InterruptedException {
+        Thread.sleep(1);
+        var today = new Date();
+        var simpleDateFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss_SSS");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        var databaseName = "diff_" + simpleDateFormat.format(today);
+        return databaseName;
     }
 
     public static void buildNewDatabase(String newDatabaseName)
@@ -104,7 +113,7 @@ public class SpringbootProjectApplication {
         var filePathOfDiffChangeLogFile = Paths
                 .get(getBaseFolderPath(), "src/main/resources", "liquibase/changelog",
                         simpleDateFormat.format(today).substring(0, 10),
-                        simpleDateFormat.format(today) + "_changelog.mysql.sql")
+                        simpleDateFormat.format(today) + "_changelog.xml")
                 .normalize().toString().replaceAll(Pattern.quote("\\"), "/");
         var isCreateFolder = !existFolder(Paths.get(filePathOfDiffChangeLogFile, "..").normalize().toString());
 
@@ -144,7 +153,7 @@ public class SpringbootProjectApplication {
         try (var input = new FileInputStream(new File(filePathOfDiffChangeLogFile))) {
             textContentOfDiffChangeLogFile = IOUtils.toString(input, StandardCharsets.UTF_8);
         }
-        var isEmptyOfDiffChangeLogFile = !textContentOfDiffChangeLogFile.contains("-- changeset ");
+        var isEmptyOfDiffChangeLogFile = !textContentOfDiffChangeLogFile.contains("</changeSet>");
 
         if (isEmptyOfDiffChangeLogFile) {
             if (isCreateFolder) {
@@ -190,32 +199,6 @@ public class SpringbootProjectApplication {
         }
     }
 
-    public static void deleteDatabase(String databaseName) throws IOException, InterruptedException {
-        var command = new ArrayList<String>();
-        if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
-            command.add("cmd");
-            command.add("/c");
-        } else {
-            command.add("/bin/bash");
-            command.add("-c");
-        }
-        command.add("mvn clean compile sql:execute --define database.mysql.name=" + databaseName);
-        var processBuilder = new ProcessBuilder(command)
-                .inheritIO()
-                .directory(new File(getBaseFolderPath()));
-        if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
-            processBuilder.environment().put("Path", System.getenv("Path") + ";" + getBaseFolderPath());
-        } else {
-            processBuilder.environment().put("PATH", System.getenv("PATH") + ":" + getBaseFolderPath());
-        }
-        var process = processBuilder.start();
-        var exitValue = process.waitFor();
-        destroy(process.toHandle());
-        if (exitValue != 0) {
-            throw new RuntimeException("Failed!");
-        }
-    }
-
     public static String getBaseFolderPath() {
         return new File(".").getAbsolutePath();
     }
@@ -238,12 +221,6 @@ public class SpringbootProjectApplication {
             FileUtils.deleteQuietly(folder);
         }
         return existFolder;
-    }
-
-    public static String getANewDatabaseName() {
-        var newDatabaseName = "database_"
-                + Generators.timeBasedGenerator().generate().toString().replaceAll(Pattern.quote("-"), "_");
-        return newDatabaseName;
     }
 
     public static boolean isTestEnviroment() {
