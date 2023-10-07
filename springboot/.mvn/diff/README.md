@@ -1,37 +1,19 @@
 # Getting Started
 
-This project was bootstrapped with [NestJS](https://nestjs.com). If you have any questions, please contact zdu.strong@gmail.com.<br/>
+Projects created by start.spring.io contain Spring Boot, a framework that makes Spring ready to work inside your app, but without much code or configuration required. Spring Boot is the quickest and most popular way to start Spring projects. If you have any questions, please contact zdu.strong@gmail.com.
 
 ## Development environment setup
-1. From https://code.visualstudio.com install Visual Studio Code.<br/>
-2. From https://nodejs.org install nodejs v18.<br/>
+1. From https://adoptium.net install java v17, and choose Entire feature.<br/>
+2. From https://code.visualstudio.com install Visual Studio Code. Next, install extension "Extension Pack for Java" and "XML".<br/>
 
 ## Available Scripts
 
-In the project directory, you can run:<br/>
+In the project directory, you can run:
 
-### `npm start`
+### `./mvn clean package`
 
-Produce executable files that can be run directly on the machine (windows, mac, linux).<br/>
-For example: diff.exe, diff-macos, diff-linux<br/>
-It can be called with ./diff in the springboot directory of the repository.<br/>
+To generate executable jar package
 
-## Install new dependencies
+### `./mvn versions:display-dependency-updates`
 
-    npm install react --save-dev
-
-After installing new dependencies, please make sure that the project runs normally.<br/>
-After installing new dependencies, please make sure that the dependent versions in package.json are all accurate versions.<br/>
-
-## Upgrade dependency
-
-You can use this command to check if a new version is available:<br/>
-
-    npx npm-check --update
-
-After upgrading the dependencies, please make sure that the project runs normally.<br/>
-After upgrading the dependencies, please make sure that the dependent versions in package.json are all accurate versions.<br/>
-
-The following dependencies are currently unable to continue to be upgraded:<br/>
-execa (Current project not support ES module)<br/>
-get-port (Current project not support ES module)<br/>
+Check that a new version of the dependency is available<br/>

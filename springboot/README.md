@@ -26,10 +26,9 @@ To generate executable jar package
 
 Run unit tests
 
-### `./diff`
+### `java -jar diff.jar`
 
 Generate database version upgrade sql.<br/>
-For now, only windows x64 system and macos x64 system are supported. If you need to support others, please compile the source code yourself.
 
 Its source code is in the ".mvn/diff" folder.<br/>
 

@@ -1,45 +1,31 @@
-# compiled output
-/dist
-/node_modules
-/package-lock.json
-/index-linux
-/index-macos
-/index-win.exe
-/index.exe
-/diff
-/diff.dmg
-/diff.exe
-/diff-linux
-/diff-macos
+/HELP.md
+/target
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**
+!**/src/test/**
 
-# Logs
-logs
-*.log
-npm-debug.log*
-pnpm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
+### STS ###
+/.apt_generated
+/.classpath
+/.factorypath
+/.project
+/.settings
+/.springBeans
+/.sts4-cache
 
-# OS
-.DS_Store
-
-# Tests
-/coverage
-/.nyc_output
-
-# IDEs and editors
+### IntelliJ IDEA ###
 /.idea
-.project
-.classpath
-.c9
-*.launch
-.settings
-*.sublime-workspace
+/*.iws
+/*.iml
+/*.ipr
 
-# IDE - VSCode
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+### NetBeans ###
+/nbproject/private
+/nbbuild
+/dist
+/nbdist
+/.nb-gradle
+/build
+
+### default storage folder of project ###
+/.mvn/storage
