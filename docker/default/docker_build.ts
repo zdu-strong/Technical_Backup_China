@@ -7,7 +7,6 @@ async function main() {
   await buildFFCreator();
   await runCapacitorTest();
   await runElectronTest();
-  await buildMysqlDiff();
   await buildCloud();
 }
 
@@ -82,21 +81,6 @@ async function buildFFCreator() {
     {
       stdio: "inherit",
       cwd: path.join(__dirname, "./ffcreator"),
-    }
-  );
-}
-
-async function buildMysqlDiff() {
-  execSync(
-    [
-      "docker build",
-      "-t mysqldiff",
-      "-f ./Dockerfile",
-      "../../..",
-    ].join(" "),
-    {
-      stdio: "inherit",
-      cwd: path.join(__dirname, "./MysqlDiff"),
     }
   );
 }

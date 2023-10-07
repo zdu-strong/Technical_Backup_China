@@ -26,10 +26,6 @@ jobs:
       run: docker build . --file docker/default/server/Dockerfile --tag my-image-name:$(date +%s) && docker image prune --all --force
 
     - uses: actions/checkout@v3
-    - name: Build the MysqlDiff
-      run: docker build . --file docker/default/MysqlDiff/Dockerfile --tag my-image-name:$(date +%s) && docker image prune --all --force
-
-    - uses: actions/checkout@v3
     - name: Build the ffcreator
       run: docker build . --file docker/default/ffcreator/Dockerfile --tag my-image-name:$(date +%s) && docker image prune --all --force
 
