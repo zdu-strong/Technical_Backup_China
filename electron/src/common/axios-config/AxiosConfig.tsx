@@ -1,5 +1,8 @@
 import axios from 'axios';
 import qs from 'qs';
+import { ServerAddress } from '../Server';
+
+axios.defaults.baseURL = ServerAddress;
 
 axios.defaults.paramsSerializer = {
   serialize(params: Record<string, any>) {
