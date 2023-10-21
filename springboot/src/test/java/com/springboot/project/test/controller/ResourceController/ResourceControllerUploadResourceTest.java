@@ -31,7 +31,8 @@ public class ResourceControllerUploadResourceTest extends BaseTest {
         assertEquals(StandardCharsets.UTF_8, result.getHeaders().getContentDisposition().getCharset());
         assertEquals(9287, result.getBody().length);
         assertNotNull(result.getHeaders().getETag());
-        assertTrue(result.getHeaders().getETag().startsWith("W/\""));
+        assertTrue(result.getHeaders().getETag().startsWith("\""));
+        assertTrue(result.getHeaders().getETag().endsWith("\""));
         assertEquals("max-age=604800, no-transform, public", result.getHeaders().getCacheControl());
         assertEquals(9287, result.getHeaders().getContentLength());
     }

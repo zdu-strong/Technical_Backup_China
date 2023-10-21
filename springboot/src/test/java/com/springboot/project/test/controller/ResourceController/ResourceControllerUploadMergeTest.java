@@ -20,7 +20,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
-
 import com.google.common.collect.Lists;
 import com.springboot.project.common.storage.RangeClassPathResource;
 import com.springboot.project.model.LongTermTaskModel;
@@ -58,7 +57,8 @@ public class ResourceControllerUploadMergeTest extends BaseTest {
         assertEquals(StandardCharsets.UTF_8, result.getHeaders().getContentDisposition().getCharset());
         assertEquals(9287, result.getBody().length);
         assertNotNull(result.getHeaders().getETag());
-        assertTrue(result.getHeaders().getETag().startsWith("W/\""));
+        assertTrue(result.getHeaders().getETag().startsWith("\""));
+        assertTrue(result.getHeaders().getETag().endsWith("\""));
         assertEquals("max-age=604800, no-transform, public", result.getHeaders().getCacheControl());
         assertEquals(9287, result.getHeaders().getContentLength());
     }

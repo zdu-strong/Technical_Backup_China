@@ -48,7 +48,7 @@ public class ResourceHttpHeadersUtil {
 
     public void setETag(HttpHeaders httpHeaders, HttpServletRequest request) {
         httpHeaders
-                .setETag("W/\""
+                .setETag("\""
                         + Base64.getEncoder().encodeToString(
                                 this.storage.getRelativePathFromRequest(request).getBytes(StandardCharsets.UTF_8))
                         + "\"");

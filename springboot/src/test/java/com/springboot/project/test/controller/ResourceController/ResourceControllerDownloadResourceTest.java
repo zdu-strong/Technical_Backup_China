@@ -29,7 +29,8 @@ public class ResourceControllerDownloadResourceTest extends BaseTest {
         assertEquals(StandardCharsets.UTF_8, response.getHeaders().getContentDisposition().getCharset());
         assertEquals(9287, response.getBody().length);
         assertNotNull(response.getHeaders().getETag());
-        assertTrue(response.getHeaders().getETag().startsWith("W/\""));
+        assertTrue(response.getHeaders().getETag().startsWith("\""));
+        assertTrue(response.getHeaders().getETag().endsWith("\""));
         assertEquals("max-age=604800, no-transform, public", response.getHeaders().getCacheControl());
         assertEquals(9287, response.getHeaders().getContentLength());
     }
