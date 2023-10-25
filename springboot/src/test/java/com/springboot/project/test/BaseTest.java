@@ -294,6 +294,8 @@ public class BaseTest {
         }).retry(s -> {
             if (s.getMessage().contains("The task failed because it stopped")) {
                 return true;
+            } else if (s instanceof InterruptedException) {
+                return true;
             } else {
                 return false;
             }

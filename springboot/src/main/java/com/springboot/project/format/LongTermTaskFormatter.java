@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Pattern;
 import org.jinq.orm.stream.JinqStream;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -35,7 +34,8 @@ public class LongTermTaskFormatter extends BaseService {
                 map.put("message", e.getMessage());
                 map.put("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
             }
-            map.put("timestamp", this.objectMapper.writeValueAsString(new Date()).replaceAll(Pattern.quote("\""), ""));
+            map.put("timestamp",
+                    this.objectMapper.readValue(this.objectMapper.writeValueAsString(new Date()), String.class));
             map.put("error", HttpStatus.valueOf(Integer.valueOf(String.valueOf(map.get("status")))).getReasonPhrase());
             var traceList = Lists.newArrayList();
             var stackTraceElement = JinqStream.from(Lists.newArrayList(e.getStackTrace()))
