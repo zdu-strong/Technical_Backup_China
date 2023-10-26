@@ -63,7 +63,6 @@
     ]
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "7.21.11",
     "@babylonjs/core": "6.26.0",
     "@emotion/react": "11.11.1",
     "@emotion/styled": "11.11.0",
