@@ -1,6 +1,6 @@
 import registerWebworker from 'webworker-promise/lib/register'
 import CryptoJS from 'crypto-js';
-import { v1 } from 'uuid';
+import { v1, v4 } from 'uuid';
 
 registerWebworker(async ({
   secretKeyOfAES,
@@ -9,13 +9,16 @@ registerWebworker(async ({
   secretKeyOfAES: string,
   data: string
 }) => {
-  return CryptoJS.AES.encrypt(
-    CryptoJS.enc.Utf8.parse(`${v1()}${data}`),
+  const salt = CryptoJS.MD5(`${v1()}${v4()}`).toString(CryptoJS.enc.Base64);
+  let result = CryptoJS.AES.encrypt(
+    CryptoJS.enc.Utf8.parse(data),
     CryptoJS.enc.Base64.parse(secretKeyOfAES),
     {
-      iv: CryptoJS.MD5(CryptoJS.enc.Base64.parse(secretKeyOfAES)),
+      iv: CryptoJS.enc.Base64.parse(salt),
       padding: CryptoJS.pad.Pkcs7,
       mode: CryptoJS.mode.CBC,
     }
   ).toString();
+  result = `${salt}${result}`;
+  return result;
 });
