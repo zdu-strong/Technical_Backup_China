@@ -169,7 +169,7 @@ async function getDeviceList(isRunAndroid: boolean) {
       .groupBy(() => "")
       .selectMany(s => {
         if (s.count() > 1) {
-          return s.where(m => m.some(n => n.includes("Pixel 6"))).toArray();
+          return s.where(m => m.some(n => n.includes("Pixel 7"))).toArray();
         }
         return s.toArray();
       })
