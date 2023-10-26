@@ -1,5 +1,6 @@
 package com.springboot.project.service;
 
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -79,17 +80,22 @@ public class EncryptDecryptService extends BaseService {
     }
 
     public String encryptByAES(String text, String secretKeyOfAES) {
+        var salt = Base64.getEncoder()
+                .encodeToString(DigestUtils.md5((Generators.timeBasedGenerator().generate().toString()
+                        + Generators.randomBasedGenerator().generate().toString()).getBytes(StandardCharsets.UTF_8)));
         var aes = new AES(Mode.CBC, Padding.PKCS5Padding, new SecretKeySpec(
                 Base64.getDecoder().decode(secretKeyOfAES), "AES"),
-                DigestUtils.md5(Base64.getDecoder().decode(secretKeyOfAES)));
-        return aes.encryptBase64(Generators.timeBasedGenerator().generate().toString() + text);
+                Base64.getDecoder().decode(salt));
+        return salt + aes.encryptBase64(text);
     }
 
     public String decryptByAES(String text, String secretKeyOfAES) {
+        var salt = text.substring(0, 24);
+        text = text.substring(24);
         var aes = new AES(Mode.CBC, Padding.PKCS5Padding, new SecretKeySpec(
                 Base64.getDecoder().decode(secretKeyOfAES), "AES"),
-                DigestUtils.md5(Base64.getDecoder().decode(secretKeyOfAES)));
-        return aes.decryptStr(text).substring(36);
+                Base64.getDecoder().decode(salt));
+        return aes.decryptStr(text);
     }
 
     public String encryptByPrivateKeyOfRSA(String text, String privateKeyOfRSA) {
