@@ -6,7 +6,8 @@
     "assets": [
       {
         "include": "**/*",
-        "exclude": "**/*.tsx"
+        "exclude": "**/*.tsx",
+        "watchAssets": true
       }
     ]
   }
