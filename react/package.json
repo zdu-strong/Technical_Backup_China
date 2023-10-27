@@ -32,6 +32,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "7.21.11",
     "@emotion/react": "11.11.1",
     "@emotion/styled": "11.11.0",
     "@fontsource/roboto": "5.0.8",
@@ -57,7 +58,7 @@
     "jsencrypt": "3.3.2",
     "linq": "4.0.2",
     "mathjs": "11.11.2",
-    "mobx-react-use-autorun": "4.0.13",
+    "mobx-react-use-autorun": "4.0.14",
     "node-polyfill-webpack-plugin": "2.0.1",
     "node-rsa": "1.1.1",
     "postcss": "8.4.31",
