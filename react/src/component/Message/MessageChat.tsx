@@ -1,16 +1,15 @@
 import { observer, useMobxState } from "mobx-react-use-autorun";
 import { MessageService } from "@/common/MessageService";
 import api from '@/api'
-import { Button, CircularProgress, TextField } from "@mui/material";
-import SendIcon from '@mui/icons-material/Send'
+import { Button, TextField } from "@mui/material";
 import { FormattedMessage } from "react-intl";
 import { v1 } from 'uuid'
 import { isMobilePhone } from "@/common/is-mobile-phone";
-import AddIcon from '@mui/icons-material/Add';
 import { concatMap, from, map, timer, toArray } from "rxjs";
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useRef } from "react";
 import MessageMoreActionDialog from "@/component/MessageMoreAction/MessageMoreActionDialog";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCloudArrowUp, faPaperPlane, faPlus, faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 export default observer((props: {
   username: string,
@@ -140,14 +139,7 @@ export default observer((props: {
             textTransform: "none",
             whiteSpace: "nowrap",
           }}
-          startIcon={state.loadingOfSend ? <CircularProgress
-            size="22px"
-            style={{ color: "white" }}
-          /> : (state.messageContent.trim() ?
-            <SendIcon />
-            :
-            <CloudUploadIcon />
-          )}
+          startIcon={<FontAwesomeIcon icon={state.loadingOfSend ? faSpinner : (state.messageContent.trim() ? faPaperPlane : faCloudArrowUp)} spin={state.loadingOfSend} />}
           onClick={() => {
             if (state.loadingOfSend) {
               return;
@@ -174,14 +166,7 @@ export default observer((props: {
             textTransform: "none",
             whiteSpace: "nowrap",
           }}
-          startIcon={state.loadingOfSend ? <CircularProgress
-            size="22px"
-            style={{ color: "white" }}
-          /> : (state.messageContent.trim() ?
-            <SendIcon style={{ fontSize: "large" }} />
-            :
-            <AddIcon style={{ fontSize: "large" }} />
-          )}
+          startIcon={<FontAwesomeIcon icon={state.loadingOfSend ? faSpinner : (state.messageContent.trim() ? faPaperPlane : faPlus)} spin={state.loadingOfSend} />}
           onClick={() => {
             if (state.loadingOfSend) {
               return;

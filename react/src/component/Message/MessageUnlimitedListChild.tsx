@@ -1,15 +1,15 @@
 import { observer, useMobxState } from "mobx-react-use-autorun";
 import { useMount } from "mobx-react-use-autorun";
-import { Button, Chip, CircularProgress, Divider, Link } from "@mui/material";
+import { Button, Chip, Divider, Link } from "@mui/material";
 import api from '@/api'
 import { MessageService } from "@/common/MessageService";
-import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { FormattedMessage } from "react-intl";
 import { UserMessageModel } from "@/model/UserMessageModel";
 import path from 'path'
-import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import { Subscription } from "rxjs";
 import { DefaultVariableSizeListChildRowHeight } from "./js/DefaultVariableSizeListChildRowHeight";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEyeSlash, faFile, faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 export default observer((props: {
   loadMessage: () => void,
@@ -71,8 +71,9 @@ export default observer((props: {
         </div>
         {state.ready && !state.message?.isRecall && state.message?.user.id === state.userId && <div>
           <Button
-            startIcon={state.loadingOfRecall ? <CircularProgress size="12px" /> : <VisibilityOffIcon style={{ fontSize: "12px" }} />}
-            size="small" variant="outlined"
+            startIcon={<FontAwesomeIcon icon={state.loadingOfRecall ? faSpinner : faEyeSlash} spin={state.loadingOfRecall} style={{ fontSize: "small" }} />}
+            size="small"
+            variant="outlined"
             style={{ marginRight: "3px", marginTop: "3px", textTransform: "none", lineHeight: "14px" }}
             onClick={recall}
             onMouseDown={(e) => e.preventDefault()}
@@ -109,7 +110,7 @@ export default observer((props: {
               overflowWrap: "break-word",
             }}
           >
-            <DescriptionOutlinedIcon style={{ fontSize: "1em", marginTop: "0.2em" }} />
+            <FontAwesomeIcon icon={faFile} style={{ marginTop: "0.2em", marginRight: "3px" }} />
             {`${decodeURIComponent(path.basename(state.message?.url))}`}
           </Link>
         </div>

@@ -1,11 +1,12 @@
 import { observer, useMobxState } from "mobx-react-use-autorun";
 import { MessageService } from "@/common/MessageService";
 import api from '@/api'
-import { AppBar, Box, Button, CircularProgress, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
 import { isMobilePhone } from "@/common/is-mobile-phone";
 import { useNavigate } from "react-router-dom";
-import LogoutIcon from '@mui/icons-material/Logout';
 import { FormattedMessage } from "react-intl";
+import { faArrowRightFromBracket, faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 export default observer((props: { username: string, userId: string }) => {
 
@@ -42,7 +43,7 @@ export default observer((props: { username: string, userId: string }) => {
           <Button
             variant="contained"
             color="secondary"
-            startIcon={state.loadingOfSignOut ? <CircularProgress style={{ color: "white" }} size="22px" /> : <LogoutIcon />}
+            startIcon={<FontAwesomeIcon icon={state.loadingOfSignOut ? faSpinner : faArrowRightFromBracket} spin={state.loadingOfSignOut} />}
             onClick={signOut}
             style={{
               marginLeft: "1em",
