@@ -24,7 +24,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-17-openjdk
 # run test
 FROM first_docker as second_docker
 RUN dnf install -y git
-RUN dnf install -y procps
+RUN dnf install -y procps-ng
 RUN dnf install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel nss libXScrnSaver alsa-lib
 COPY . /all_code
 WORKDIR /all_code/capacitor-cypress

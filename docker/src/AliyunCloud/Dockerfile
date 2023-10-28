@@ -45,7 +45,7 @@ RUN mv target/*.jar target/server.jar
 # compile client code
 FROM first_docker as three_docker
 RUN dnf install -y git
-RUN dnf install -y procps
+RUN dnf install -y procps-ng
 RUN dnf install -y xorg-x11-server-Xvfb gtk2-devel gtk3-devel libnotify-devel nss libXScrnSaver alsa-lib
 COPY . /all_code
 WORKDIR /all_code/springboot
