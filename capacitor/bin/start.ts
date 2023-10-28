@@ -142,6 +142,23 @@ async function createChildProcessOfCapacitor(isRunAndroid: boolean, avaliablePor
   await updateDownloadAddressOfGrableDependencies(isRunAndroid);
   await addAndroidPermissions(isRunAndroid);
   await usesCleartextTraffic(isRunAndroid);
+  await execa.command(
+    [
+      `cap run`,
+      "--no-sync",
+      `${deviceList.length === 1 ? `--target=${linq.from(deviceList).single()}` : ''}`,
+      `${isRunAndroid ? "android" : "ios"}`,
+    ].join(" "),
+    {
+      stdio: "inherit",
+      cwd: path.join(__dirname, ".."),
+      extendEnv: true,
+      env: (isRunAndroid ? {
+        "ANDROID_HOME": `${androidSdkRootPath}`,
+      } : {
+      }) as any,
+    }
+  );
   const childProcess = execa.command(
     [
       `cap run`,
