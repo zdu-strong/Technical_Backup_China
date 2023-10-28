@@ -1,6 +1,7 @@
 import { Dialog, DialogContent, DialogContentText, DialogTitle, Divider, Fab } from "@mui/material";
 import { observer, useMobxState } from "mobx-react-use-autorun";
-import CloseIcon from '@mui/icons-material/Close';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faXmark } from '@fortawesome/free-solid-svg-icons'
 import { FormattedMessage } from "react-intl";
 
 export default observer((props: {
@@ -22,7 +23,7 @@ export default observer((props: {
         <FormattedMessage id="PasswordHint" defaultMessage="Password hint" />
       </div>
       <Fab color="primary" size="small" aria-label="add" onClick={state.closeDialog} >
-        <CloseIcon />
+        <FontAwesomeIcon icon={faXmark} size="xl" />
       </Fab>
     </DialogTitle>
     <Divider />

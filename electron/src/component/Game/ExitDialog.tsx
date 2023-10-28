@@ -1,7 +1,8 @@
 import { Button, Dialog, DialogActions, DialogTitle, Fab } from "@mui/material";
 import { observer, useMobxState } from "mobx-react-use-autorun";
 import { FormattedMessage } from "react-intl";
-import CloseIcon from '@mui/icons-material/Close';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faXmark } from '@fortawesome/free-solid-svg-icons'
 import remote from "@/remote";
 
 export default observer((props: {
@@ -39,7 +40,7 @@ export default observer((props: {
         await Promise.resolve(null);
         state.canvasRef.current!.focus();
       }}>
-        <CloseIcon />
+        <FontAwesomeIcon icon={faXmark} size="xl" />
       </Fab>
     </DialogTitle>
     <DialogActions className="flex justify-end">

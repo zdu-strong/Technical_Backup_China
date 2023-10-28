@@ -7,7 +7,8 @@ import { AndroidNotch } from '@awesome-cordova-plugins/android-notch'
 import { Capacitor } from '@capacitor/core'
 import { delay, distinctUntilChanged, from, of, repeat, Subscription, tap } from "rxjs";
 import { exhaustMapWithTrailing } from "rxjs-exhaustmap-with-trailing";
-import SettingsIcon from '@mui/icons-material/Settings';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGear } from '@fortawesome/free-solid-svg-icons'
 
 const css = stylesheet({
   container: {
@@ -92,8 +93,9 @@ export default observer((props: { exit: () => void }) => {
         className={css.exitButton}
         onClick={() => {
           state.exitDialog.open = true
-        }}>
-        <SettingsIcon />
+        }}
+      >
+        <FontAwesomeIcon icon={faGear} size="xl" />
       </Fab>}
     </div>
     {state.exitDialog.open && <ExitDialog exit={state.exit} closeDialog={() => { state.exitDialog.open = false }} />}

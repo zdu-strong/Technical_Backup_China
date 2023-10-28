@@ -55,15 +55,14 @@ react-intl <br/>
 2. mobx-react-use-autorun (https://www.npmjs.com/package/mobx-react-use-autorun)
 3. typestyle (https://www.npmjs.com/package/typestyle)<br/>
 4. Material UI Components (https://material-ui.com)<br/>
-5. Material Icons (https://mui.com/material-ui/material-icons)<br/>
-6. Loading icon (https://mui.com/material-ui/react-progress)<br/>
-7. axios (https://axios-http.com)
-8. typedjson (https://www.npmjs.com/package/typedjson)
-9. linq (https://www.npmjs.com/package/linq)<br/>
-10. date-fns (https://date-fns.org)
-11. UUID (https://www.npmjs.com/package/uuid)<br/>
-12. Recharts (https://recharts.org/en-US)<br/>
-13. tailwindcss (https://tailwindcss.com)<br/>
-14. Animate.css (https://animate.style)<br/>
-15. react-git-info (https://www.npmjs.com/package/react-git-info)
-16. mathjs (https://www.npmjs.com/package/mathjs)
+5. Icons (https://fontawesome.com/search?o=r&m=free)<br/>
+6. axios (https://axios-http.com)
+7. typedjson (https://www.npmjs.com/package/typedjson)
+8. linq (https://www.npmjs.com/package/linq)<br/>
+9. date-fns (https://date-fns.org)
+10. UUID (https://www.npmjs.com/package/uuid)<br/>
+11. Recharts (https://recharts.org/en-US)<br/>
+12. tailwindcss (https://tailwindcss.com)<br/>
+13. Animate.css (https://animate.style)<br/>
+14. react-git-info (https://www.npmjs.com/package/react-git-info)
+15. mathjs (https://www.npmjs.com/package/mathjs)

@@ -1,9 +1,9 @@
-import { Alert, Dialog, DialogContent, DialogTitle, Divider, Fab } from "@mui/material"
+import { Alert, Dialog, DialogContent, DialogTitle, Divider, Fab, IconButton } from "@mui/material"
 import { GlobalMessageList, MessageService, MESSAGE_TYPE_ENUM } from "@/common/MessageService"
 import linq from "linq";
 import { observer } from 'mobx-react-use-autorun';
-import CloseIcon from '@mui/icons-material/Close';
-import HelpIcon from '@mui/icons-material/Help';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleQuestion, faXmark } from '@fortawesome/free-solid-svg-icons'
 import Tooltip from '@mui/material/Tooltip';
 import { stylesheet } from "typestyle";
 import { FormattedMessage } from "react-intl";
@@ -102,11 +102,13 @@ export default observer(() => {
               <FormattedMessage id="ClickTheBackgroundBoard" defaultMessage="Click the background board" />
             </div>
           </div>} arrow={true}>
-            <HelpIcon color={getMessageType()} fontSize="medium" style={{ marginLeft: "4px" }} />
+            <IconButton color={getMessageType()} style={{ marginLeft: "4px" }}>
+              <FontAwesomeIcon icon={faCircleQuestion} />
+            </IconButton>
           </Tooltip>
         </div>
         <Fab color="default" id="closeButton" onClick={() => MessageService.error([])}>
-          <CloseIcon />
+          <FontAwesomeIcon icon={faXmark} size="xl" />
         </Fab>
       </DialogTitle>
       <Divider />

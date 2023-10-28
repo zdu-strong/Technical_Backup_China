@@ -1,14 +1,14 @@
-import { Button, CircularProgress, TextField } from "@mui/material";
+import { Button, IconButton, TextField } from "@mui/material";
 import { observer, useMobxState } from "mobx-react-use-autorun";
 import { FormattedMessage } from "react-intl";
 import { stylesheet } from "typestyle";
-import HelpIcon from '@mui/icons-material/Help';
-import LoginIcon from '@mui/icons-material/Login';
 import AccountTooltipDialog from "@/component/SignIn/AccountTooltipDialog";
 import PasswordTooltipDialog from "@/component/SignIn/PasswordTooltipDialog";
 import api from "@/api";
 import { MessageService } from "@/common/MessageService";
 import { Link, useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleQuestion, faArrowRightToBracket, faSpinner } from '@fortawesome/free-solid-svg-icons'
 
 const css = stylesheet({
   container: {
@@ -119,7 +119,12 @@ export default observer(() => {
         error={!!state.error.username()}
         helperText={state.error.username()}
         InputProps={{
-          endAdornment: <HelpIcon color="primary" style={{ cursor: "pointer" }} onClick={() => state.usernameTooltipDialog.open = true} />
+          endAdornment: <IconButton
+            color="primary"
+            onClick={() => state.usernameTooltipDialog.open = true}
+          >
+            <FontAwesomeIcon icon={faCircleQuestion} />
+          </IconButton>
         }}
         autoFocus={true}
       />
@@ -144,7 +149,12 @@ export default observer(() => {
         error={!!state.error.password()}
         helperText={state.error.password()}
         InputProps={{
-          endAdornment: <HelpIcon color="primary" style={{ cursor: "pointer" }} onClick={() => state.passwordTooltipDialog.open = true} />
+          endAdornment: <IconButton
+            color="primary"
+            onClick={() => state.passwordTooltipDialog.open = true}
+          >
+            <FontAwesomeIcon icon={faCircleQuestion} />
+          </IconButton>
         }}
         autoFocus={true}
       />}
@@ -165,7 +175,7 @@ export default observer(() => {
       <Button
         variant="contained"
         className="normal-case"
-        startIcon={state.loading.signIn ? <CircularProgress color="inherit" size="16px" /> : <LoginIcon />}
+        startIcon={<FontAwesomeIcon icon={state.loading.signIn ? faSpinner : faArrowRightToBracket} spin={state.loading.signIn} />}
         onClick={signIn}
         style={{
           textTransform: "none"

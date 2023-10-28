@@ -2,7 +2,8 @@ import { Alert, Dialog, DialogContent, DialogTitle, Divider, Fab } from "@mui/ma
 import { GlobalMessageList, MessageService, MESSAGE_TYPE_ENUM } from "@/common/MessageService"
 import linq from "linq";
 import { observer } from 'mobx-react-use-autorun';
-import CloseIcon from '@mui/icons-material/Close';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faXmark } from '@fortawesome/free-solid-svg-icons'
 import HelpIcon from '@mui/icons-material/Help';
 import Tooltip from '@mui/material/Tooltip';
 import { stylesheet } from "typestyle";
@@ -106,7 +107,7 @@ export default observer(() => {
           </Tooltip>
         </div>
         <Fab color="default" id="closeButton" onClick={() => MessageService.error([])}>
-          <CloseIcon />
+          <FontAwesomeIcon icon={faXmark} size="xl" />
         </Fab>
       </DialogTitle>
       <Divider />

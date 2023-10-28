@@ -7,7 +7,8 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
-import CloseIcon from '@mui/icons-material/Close';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faXmark } from '@fortawesome/free-solid-svg-icons'
 import { MessageMoreActionTranslation } from '@/component/MessageMoreAction/MessageMoreActionTranslation'
 import { observer, useMobxState } from 'mobx-react-use-autorun';
 import { FormattedMessage } from 'react-intl';
@@ -38,7 +39,7 @@ export default observer((props: {
             onClick={state.closeDialog}
             aria-label="close"
           >
-            <CloseIcon />
+            <FontAwesomeIcon icon={faXmark} size="xl" />
           </IconButton>
         </Toolbar>
       </AppBar>

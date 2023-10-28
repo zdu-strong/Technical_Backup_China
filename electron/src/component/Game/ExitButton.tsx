@@ -3,7 +3,8 @@ import { observer, useMobxState } from "mobx-react-use-autorun";
 import { stylesheet } from "typestyle";
 import ExitDialog from "@/component/Game/ExitDialog";
 import { useMount } from "mobx-react-use-autorun";
-import SettingsIcon from '@mui/icons-material/Settings';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGear } from '@fortawesome/free-solid-svg-icons'
 
 const css = stylesheet({
   container: {
@@ -49,8 +50,9 @@ export default observer((props: {
         className={css.exitButton}
         onClick={() => {
           state.exitDialog.open = true
-        }}>
-        <SettingsIcon />
+        }}
+      >
+        <FontAwesomeIcon icon={faGear} size="xl" />
       </Fab>}
     </div>
     {state.exitDialog.open && <ExitDialog

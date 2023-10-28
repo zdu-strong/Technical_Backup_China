@@ -63,16 +63,15 @@ react-intl <br/>
 2. mobx-react-use-autorun (https://www.npmjs.com/package/mobx-react-use-autorun)
 3. typestyle (https://www.npmjs.com/package/typestyle)<br/>
 4. Material UI Components (https://material-ui.com)<br/>
-5. Material Icons (https://mui.com/material-ui/material-icons)<br/>
-6. Loading icon (https://mui.com/material-ui/react-progress)<br/>
-7. Capacitor Plugins (https://capacitorjs.com/docs/apis)<br/>
-8. axios (https://axios-http.com)
-9. typedjson (https://www.npmjs.com/package/typedjson)
-10. linq (https://www.npmjs.com/package/linq)<br/>
-11. UUID (https://www.npmjs.com/package/uuid)<br/>
-12. tailwindcss (https://tailwindcss.com)<br/>
-13. Animate.css (https://animate.style)<br/>
-14. react-git-info (https://www.npmjs.com/package/react-git-info)
-15. Game Engine (https://www.babylonjs.com)
-16. mathjs (https://www.npmjs.com/package/mathjs)
-17. public test certificate (https://ask.dcloud.net.cn/article/36522)
+5. Icons (https://fontawesome.com/search?o=r&m=free)<br/>
+6. Capacitor Plugins (https://capacitorjs.com/docs/apis)<br/>
+7. axios (https://axios-http.com)
+8. typedjson (https://www.npmjs.com/package/typedjson)
+9. linq (https://www.npmjs.com/package/linq)<br/>
+10. UUID (https://www.npmjs.com/package/uuid)<br/>
+11. tailwindcss (https://tailwindcss.com)<br/>
+12. Animate.css (https://animate.style)<br/>
+13. react-git-info (https://www.npmjs.com/package/react-git-info)
+14. Game Engine (https://www.babylonjs.com)
+15. mathjs (https://www.npmjs.com/package/mathjs)
+16. public test certificate (https://ask.dcloud.net.cn/article/36522)
