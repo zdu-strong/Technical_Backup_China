@@ -1,13 +1,12 @@
 import { BottomNavigation, BottomNavigationAction } from "@mui/material";
 import { observer, useMobxState } from "mobx-react-use-autorun";
-import RestoreIcon from '@mui/icons-material/Restore';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
 import FriendList from "@/component/Friend/FriendList";
 import StrangerList from "@/component/Stranger/StrangerList";
 import { NavigationEnum } from "@/component/Home/js/NavigationEnum";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { FormattedMessage } from "react-intl";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGear, faUserGroup, faUsersBetweenLines } from "@fortawesome/free-solid-svg-icons";
 
 export default observer(() => {
 
@@ -39,9 +38,9 @@ export default observer(() => {
             state.navigation = newValue;
           }}
         >
-          <BottomNavigationAction value={NavigationEnum.Friend} label="Friend" icon={<RestoreIcon />} />
-          <BottomNavigationAction value={NavigationEnum.Stranger} label="Stranger" icon={<FavoriteIcon />} />
-          <BottomNavigationAction value={NavigationEnum.Setting} label="Setting" icon={<LocationOnIcon />} />
+          <BottomNavigationAction value={NavigationEnum.Friend} label="Friend" icon={<FontAwesomeIcon icon={faUserGroup} style={{ fontSize: "xx-large" }} />} />
+          <BottomNavigationAction value={NavigationEnum.Stranger} label="Stranger" icon={<FontAwesomeIcon icon={faUsersBetweenLines} style={{ fontSize: "xx-large" }} />} />
+          <BottomNavigationAction value={NavigationEnum.Setting} label="Setting" icon={<FontAwesomeIcon icon={faGear} style={{ fontSize: "xx-large" }} />} />
         </BottomNavigation>
       </div>
     </div>

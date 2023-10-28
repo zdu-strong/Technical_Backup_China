@@ -1,10 +1,11 @@
 import { FriendshipModel } from "@/model/FriendshipModel";
-import { Button, CircularProgress } from "@mui/material";
+import { Button } from "@mui/material";
 import { observer, useMobxState } from "mobx-react-use-autorun";
 import api from "@/api";
 import { MessageService } from "@/common/MessageService";
-import DeleteIcon from '@mui/icons-material/Delete';
 import { FormattedMessage } from "react-intl";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpinner, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 export default observer((props: { friendship: FriendshipModel, refreshFriendList: () => Promise<void> }) => {
 
@@ -40,9 +41,7 @@ export default observer((props: { friendship: FriendshipModel, refreshFriendList
         marginRight: "1em",
         textTransform: "none"
       }}
-      startIcon={
-        state.loading ? <CircularProgress /> : <DeleteIcon />
-      }
+      startIcon={<FontAwesomeIcon icon={state.loading ? faSpinner : faTrash} spin={state.loading} />}
       onClick={deleteFromFriendList}
     >
       <FormattedMessage id="LiftYourFriends" defaultMessage="Lift your friends" />

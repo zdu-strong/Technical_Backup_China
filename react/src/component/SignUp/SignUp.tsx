@@ -1,11 +1,8 @@
-import { Button, CircularProgress, Divider, Fab, IconButton, TextField } from "@mui/material";
+import { Button, Divider, Fab, IconButton, TextField } from "@mui/material";
 import { observer, useMobxState } from "mobx-react-use-autorun";
 import { FormattedMessage } from "react-intl";
 import { stylesheet } from "typestyle";
 import { v1 } from "uuid";
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
-import SaveIcon from '@mui/icons-material/Save';
 import Box from '@mui/material/Box';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
@@ -14,10 +11,11 @@ import { useMount } from "mobx-react-use-autorun";
 import api from "@/api";
 import { MessageService } from "@/common/MessageService";
 import { UserEmailModel } from "@/model/UserEmailModel";
-import SendIcon from '@mui/icons-material/Send';
 import { Link, useNavigate } from "react-router-dom";
 import LoadingOrErrorComponent from "@/common/LoadingOrErrorComponent/LoadingOrErrorComponent";
 import { ReactNode } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFloppyDisk, faPaperPlane, faPlus, faSpinner, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 const css = stylesheet({
   container: {
@@ -316,7 +314,7 @@ export default observer(() => {
                       state.loading.sendVerificationCode[s.id!] = false;
                     }
                   }}
-                  startIcon={state.loading.sendVerificationCode[s.id!] ? <CircularProgress color="inherit" size="16px" /> : <SendIcon />}
+                  startIcon={<FontAwesomeIcon icon={state.loading.sendVerificationCode[s.id!] ? faSpinner : faPaperPlane} spin={state.loading.sendVerificationCode[s.id!]} style={{ fontSize: "medium" }} />}
                 >
                   <FormattedMessage id="Send" defaultMessage="Send" />
                 </Button>
@@ -348,9 +346,8 @@ export default observer(() => {
                     }
                   }}
                   style={{ marginLeft: "0.2em" }}
-                  size="large"
                 >
-                  <DeleteIcon />
+                  <FontAwesomeIcon icon={faTrash} />
                 </IconButton>
               </div>
             </div>)}
@@ -371,7 +368,7 @@ export default observer(() => {
                   })
                 }}
               >
-                <AddIcon />
+                <FontAwesomeIcon icon={faPlus} style={{ fontSize: "large" }} />
               </Fab>
             </div>
           </div>}
@@ -395,7 +392,7 @@ export default observer(() => {
                 textTransform: "none"
               }}
               variant="contained"
-              startIcon={<SaveIcon />}
+              startIcon={<FontAwesomeIcon icon={faFloppyDisk} />}
               onClick={() => {
                 if (state.activeStep > 0) {
                   state.activeStep--;
@@ -409,7 +406,7 @@ export default observer(() => {
             </Link>
             {state.activeStep < state.steps.length - 1 && <Button
               variant="contained"
-              startIcon={<SaveIcon />}
+              startIcon={<FontAwesomeIcon icon={faFloppyDisk} />}
               onClick={nextStep}
               style={{
                 textTransform: "none"
@@ -419,7 +416,7 @@ export default observer(() => {
             </Button>}
             {state.activeStep >= state.steps.length - 1 && <Button
               variant="contained"
-              startIcon={state.loading.signUp ? <CircularProgress color="inherit" size="16px" /> : <SaveIcon />}
+              startIcon={<FontAwesomeIcon icon={state.loading.signUp ? faSpinner : faFloppyDisk} spin={state.loading.signUp} />}
               onClick={signUp}
               style={{
                 textTransform: "none"

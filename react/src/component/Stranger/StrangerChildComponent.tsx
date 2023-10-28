@@ -1,10 +1,11 @@
 import { FriendshipModel } from "@/model/FriendshipModel";
-import { Button, CircularProgress } from "@mui/material";
+import { Button } from "@mui/material";
 import { observer, useMobxState } from "mobx-react-use-autorun";
-import AddIcon from '@mui/icons-material/Add';
 import { MessageService } from "@/common/MessageService";
 import api from "@/api";
 import { FormattedMessage } from "react-intl";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus, faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 export default observer((props: { friendship: FriendshipModel, refreshFriendshipList: () => Promise<void> }) => {
 
@@ -42,9 +43,7 @@ export default observer((props: { friendship: FriendshipModel, refreshFriendship
         marginRight: "1em",
         textTransform: "none"
       }}
-      startIcon={
-        state.loading ? <CircularProgress /> : <AddIcon />
-      }
+      startIcon={<FontAwesomeIcon icon={state.loading ? faSpinner : faPlus} spin={state.loading} />}
       onClick={addFriend}
     >
       <FormattedMessage id="AddToFriends" defaultMessage="Add to friends" />
