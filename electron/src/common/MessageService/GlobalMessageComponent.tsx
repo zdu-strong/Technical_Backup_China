@@ -84,24 +84,27 @@ export default observer(() => {
           {getMessageType() === MESSAGE_TYPE_ENUM.success && 'Success'}
           {getMessageType() === MESSAGE_TYPE_ENUM.warning && 'Warning'}
           {getMessageType() === MESSAGE_TYPE_ENUM.info && 'Info'}
-          <Tooltip title={<div className="flex flex-col">
-            <div>
-              <FormattedMessage id="TheWayToCloseThePopUpBox" defaultMessage="The way to close the pop -up box" />
-              {": "}
-            </div>
-            <div>
-              {"1. "}
-              <FormattedMessage id="PressTheESCKey" defaultMessage="Press the ESC key" />
-            </div>
-            <div>
-              {"2. "}
-              <FormattedMessage id="ClickTheCloseButton" defaultMessage="Click the close button" />
-            </div>
-            <div>
-              {"3. "}
-              <FormattedMessage id="ClickTheBackgroundBoard" defaultMessage="Click the background board" />
-            </div>
-          </div>} arrow={true}>
+          <Tooltip
+            title={<div className="flex flex-col">
+              <div>
+                <FormattedMessage id="TheWayToCloseThePopUpBox" defaultMessage="The way to close the pop -up box" />
+                {": "}
+              </div>
+              <div>
+                {"1. "}
+                <FormattedMessage id="PressTheESCKey" defaultMessage="Press the ESC key" />
+              </div>
+              <div>
+                {"2. "}
+                <FormattedMessage id="ClickTheCloseButton" defaultMessage="Click the close button" />
+              </div>
+              <div>
+                {"3. "}
+                <FormattedMessage id="ClickTheBackgroundBoard" defaultMessage="Click the background board" />
+              </div>
+            </div>}
+            arrow={true}
+          >
             <IconButton color={getMessageType()} style={{ marginLeft: "4px" }}>
               <FontAwesomeIcon icon={faCircleQuestion} />
             </IconButton>

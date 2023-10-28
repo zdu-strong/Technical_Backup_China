@@ -1,10 +1,9 @@
-import { Alert, Dialog, DialogContent, DialogTitle, Divider, Fab } from "@mui/material"
+import { Alert, Dialog, DialogContent, DialogTitle, Divider, Fab, IconButton } from "@mui/material"
 import { GlobalMessageList, MessageService, MESSAGE_TYPE_ENUM } from "@/common/MessageService"
 import linq from "linq";
 import { observer } from 'mobx-react-use-autorun';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faXmark } from '@fortawesome/free-solid-svg-icons'
-import HelpIcon from '@mui/icons-material/Help';
+import { faCircleQuestion, faXmark } from '@fortawesome/free-solid-svg-icons'
 import Tooltip from '@mui/material/Tooltip';
 import { stylesheet } from "typestyle";
 import { FormattedMessage } from "react-intl";
@@ -85,25 +84,30 @@ export default observer(() => {
           {getMessageType() === MESSAGE_TYPE_ENUM.success && 'Success'}
           {getMessageType() === MESSAGE_TYPE_ENUM.warning && 'Warning'}
           {getMessageType() === MESSAGE_TYPE_ENUM.info && 'Info'}
-          <Tooltip title={<div className="flex flex-col">
-            <div>
-              <FormattedMessage id="TheWayToCloseThePopUpBox" defaultMessage="The way to close the pop -up box" />
-              {": "}
-            </div>
-            <div>
-              {"1. "}
-              <FormattedMessage id="PressTheESCKey" defaultMessage="Press the ESC key" />
-            </div>
-            <div>
-              {"2. "}
-              <FormattedMessage id="ClickTheCloseButton" defaultMessage="Click the close button" />
-            </div>
-            <div>
-              {"3. "}
-              <FormattedMessage id="ClickTheBackgroundBoard" defaultMessage="Click the background board" />
-            </div>
-          </div>} arrow={true}>
-            <HelpIcon color={getMessageType()} fontSize="medium" style={{ marginLeft: "4px" }} />
+          <Tooltip
+            title={<div className="flex flex-col">
+              <div>
+                <FormattedMessage id="TheWayToCloseThePopUpBox" defaultMessage="The way to close the pop -up box" />
+                {": "}
+              </div>
+              <div>
+                {"1. "}
+                <FormattedMessage id="PressTheESCKey" defaultMessage="Press the ESC key" />
+              </div>
+              <div>
+                {"2. "}
+                <FormattedMessage id="ClickTheCloseButton" defaultMessage="Click the close button" />
+              </div>
+              <div>
+                {"3. "}
+                <FormattedMessage id="ClickTheBackgroundBoard" defaultMessage="Click the background board" />
+              </div>
+            </div>}
+            arrow={true}
+          >
+            <IconButton color={getMessageType()} style={{ marginLeft: "4px" }}>
+              <FontAwesomeIcon icon={faCircleQuestion} />
+            </IconButton>
           </Tooltip>
         </div>
         <Fab color="default" id="closeButton" onClick={() => MessageService.error([])}>
